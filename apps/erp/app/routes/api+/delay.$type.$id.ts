@@ -22,13 +22,15 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     bypassRls: true
   });
   const claims = await getUserClaims(userId, companyId);
-  const result = await getDelayAnalysis(
-    client,
-    companyId,
-    kind,
-    params.id,
-    (module) => hasPermission(claims.permissions, module, "view", companyId)
-  );
-  if (!result) throw new Response("Not found", { status: 404 });
-  return result;
+  try {
+    return await getDelayAnalysis(
+      client,
+      companyId,
+      kind,
+      params.id,
+      (module) => hasPermission(claims.permissions, module, "view", companyId)
+    );
+  } catch {
+    return null;
+  }
 }

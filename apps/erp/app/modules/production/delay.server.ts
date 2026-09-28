@@ -96,6 +96,7 @@ async function graphForJobs(
           )
           .eq("companyId", companyId)
           .in("id", jobIds)
+          .order("id")
           .range(from, to)
       )
     : [];
@@ -109,6 +110,7 @@ async function graphForJobs(
           )
           .eq("companyId", companyId)
           .in("jobId", jobIds)
+          .order("id")
           .range(from, to)
       )
     : [];
@@ -125,6 +127,8 @@ async function graphForJobs(
               .select("operationId, dependsOnId")
               .eq("companyId", companyId)
               .in("jobId", jobIds)
+              .order("operationId")
+              .order("dependsOnId")
               .range(from, to)
           )
         : [],
@@ -135,6 +139,7 @@ async function graphForJobs(
               .select("jobId, itemId, jobOperationId")
               .eq("companyId", companyId)
               .in("jobId", jobIds)
+              .order("id")
               .range(from, to)
           )
         : [],
@@ -145,6 +150,7 @@ async function graphForJobs(
               .select("jobOperationId, startTime, endTime")
               .eq("companyId", companyId)
               .in("jobOperationId", opIds)
+              .order("id")
               .range(from, to)
           )
         : [],
@@ -157,6 +163,7 @@ async function graphForJobs(
               )
               .eq("companyId", companyId)
               .in("jobId", jobIds)
+              .order("id")
               .range(from, to)
           )
         : [],
@@ -169,6 +176,7 @@ async function graphForJobs(
               )
               .eq("companyId", companyId)
               .in("jobId", jobIds)
+              .order("id")
               .range(from, to)
           )
         : [],
@@ -181,6 +189,7 @@ async function graphForJobs(
               )
               .eq("companyId", companyId)
               .in("jobOperationId", opIds)
+              .order("id")
               .range(from, to)
           )
         : []
@@ -203,6 +212,7 @@ async function graphForJobs(
           )
           .eq("companyId", companyId)
           .in("id", salesLineIds)
+          .order("id")
           .range(from, to)
       )
     : [];

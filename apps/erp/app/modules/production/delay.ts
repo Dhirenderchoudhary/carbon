@@ -110,13 +110,8 @@ type Edge = {
 
 type Piece = { id: string; class: DelayClass; days: number };
 
-// Civil dates as UTC midnights, so the span is a whole number of days.
 function daySpan(later: string, earlier: string): number {
-  return (
-    (parseDate(later).toDate("UTC").getTime() -
-      parseDate(earlier).toDate("UTC").getTime()) /
-    86_400_000
-  );
+  return parseDate(later).compare(parseDate(earlier));
 }
 
 export function calendarDays(later: string, earlier: string): number {
