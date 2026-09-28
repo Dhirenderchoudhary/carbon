@@ -1,4 +1,4 @@
-import { type CalendarDate, parseDate } from "@internationalized/date";
+import { parseDate } from "@internationalized/date";
 
 export type DelayKind =
   | "supply"
@@ -110,24 +110,13 @@ type Edge = {
 
 type Piece = { id: string; class: DelayClass; days: number };
 
-// days_from_civil (Howard Hinnant). parseDate only checks the calendar;
-// CalendarDate has no day-span that this file should depend on.
-function daysFromCivil(date: CalendarDate): number {
-  const y = date.year - (date.month <= 2 ? 1 : 0);
-  const era = Math.floor(y / 400);
-  const yoe = y - era * 400;
-  const doy =
-    Math.floor(
-      (153 * (date.month > 2 ? date.month - 3 : date.month + 9) + 2) / 5
-    ) +
-    date.day -
-    1;
-  const doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy;
-  return era * 146097 + doe - 719468;
-}
-
+// Civil dates as UTC midnights, so the span is a whole number of days.
 function daySpan(later: string, earlier: string): number {
-  return daysFromCivil(parseDate(later)) - daysFromCivil(parseDate(earlier));
+  return (
+    (parseDate(later).toDate("UTC").getTime() -
+      parseDate(earlier).toDate("UTC").getTime()) /
+    86_400_000
+  );
 }
 
 export function calendarDays(later: string, earlier: string): number {
