@@ -132,6 +132,10 @@ msgstr "{0} en stock ; les {1} restants seront prélevés comme {2}"
 msgid "{0} jobs created"
 msgstr "{0} ordres de fabrication créés"
 
+#. placeholder {0}: days(report.lateDays)
+msgid "{0} late"
+msgstr ""
+
 #. placeholder {0}: mappings.length
 msgid "{0} lines to map"
 msgstr "{0} lignes à mapper"
@@ -285,6 +289,12 @@ msgstr "{count, plural, one {# compte avec un solde} other {# comptes avec un so
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# cours} other {# cours}}"
 
+msgid "{count} day"
+msgstr ""
+
+msgid "{count} days"
+msgstr ""
+
 msgid "{days}d"
 msgstr "{days}j"
 
@@ -293,6 +303,9 @@ msgstr "{done} sur {total} phases terminées"
 
 msgid "{excluded, plural, one {# row excluded} other {# rows excluded}}"
 msgstr "{excluded, plural, one {# ligne exclue} other {# lignes exclues}}"
+
+msgid "{from} and {to} depend on each other."
+msgstr ""
 
 msgid "{from}–{to} of {count}"
 msgstr "{from}–{to} sur {count}"
@@ -362,6 +375,9 @@ msgstr "{scopeCount} autorisations"
 
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} sélectionnés"
+
+msgid "{successor} is planned {span} before {predecessor}."
+msgstr ""
 
 msgid "{total} phases to get your company live on Carbon. Each one ends at a checkpoint."
 msgstr "{total} phases pour mettre votre société en direct sur Carbon. Chacune se termine à un point de contrôle."
@@ -3851,6 +3867,9 @@ msgstr "Date de réalisation"
 msgid "Completed Date"
 msgstr "Date d'achèvement"
 
+msgid "Completed late"
+msgstr ""
+
 msgid "Completed Qty"
 msgstr "Quantité Complétée"
 
@@ -4490,6 +4509,9 @@ msgstr "N'a pas pu enregistrer"
 
 msgid "Couldn't complete the Onshape connection"
 msgstr "Impossible d'établir la connexion Onshape"
+
+msgid "Couldn't load delay analysis."
+msgstr ""
 
 msgid "Couldn't load documents"
 msgstr "Impossible de charger les documents"
@@ -5429,6 +5451,9 @@ msgstr "Définir des rôles personnalisés avec des autorisations granulaires pa
 
 msgid "Define multi-level BOMs and Bill of Process (make methods)"
 msgstr "Définir des BOM multi-niveaux et des Listes des opérations (méthodes de fabrication)"
+
+msgid "Delay analysis"
+msgstr ""
 
 msgid "Delete"
 msgstr "Supprimer"
@@ -8791,6 +8816,12 @@ msgstr "Matériaux Indirects et Services"
 msgid "Indirect Materials & Services (default)"
 msgstr "Matériaux Indirects et Services (par défaut)"
 
+msgid "inferred"
+msgstr ""
+
+msgid "Inferred."
+msgstr ""
+
 msgid "Infrastructure"
 msgstr "Infrastructure"
 
@@ -9518,6 +9549,12 @@ msgstr "Dernière utilisation"
 
 msgid "Late in the evening, {name}."
 msgstr "Tard en soirée, {name}."
+
+msgid "Late supply"
+msgstr ""
+
+msgid "Late, with enough slack"
+msgstr ""
 
 msgid "Latest operation end"
 msgstr "Fin de la dernière opération"
@@ -11618,6 +11655,9 @@ msgstr "Non configuré"
 msgid "Not enough jobs to cover quantity"
 msgstr "Pas assez d'ordres de fabrication pour couvrir la quantité"
 
+msgid "Not late."
+msgstr ""
+
 msgid "Not reached"
 msgstr "Non atteint"
 
@@ -11684,6 +11724,9 @@ msgstr "Rien ici ne correspond à votre recherche et vos filtres."
 
 msgid "Nothing in the archive"
 msgstr "Rien dans l'archive"
+
+msgid "Nothing open is pushed past its date."
+msgstr ""
 
 msgid "Nothing scheduled — add a station below."
 msgstr "Rien de programmé — ajoutez une station ci-dessous."
@@ -12064,6 +12107,12 @@ msgstr "Ordre d'opération"
 msgid "Operation quantity"
 msgstr "Quantité d'opération"
 
+msgid "Operation ran long"
+msgstr ""
+
+msgid "Operation started late"
+msgstr ""
+
 msgid "Operation supplier process"
 msgstr "Processus fournisseur d'opération"
 
@@ -12254,6 +12303,12 @@ msgstr "La production n'a jamais une durée plus longue que ses matières premi�
 
 msgid "Outside operation"
 msgstr "Écart de Frais Généraux"
+
+msgid "Outside processing"
+msgstr ""
+
+msgid "Outside processing returned late"
+msgstr ""
 
 msgid "Over-applied by"
 msgstr "Appliqué en excédent de"
@@ -13493,6 +13548,9 @@ msgstr "Règle d'approbation des documents de qualité"
 
 msgid "Quality Documents"
 msgstr "Documents de Qualité"
+
+msgid "Quality hold"
+msgstr ""
 
 msgid "Quality Type"
 msgstr "Type Qualité"
@@ -15814,6 +15872,9 @@ msgstr "Expéditions"
 
 msgid "Shipped"
 msgstr "Expédié"
+
+msgid "Shipped late"
+msgstr ""
 
 msgid "Shipped lines for this customer with quantity remaining to return"
 msgstr "Lignes expédiées pour ce client avec quantité restante à retourner"
