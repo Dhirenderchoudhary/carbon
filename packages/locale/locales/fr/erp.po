@@ -11876,10 +11876,11 @@ msgstr "Non configuré"
 msgid "Not enough jobs to cover quantity"
 msgstr "Pas assez d'ordres de fabrication pour couvrir la quantité"
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "Non réalisable"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "Non atteint"

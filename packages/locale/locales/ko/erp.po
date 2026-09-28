@@ -11876,10 +11876,11 @@ msgstr "미설정"
 msgid "Not enough jobs to cover quantity"
 msgstr "수량을 충당하기에 충분한 작업 지시가 없습니다."
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "불가능"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "도달하지 않음"

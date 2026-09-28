@@ -11876,10 +11876,11 @@ msgstr "कॉन्फ़िगर नहीं किया गया"
 msgid "Not enough jobs to cover quantity"
 msgstr "मात्रा को कवर करने के लिए पर्याप्त जॉबें नहीं हैं"
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "संभव नहीं"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "प्राप्त नहीं"

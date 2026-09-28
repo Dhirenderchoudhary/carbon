@@ -11876,10 +11876,11 @@ msgstr "未設定"
 msgid "Not enough jobs to cover quantity"
 msgstr "数量をカバーするのに十分な製造指図がありません"
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "実現不可能"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "未到達"

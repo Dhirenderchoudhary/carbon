@@ -11876,10 +11876,11 @@ msgstr "Yapılandırılmadı"
 msgid "Not enough jobs to cover quantity"
 msgstr "Miktarı karşılamak için yeterli İş emri yok"
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "Gerçekleştirilemez"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "Ulaşılmadı"

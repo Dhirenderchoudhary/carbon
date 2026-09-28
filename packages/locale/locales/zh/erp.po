@@ -11876,10 +11876,11 @@ msgstr "未配置"
 msgid "Not enough jobs to cover quantity"
 msgstr "工单数量不足以覆盖所需数量"
 
-msgid "Not late."
-msgstr ""
 msgid "Not feasible"
 msgstr "不可行"
+
+msgid "Not late."
+msgstr ""
 
 msgid "Not reached"
 msgstr "未到达"
