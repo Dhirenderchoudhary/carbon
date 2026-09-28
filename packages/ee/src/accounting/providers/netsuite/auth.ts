@@ -84,7 +84,8 @@ export function signNetSuiteRequest(args: {
   timestamp?: string;
 }): { authorization: string; nonce: string; timestamp: string } {
   const nonce = args.nonce ?? randomBytes(16).toString("hex");
-  const timestamp = args.timestamp ?? String(Math.floor(Date.now() / 1000));
+  // Date.now() is 13 digits until 2286; dropping the last three is unix seconds.
+  const timestamp = args.timestamp ?? String(Date.now()).slice(0, -3);
   const baseString = netSuiteSignatureBaseString({
     method: args.method,
     url: args.url,

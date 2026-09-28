@@ -1,4 +1,5 @@
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
+import { round } from "@carbon/utils";
 import { getAccountMappings } from "../../core/account-mapping";
 import {
   getPostingSyncSourceTypeSkipReason,
@@ -90,8 +91,8 @@ export function sumNetSuiteJournalDebitTotals(
   for (const line of entry.line?.items ?? []) {
     const accountId = line.account?.id;
     if (!accountId) continue;
-    const debit = Math.round((Number(line.debit) || 0) * 100);
-    const credit = Math.round((Number(line.credit) || 0) * 100);
+    const debit = round((Number(line.debit) || 0) * 100, 0);
+    const credit = round((Number(line.credit) || 0) * 100, 0);
     cents.set(accountId, (cents.get(accountId) ?? 0) + debit - credit);
   }
   const totals = new Map<string, number>();
