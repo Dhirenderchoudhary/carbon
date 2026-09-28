@@ -48,6 +48,18 @@ msgstr "\"{taskName}\"已完成——其所有{0}个设置映射项都已配置�
 msgid "(excluded for this customer)"
 msgstr "(已为此客户排除)"
 
+#. placeholder {0}: target.slackDays
+msgid "{0, plural, one {# day of slack} other {# days of slack}}"
+msgstr "{0, plural, one {# 天的松弛} other {# 天的松弛}}"
+
+#. placeholder {0}: -target.slackDays
+msgid "{0, plural, one {# day short} other {# days short}}"
+msgstr "{0, plural, one {缺# 天} other {缺# 天}}"
+
+#. placeholder {0}: forecast.zeroStandardOperationCount
+msgid "{0, plural, one {# operation has no time standards} other {# operations have no time standards}}"
+msgstr "{0, plural, one {# 道工序无工时定额} other {# 道工序无工时定额}}"
+
 #. placeholder {0}: totalScopeRows(run.violationRowsByTable)
 msgid "{0, plural, one {# row links to data outside this company, so a safety copy of your current data can't be made.} other {# rows link to data outside this company, so a safety copy of your current data can't be made.}}"
 msgstr "{0, plural, one {# 行链接到该公司外的数据，无法制作当前数据的安全副本。} other {# 行链接到该公司外的数据，无法制作当前数据的安全副本。}}"
@@ -238,6 +250,10 @@ msgstr "{0} 个值"
 msgid "{0} values missing"
 msgstr "{0} 个值缺失"
 
+#. placeholder {0}: file.name
+msgid "{0} will be saved as {name}"
+msgstr "{0} 将被保存为 {name}"
+
 #. placeholder {0}: item.days
 msgid "{0}d"
 msgstr "{0}天"
@@ -279,6 +295,9 @@ msgstr "应收款项的{arOverduePct}%"
 
 msgid "{chainLabel}. Consider pointing this part directly at the final successor."
 msgstr "{chainLabel}。考虑直接将此零件指向最终后继物料。"
+
+msgid "{componentCount, plural, one {# component} other {# components}}"
+msgstr ""
 
 msgid "{conflictCount} conflicts"
 msgstr "{conflictCount} 个冲突"
@@ -415,6 +434,9 @@ msgstr "已更新{updatedJobCount}个工单"
 msgid "{uploadedFileName} uploaded — fields filled from the document."
 msgstr "已上传{uploadedFileName}——字段从文件填充。"
 
+msgid "{value, plural, one {# day} other {# days}}"
+msgstr "{value, plural, one {# 天} other {# 天}}"
+
 msgid "{variances, plural, one {# line differs from the expected quantity} other {# lines differ from the expected quantity}}"
 msgstr "{variances, plural, one {#行与预期数量不同} other {#行与预期数量不同}}"
 
@@ -538,6 +560,15 @@ msgstr "90天"
 
 msgid "A \"must match\" rule on this process blocks these from sharing a batch"
 msgstr "此工序上的 \"必须匹配\" 规则阻止这些共享一个生产批次"
+
+msgid "A 3D model the operator can turn around"
+msgstr ""
+
+msgid "A 4-digit PIN is generated when the operator is created."
+msgstr "创建操作员时会生成4位数PIN。"
+
+msgid "A batch needs at least one operation. To break up the whole batch, use Dissolve instead."
+msgstr "生产批次需要至少一个工序。要分解整个生产批次，请改用\"分解\"。"
 
 msgid "A Carbon-run data migration — you load your own data"
 msgstr "Carbon 运行的数据迁移 — 您加载自己的数据"
@@ -739,6 +770,12 @@ msgstr "一项不合格任务，用于防止问题在其他地方重复出现—
 
 msgid "A part contains the information about a specific item that can be purchased or manufactured."
 msgstr "零件包含可以购买或制造的特定项目的信息。"
+
+msgid "A part in this step may tip once placed — consider a fixture or a second person."
+msgstr ""
+
+msgid "A photo or PDF the operator sees on this step"
+msgstr ""
 
 msgid "A physical pull signal — a printed card or QR code living with the stock — that raises a purchase order or a job the moment it's scanned to refill a bin."
 msgstr "一个物理拉动信号——一张印刷卡片或 QR 码与库存一起放置——在扫描时立即提高采购订单或工单以补充料箱。"
@@ -1378,8 +1415,14 @@ msgstr "添加条款"
 msgid "Add Company"
 msgstr "添加公司"
 
+msgid "Add components first"
+msgstr ""
+
 msgid "Add condition"
 msgstr "添加条件"
+
+msgid "Add Console Operator"
+msgstr "添加控制台操作员"
 
 msgid "Add Contractor"
 msgstr "添加外协人员"
@@ -1431,6 +1474,9 @@ msgstr "手动添加"
 
 msgid "Add match"
 msgstr "添加匹配"
+
+msgid "Add Model"
+msgstr ""
 
 msgid "Add Note"
 msgstr "添加备注"
@@ -1510,6 +1556,9 @@ msgstr "添加发货"
 
 msgid "Add Shipping"
 msgstr "添加运费"
+
+msgid "Add Slide"
+msgstr ""
 
 msgid "Add slot"
 msgstr "添加插槽"
@@ -2561,6 +2610,9 @@ msgstr "您确定要作废此发货吗？此操作将反转所有库存交易，
 msgid "Are you sure?"
 msgstr "你确定吗？"
 
+msgid "As if it jumped to the front of the shop's queue."
+msgstr "就像它跳到了车间队列的最前面。"
+
 msgid "As needed"
 msgstr "按需"
 
@@ -2684,6 +2736,9 @@ msgstr "将此存储单元分配给工作中心（线边）"
 msgid "Assigns this unit to a work center for lineside material, so operators see it on the production view; inherited from the parent unit when set there."
 msgstr "将此库位分配给工作中心以进行线边物料管理，使操作员能在生产视图上看到；从父库位继承该设置。"
 
+msgid "Assumptions"
+msgstr "假设"
+
 msgid "At each gate"
 msgstr "在每个关卡"
 
@@ -2791,6 +2846,9 @@ msgstr "自动化质量标志和通知"
 
 msgid "Automate your business processes with event-driven workflows that trigger actions when things happen in Carbon."
 msgstr "通过事件驱动的工作流自动化您的业务流程，当 Carbon 中发生事情时触发操作。"
+
+msgid "Automatic"
+msgstr ""
 
 msgid "Automatic Cost Updates"
 msgstr "自动成本更新"
@@ -2958,6 +3016,9 @@ msgstr "批号"
 msgid "Batch Properties"
 msgstr "批量属性"
 
+msgid "Batch Quantities"
+msgstr "批次数量"
+
 msgid "Batch Size"
 msgstr "批量大小"
 
@@ -3010,6 +3071,9 @@ msgstr "最佳情况预测"
 msgid "Best case…"
 msgstr "最佳情况…"
 
+msgid "Best-case finish"
+msgstr "最佳情况完成日期"
+
 msgid "Beta"
 msgstr "测试版"
 
@@ -3058,6 +3122,7 @@ msgstr "阻止，允许覆盖"
 msgid "Blocked"
 msgstr "已阻止"
 
+#. placeholder {0}: blockers.join(", ")
 #. placeholder {0}: workCenter.blockingDispatchReadableId
 msgid "Blocked by {0}"
 msgstr "被 {0} 阻止"
@@ -3079,6 +3144,9 @@ msgstr "正文"
 
 msgid "BoM"
 msgstr "物料清单"
+
+msgid "BOM"
+msgstr ""
 
 msgid "BoM + BoP"
 msgstr "BoM + BoP"
@@ -3107,6 +3175,9 @@ msgstr "账册锁定日期（手动）"
 msgid "Both"
 msgstr "两者"
 
+msgid "Both finishes compared against a date you choose."
+msgstr "将两个交期与您选择的日期进行对比。"
+
 msgid "Bottleneck"
 msgstr "瓶颈"
 
@@ -3118,6 +3189,9 @@ msgstr "面包屑"
 
 msgid "Bring in your parts, BOMs, Bill of Process, and costing — with Carbon's import tools, CSV, or LLM help."
 msgstr "导入您的零件、BOM、工序清单和成本核算—使用 Carbon 的导入工具、CSV 或 LLM 帮助。"
+
+msgid "Brings in steps"
+msgstr ""
 
 msgid "Browse library"
 msgstr "浏览库"
@@ -3146,6 +3220,9 @@ msgstr "构建任何全新工作"
 msgid "Build integrations and customizations"
 msgstr "构建集成和自定义"
 
+msgid "Build off to the side"
+msgstr ""
+
 msgid "Build quotes pulling live part, cost, and Bill of Process data"
 msgstr "通过拉取实时零件、成本和工序清单数据来创建报价单"
 
@@ -3155,8 +3232,14 @@ msgstr "构建基于角色的培训材料"
 msgid "Build tailored, role-based training materials"
 msgstr "构建定制的、基于角色的培训材料"
 
+msgid "Builds this step's components beside the model as a group, then carries the group in at a later join step."
+msgstr ""
+
 msgid "Built and costed as its own method"
 msgstr "作为独立方法构建和计算成本"
+
+msgid "Built off to the side, then carried in at its join step"
+msgstr ""
 
 msgid "Bulk Import"
 msgstr "批量导入"
@@ -3257,6 +3340,9 @@ msgstr "调用外部 URL"
 msgid "Called a method in Carbon — the components plus operations that produce a part."
 msgstr "在Carbon中称为方法 — 生产一个零件的组成部分和工序。"
 
+msgid "Camera"
+msgstr ""
+
 msgid "Can't be restored"
 msgstr "无法恢复"
 
@@ -3271,6 +3357,10 @@ msgstr "无法禁用唯一的启用休息时间。请添加另一个休息时间
 
 msgid "Can't download this file"
 msgstr "无法下载此文件"
+
+#. placeholder {0}: file.name
+msgid "Can't upload a file named {0}"
+msgstr "无法上传名为 {0} 的文件"
 
 msgid "Cancel"
 msgstr "取消"
@@ -3675,6 +3765,9 @@ msgstr "正在清除演示数据"
 msgid "Click again to disconnect"
 msgstr "再次单击以断开连接"
 
+msgid "Click components in the viewer to add them. Shift-click adds several."
+msgstr ""
+
 msgid "Click to rename"
 msgstr "单击以重命名"
 
@@ -3740,6 +3833,11 @@ msgstr "代码"
 
 msgid "Collapse"
 msgstr "折叠"
+
+#. placeholder {0}: group.name
+#. placeholder {0}: unit.name
+msgid "Collapse {0}"
+msgstr ""
 
 msgid "Collapse all"
 msgstr "全部折叠"
@@ -3887,6 +3985,16 @@ msgstr "完成进行中 — 请在生产车间重试"
 
 msgid "Completion Time"
 msgstr "完成时间"
+
+#. placeholder {0}: group.name
+msgid "Component details: {0}"
+msgstr ""
+
+msgid "Components"
+msgstr ""
+
+msgid "Components hidden only while this step plays, such as a fixture in the way; use the eye in the Components tab to hide one."
+msgstr ""
 
 #. placeholder {0}: formatRelativeTime(tieOut.computedAt)
 msgid "computed {0}"
@@ -4089,6 +4197,9 @@ msgstr "控制台模式已启用"
 
 msgid "Console Operator"
 msgstr "控制台操作员"
+
+msgid "Console Operator Created"
+msgstr "控制台操作员已创建"
 
 msgid "consumable"
 msgstr "耗材"
@@ -4333,9 +4444,6 @@ msgstr "复制零件号"
 msgid "Copy part unique identifier"
 msgstr "复制零件唯一标识符"
 
-msgid "Copy PIN"
-msgstr "复制PIN"
-
 msgid "Copy previous day"
 msgstr "复制前一天"
 
@@ -4491,6 +4599,9 @@ msgstr "无法生成 PDF。请重试。"
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
 msgid "Could not dissolve {0}: {1} — production already recorded"
 msgstr "无法解散 {0}: {1} — 生产已记录"
+
+msgid "Could not predict lead time"
+msgstr "无法预测提前期"
 
 msgid "Could not prepare region image for analysis"
 msgstr "无法准备区域图像以进行分析"
@@ -4656,6 +4767,9 @@ msgstr "新建"
 
 msgid "Create new rule"
 msgstr "创建新规则"
+
+msgid "Create Operator"
+msgstr "创建操作员"
 
 msgid "Create PO Revision"
 msgstr "创建采购订单修订版本"
@@ -5477,6 +5591,9 @@ msgstr "删除操作"
 msgid "Delete Action"
 msgstr "删除操作"
 
+msgid "Delete and apply"
+msgstr "删除并应用"
+
 msgid "Delete and restore"
 msgstr "删除并恢复"
 
@@ -5708,6 +5825,9 @@ msgstr "删除发货方式"
 msgid "Delete step"
 msgstr "删除步骤"
 
+msgid "Delete Step"
+msgstr ""
+
 msgid "Delete Stock Transfer"
 msgstr "删除库存转移"
 
@@ -5716,6 +5836,10 @@ msgstr "删除存储类型"
 
 msgid "Delete Storage Unit"
 msgstr "删除存储单元"
+
+#. placeholder {0}: unit.name
+msgid "Delete subassembly {0}"
+msgstr ""
 
 msgid "Delete Substance"
 msgstr "删除物质"
@@ -5885,6 +6009,9 @@ msgstr "详情"
 
 msgid "Details"
 msgstr "详情"
+
+msgid "Detected by the motion planner"
+msgstr ""
 
 msgid "Developer"
 msgstr "开发人员"
@@ -6103,8 +6230,17 @@ msgstr "完成"
 msgid "Done"
 msgstr "完成"
 
+msgid "Done Adding"
+msgstr ""
+
+msgid "Done Editing Path"
+msgstr ""
+
 msgid "Done when day-to-day runs without us in the room"
 msgstr "完成时日常运营无需我们在场"
+
+msgid "Double-click to play this step"
+msgstr ""
 
 msgid "Download"
 msgstr "下载"
@@ -6148,6 +6284,9 @@ msgstr "将采购订单 PDF 拖放到此处，或点击选择文件"
 
 msgid "Drag handle"
 msgstr "拖动手柄"
+
+msgid "Drag the red waypoints in the viewer"
+msgstr ""
 
 msgid "Drag to assign"
 msgstr "拖动以分配"
@@ -6339,6 +6478,9 @@ msgstr "每个工单需要自己的批次号 — 或将它们合并为一个批�
 
 msgid "Each line is a link from this company's data to a row it doesn't own. A backup with these rows could never be restored."
 msgstr "每一行都是从该公司的数据链接到它不拥有的一行。包含这些行的备份永远无法恢复。"
+
+msgid "Each line is a link from this company's data to a row it doesn't own. Removing those rows lets the demo data apply."
+msgstr "每一行都是从此公司的数据指向其不拥有的行的链接。移除这些行可以应用演示数据。"
 
 msgid "Each line is a link from this company's data to a row it doesn't own. Removing those rows lets the restore run."
 msgstr "每一行都是从该公司的数据链接到它不拥有的一行。删除这些行可以运行恢复。"
@@ -6550,6 +6692,9 @@ msgstr "编辑合作伙伴"
 msgid "Edit Passkey"
 msgstr "编辑 通行密钥"
 
+msgid "Edit Path"
+msgstr ""
+
 msgid "Edit Payment"
 msgstr "编辑付款"
 
@@ -6648,6 +6793,10 @@ msgstr "编辑存储类型"
 
 msgid "Edit Storage Unit"
 msgstr "编辑存储单元"
+
+#. placeholder {0}: unit.name
+msgid "Edit subassembly {0}"
+msgstr ""
 
 msgid "Edit Substance"
 msgstr "编辑物质"
@@ -6831,6 +6980,9 @@ msgstr "上月末"
 
 msgid "End of Last Quarter"
 msgstr "上一季度末"
+
+msgid "End of queue"
+msgstr "队列末尾"
 
 msgid "End Time"
 msgstr "结束时间"
@@ -7143,7 +7295,9 @@ msgstr "现有 Stripe 客户"
 msgid "Expand"
 msgstr "展开"
 
+#. placeholder {0}: group.name
 #. placeholder {0}: item.label
+#. placeholder {0}: unit.name
 msgid "Expand {0}"
 msgstr "展开 {0}"
 
@@ -7651,6 +7805,9 @@ msgstr "更新计数失败"
 msgid "Failed to update item cost"
 msgstr "更新项目成本失败"
 
+msgid "Failed to update lead times"
+msgstr "无法更新提前期"
+
 msgid "Failed to update opportunity with purchase order"
 msgstr "未能使用采购订单更新商机"
 
@@ -8067,8 +8224,8 @@ msgstr "总账和月末结账"
 msgid "Generate"
 msgstr "生成"
 
-msgid "Generate a new 4-digit PIN. Share it with the operator so they can pin in at MES terminals."
-msgstr "生成新的4位PIN码。与操作员分享，以便他们可以在MES终端上登录。"
+msgid "Generate a new 4-digit PIN. The operator's current PIN stops working immediately."
+msgstr "生成新的4位数PIN。操作员的当前PIN将立即停止工作。"
 
 msgid "Generate and send customer invoices"
 msgstr "生成并发送客户发票"
@@ -8081,9 +8238,6 @@ msgstr "生成会计年度"
 
 msgid "Generate material IDs and descriptions based on the properties of the material."
 msgstr "根据原材料的属性生成原材料ID和描述。"
-
-msgid "Generate new PIN"
-msgstr "生成新PIN"
 
 msgid "Generate Picking List"
 msgstr "生成拣货单"
@@ -8365,14 +8519,26 @@ msgstr "标头"
 msgid "Help"
 msgstr "帮助"
 
+msgid "Hidden on this step"
+msgstr ""
+
 msgid "Hide"
 msgstr "隐藏"
+
+msgid "Hide {label}"
+msgstr ""
 
 msgid "Hide account number"
 msgstr "隐藏账户号码"
 
+msgid "Hide Again"
+msgstr ""
+
 msgid "Hide raw"
 msgstr "隐藏原始内容"
+
+msgid "Hide selected on this step"
+msgstr ""
 
 msgid "Hide system quantities until the review step"
 msgstr "在评审步骤前隐藏系统数量"
@@ -8593,6 +8759,9 @@ msgstr "I（放宽检验）"
 msgid "I have a reasonable basis to believe this individual is a U.S. person as defined in 22 CFR 120.62"
 msgstr "我有合理的理由相信该个人是根据 22 CFR 120.62 定义的美国人"
 
+msgid "I understand, replace my existing data with the new demo data"
+msgstr ""
+
 msgid "I'm Still Working"
 msgstr "我仍在工作"
 
@@ -8640,6 +8809,9 @@ msgstr "如果它正在阻塞或日期处于风险中，它会获得一个负责
 
 msgid "If items already exist"
 msgstr "如果物料已经存在"
+
+msgid "If ordered today — placed behind everything already released."
+msgstr "如果今日订购——将排在所有已下达工作之后。"
 
 msgid "If ordered, no stockout projected in the next 48 weeks"
 msgstr "如果已订购，未来48周内无缺货预测"
@@ -8740,6 +8912,9 @@ msgstr "库存，剩余部分为{substitute}"
 
 msgid "In the loop together"
 msgstr "一起保持沟通"
+
+msgid "In this step"
+msgstr ""
 
 msgid "In use"
 msgstr "使用中"
@@ -8912,6 +9087,12 @@ msgstr "安装"
 msgid "Installed"
 msgstr "已安装"
 
+msgid "Installed on this step, so it can't be hidden here."
+msgstr ""
+
+msgid "Instruction"
+msgstr ""
+
 msgid "Instructions"
 msgstr "说明"
 
@@ -9021,6 +9202,9 @@ msgid "Inventory Movements"
 msgstr "库存移动"
 
 msgid "Inventory Qty"
+msgstr "库存数量"
+
+msgid "Inventory Quantities"
 msgstr "库存数量"
 
 msgid "Inventory Tracking"
@@ -9363,6 +9547,13 @@ msgstr "物料清单中包含此物料的工单"
 msgid "Join {0}"
 msgstr "加入 {0}"
 
+#. placeholder {0}: selected.number
+msgid "Joins step {0}"
+msgstr ""
+
+msgid "Joins step {number}: {title}"
+msgstr ""
+
 msgid "Journal"
 msgstr "凭证"
 
@@ -9404,6 +9595,12 @@ msgstr "保留"
 
 msgid "Keep Current"
 msgstr "保持当前"
+
+msgid "Keep demo data"
+msgstr ""
+
+msgid "Keep demo data and delete your previous data?"
+msgstr ""
 
 msgid "Keep editing"
 msgstr "继续编辑"
@@ -10574,6 +10771,9 @@ msgstr "最近 — 搜索查找更多"
 msgid "Most things get caught and resolved here. Name it plainly."
 msgstr "大多数问题在这里都会被发现和解决。直言不讳地说出来。"
 
+msgid "Motion"
+msgstr ""
+
 msgid "Move"
 msgstr "移动"
 
@@ -10677,6 +10877,9 @@ msgstr "需要的是该天的工作小时数除以 {personDayHours} 小时，向
 
 msgid "Needs a Business or Partner plan."
 msgstr "需要业务或合作伙伴计划。"
+
+msgid "Needs expedite"
+msgstr "需要加急"
 
 msgid "Needs fixing"
 msgstr "需要修复"
@@ -10887,9 +11090,6 @@ msgstr "新建付款条件"
 
 msgid "New Picking List"
 msgstr "新拣货单"
-
-msgid "New PIN"
-msgstr "新PIN"
 
 msgid "New PO"
 msgstr "新采购订单"
@@ -11171,11 +11371,20 @@ msgstr "还没有变更。"
 msgid "No clauses yet. Use Add clause above."
 msgstr "还没有子句。使用上面的添加子句。"
 
+msgid "No clear path"
+msgstr ""
+
+msgid "No collision-free path"
+msgstr ""
+
 msgid "No comments yet. Be the first to add a comment."
 msgstr "还没有评论。成为第一个添加评论的人。"
 
 msgid "No completed jobs within range"
 msgstr "范围内没有已完成的工单"
+
+msgid "No components yet"
+msgstr ""
 
 msgid "No condition may match"
 msgstr "没有条件可以匹配"
@@ -11523,8 +11732,14 @@ msgstr "此页面没有可用的快捷键。"
 msgid "No single, trusted number for inventory or job status"
 msgstr "库存管理或工单状态没有单一的可信数字"
 
+msgid "No slides yet"
+msgstr ""
+
 msgid "No sorts applied to this view"
 msgstr "此查看未应用任何排序"
+
+msgid "No step selected"
+msgstr ""
 
 msgid "No stock"
 msgstr "无库存"
@@ -11595,6 +11810,12 @@ msgstr "此地点没有工作中心"
 msgid "No work centers exist"
 msgstr "没有工作中心存在"
 
+msgid "No, build in place"
+msgstr ""
+
+msgid "No, it's the base"
+msgstr ""
+
 msgid "Nom"
 msgstr "标称值"
 
@@ -11657,6 +11878,8 @@ msgstr "工单数量不足以覆盖所需数量"
 
 msgid "Not late."
 msgstr ""
+msgid "Not feasible"
+msgstr "不可行"
 
 msgid "Not reached"
 msgstr "未到达"
@@ -11846,6 +12069,9 @@ msgstr "在存储单元上"
 msgid "On this operation"
 msgstr "在此工序上"
 
+msgid "On time"
+msgstr "准时"
+
 msgid "On-account credit available"
 msgstr "可用账户贷方"
 
@@ -11880,6 +12106,9 @@ msgstr "1 {0} 等于多少 {1}？"
 
 msgid "One firing of a workflow, recorded step by step with the values each step used and produced, acting throughout with the permissions of the workflow's owner."
 msgstr "一次工作流执行，逐步记录每个步骤使用和产生的值，始终以工作流负责人的权限行动。"
+
+msgid "One or more quantities cannot meet this date"
+msgstr "一个或多个数量无法满足此日期"
 
 msgid "One serial unit or one batch that Carbon follows individually, carrying its own status and attributes such as an expiry date."
 msgstr "Carbon单独跟踪的一个编号件或一个生产批次，具有自己的状态和属性，例如有效期。"
@@ -12148,6 +12377,9 @@ msgstr "操作员收到警告。库存仍然可以通过。"
 
 msgid "Operator must pick a different batch/serial."
 msgstr "操作员必须选择不同的生产批次/序列号。"
+
+msgid "Operator must record this step"
+msgstr ""
 
 msgid "Operator Pool"
 msgstr "操作员池"
@@ -12701,6 +12933,12 @@ msgstr "先选择属性"
 msgid "Pick a record type…"
 msgstr "选择记录类型…"
 
+msgid "Pick a step from the list to edit its details, components, and materials."
+msgstr ""
+
+msgid "Pick a target date to compare."
+msgstr "选择一个目标日期进行比较。"
+
 msgid "Pick a value from an earlier step"
 msgstr "从早期步骤选择一个值"
 
@@ -12844,6 +13082,9 @@ msgstr "计划对单次建议补货的上限；超过此限制的数量将拆分
 msgid "Plants, warehouses"
 msgstr "工厂、仓库"
 
+msgid "Playback"
+msgstr ""
+
 msgid "Please contact your administrator to enable audit logging."
 msgstr "请联系您的管理员以启用审计日志。"
 
@@ -12960,6 +13201,12 @@ msgstr "潜在数据丢失"
 
 msgid "Pre-filled for a new item when expiry is Fixed Duration."
 msgstr "当有效期为固定期间时，为新物料预填充。"
+
+msgid "Predict lead time"
+msgstr "预测提前期"
+
+msgid "Predicting lead time…"
+msgstr "正在预测提前期…"
 
 msgid "Preferred Supplier"
 msgstr "首选供应商"
@@ -13643,6 +13890,9 @@ msgstr "问题"
 msgid "Queued"
 msgstr "排队中"
 
+msgid "Queued finish"
+msgstr "排队完成日期"
+
 msgid "Quiet on the floor tonight, {name}."
 msgstr "今晚车间很安静，{name}。"
 
@@ -14007,6 +14257,9 @@ msgstr "立即为该地点重新生成排程。它也会在最后一次排程变
 msgid "Regenerate thumbnail from the 3D model"
 msgstr "从 3D 模型重新生成缩略图"
 
+msgid "Regenerating removes \"Build off to the side\" settings."
+msgstr ""
+
 msgid "Regenerating thumbnail…"
 msgstr "正在重新生成缩略图…"
 
@@ -14104,9 +14357,6 @@ msgstr "剩余"
 msgid "Remaining after split stays on the original row."
 msgstr "拆分后的剩余部分保留在原始行上。"
 
-msgid "Remember this PIN. You will need it to exit console mode on MES terminals."
-msgstr "记住此PIN。您需要它来退出MES终端上的控制台模式。"
-
 msgid "Remove"
 msgstr "移除"
 
@@ -14114,9 +14364,22 @@ msgstr "移除"
 msgid "Remove {0}"
 msgstr "移除{0}"
 
+#. placeholder {0}: selectedIds.size
+msgid "Remove {0} from batch"
+msgstr "从生产批次中移除 {0}"
+
 #. placeholder {0}: removing.jobReadableId ?? "this operation"
 msgid "Remove {0} from this batch? Its operation goes back to the schedule to run on its own."
 msgstr "从此生产批次中移除 {0}？其工序回到排程以单独运行。"
+
+#. placeholder {0}: group.name
+msgid "Remove {0} from this step"
+msgstr ""
+
+#. placeholder {0}: selectedIds.size
+#. placeholder {1}: batch.readableId
+msgid "Remove {0} of {memberCount} operations from {1}?"
+msgstr "从 {1} 中移除 {0} 个（共 {memberCount} 个）工序？"
 
 msgid "Remove {label}"
 msgstr "移除 {label}"
@@ -14129,6 +14392,9 @@ msgstr "移除条款"
 
 msgid "Remove condition"
 msgstr "移除条件"
+
+msgid "Remove corrupted data and apply"
+msgstr "移除损坏的数据并应用"
 
 msgid "Remove corrupted data and restore"
 msgstr "移除损坏数据并恢复"
@@ -14534,6 +14800,9 @@ msgstr "退货原因"
 
 msgid "Return Reasons"
 msgstr "退货原因"
+
+msgid "Return to Integrations and connect Onshape again."
+msgstr "返回集成并重新连接Onshape。"
 
 msgid "Return to Integrations and connect Ramp again."
 msgstr "返回集成页面并重新连接 Ramp。"
@@ -14973,9 +15242,6 @@ msgstr "销售收入"
 msgid "Sales Rule Violations"
 msgstr "销售规则违规"
 
-msgid "Sales rules"
-msgstr "销售规则"
-
 msgid "Sales Rules"
 msgstr "销售规则"
 
@@ -15058,6 +15324,9 @@ msgstr "保存视图"
 msgid "Saved"
 msgstr "已保存"
 
+msgid "Saved view"
+msgstr ""
+
 msgid "Saved Views"
 msgstr "已保存的视图"
 
@@ -15126,6 +15395,9 @@ msgstr "排程已重新生成"
 
 msgid "Scheduled"
 msgstr "已计划"
+
+msgid "Scheduled against your shop's current workload. Nothing is saved until you apply."
+msgstr "根据您车间当前工作负荷进行排程。在您应用前，不会保存任何内容。"
 
 msgid "Scheduled Maintenance"
 msgstr "定期维护"
@@ -15361,6 +15633,9 @@ msgstr "选择未创建报价的原因。"
 
 msgid "Select a shape first to see available options"
 msgstr "请先选择形状以查看可用选项"
+
+msgid "Select a step to hide parts on it."
+msgstr ""
 
 msgid "Select a substance and shape first to see available options"
 msgstr "请先选择物质和形状以查看可用选项"
@@ -15618,6 +15893,9 @@ msgstr "要退货的序列号"
 msgid "Serial or Batch Tracking Required"
 msgstr "序列号或批次跟踪必需"
 
+msgid "Serial Quantities"
+msgstr "序列号数量"
+
 msgid "Serial tracking"
 msgstr "序列号追踪"
 
@@ -15794,6 +16072,12 @@ msgstr "分享链接"
 
 msgid "Share Quote"
 msgstr "分享报价"
+
+msgid "Share this PIN with {name} so they can pin in at MES terminals."
+msgstr "将此PIN与 {name} 分享，以便他们可以在MES终端登入。"
+
+msgid "Share this PIN with the operator so they can pin in at MES terminals."
+msgstr "将此PIN与操作员分享，以便他们可以在MES终端登入。"
 
 msgid "Shared"
 msgstr "共享"
@@ -15972,15 +16256,28 @@ msgstr "快捷键"
 msgid "Show"
 msgstr "显示"
 
+#. placeholder {0}: group.name
+msgid "Show {0}"
+msgstr ""
+
 #. placeholder {0}: overflow.length
 msgid "Show {0} more"
 msgstr "显示{0}个更多"
+
+msgid "Show {label}"
+msgstr ""
 
 msgid "Show a readable Customer ID column on the customer list, customer forms, and dropdowns. Customers are still identified internally either way."
 msgstr "在客户列表、客户表单和下拉菜单上显示可读的客户ID列。无论哪种方式，客户在内部仍然可以被识别。"
 
 msgid "Show a readable Supplier ID column on the supplier list, supplier forms, and dropdowns. Suppliers are still identified internally either way."
 msgstr "在供应商列表、供应商表单和下拉菜单上显示可读的供应商 ID 列。无论哪种方式，供应商在内部仍然可以被识别。"
+
+msgid "Show All"
+msgstr ""
+
+msgid "Show all hidden on this step"
+msgstr ""
 
 msgid "Show available batch numbers"
 msgstr "显示可用的生产批次号"
@@ -16149,6 +16446,9 @@ msgstr "按客户、客户类型或任何维度划分收入"
 #. placeholder {0}: i + 1
 msgid "Slide {0}"
 msgstr "幻灯片 {0}"
+
+msgid "Slides"
+msgstr ""
 
 msgid "Smallest run worth batching. Leave empty for none."
 msgstr "最小分批数量。留空表示无。"
@@ -16403,6 +16703,10 @@ msgstr "留在此页面"
 msgid "Step"
 msgstr "步骤"
 
+#. placeholder {0}: stepIndex + 1
+msgid "Step {0} of {stepCount}"
+msgstr ""
+
 msgid "Step added"
 msgstr "已添加步骤"
 
@@ -16414,6 +16718,12 @@ msgstr "步骤记录"
 
 msgid "Step removed — pick a new value"
 msgstr "步骤已移除 — 选择新值"
+
+msgid "Step status: {label}"
+msgstr ""
+
+msgid "Step status: {label}. Change status"
+msgstr ""
 
 msgid "steps"
 msgstr "步骤"
@@ -16926,6 +17236,9 @@ msgstr "目标公司"
 
 msgid "Target customers by type."
 msgstr "按类型定位客户。"
+
+msgid "Target date"
+msgstr "目标日期"
 
 msgid "Target disposition row"
 msgstr "目标处置行"
@@ -17572,6 +17885,9 @@ msgstr "此资产将折旧的月数。"
 msgid "The on-hand level that triggers a new replenishment order under the quantity-based policies."
 msgstr "按数量触发新补充订单的库存水平根据基于数量的政策。"
 
+msgid "The Onshape connection expired"
+msgstr "Onshape连接已过期"
+
 msgid "The operations and steps your parts move through"
 msgstr "您的零件所经历的工序和步骤"
 
@@ -17598,6 +17914,9 @@ msgstr "当需要该零件的父级被构造时，该零件被制造为其自己
 
 msgid "The part is taken from existing stock when its parent is built — no new job or purchase order."
 msgstr "构建其父级时，从现有库存中获取该零件 - 无新工作或采购订单。"
+
+msgid "The path this step's components travel into place during playback; worked out from the model, or drawn by hand with Edit Path."
+msgstr ""
 
 msgid "The people on the Carbon side who will run your implementation, and how to reach them."
 msgstr "Carbon 方面将运行您的实施的人员，以及如何联系他们。"
@@ -17888,6 +18207,9 @@ msgstr "此文件的版本标记；新版本创建一个副本，取代前一个
 msgid "The version stamp for this procedure; new versions create a copy that supersedes the previous one without deleting it."
 msgstr "此程序文件的版本标记；新版本创建一个副本，取代前一个版本而不删除它。"
 
+msgid "The view a step plays from; without a saved view the step frames its own components."
+msgstr ""
+
 msgid "The warehouse goods on this order will ship from; the customer's Shipping Location is where they'll arrive."
 msgstr "此订单的商品将从其发货的仓库；客户的发货地点是他们到达的地方。"
 
@@ -17953,6 +18275,9 @@ msgstr "这些工序使用的工艺支持多个供应商。请为每个工序选
 
 msgid "These parts are being replaced by this one. Each rule is set on the old part; open it to change the rule."
 msgstr "这些零件被此零件替代。每个规则都在旧零件上设置；打开它来更改规则。"
+
+msgid "These rows link to data outside this company, so a safety copy of your current data can't be made. Deleting them cannot be undone. If they turn out to be shared with other companies in this group, nothing is deleted and the demo data isn't applied."
+msgstr "这些行链接到此公司外部的数据，因此无法为您当前的数据创建安全副本。删除它们无法撤销。如果它们与此集团中的其他公司共享，则不会删除任何内容，演示数据也不会应用。"
 
 msgid "These rows link to data outside this company, so a safety copy of your current data can't be made. Deleting them cannot be undone. If they turn out to be shared with other companies in this group, nothing is deleted and the restore doesn't start."
 msgstr "这些行链接到此公司外的数据，因此无法创建当前数据的安全备份。删除它们无法撤销。如果这些行实际上与此集团中的其他公司共享，则不删除任何行，且不启动还原。"
@@ -18068,6 +18393,9 @@ msgstr "此工作将不再在车间可用。"
 msgid "This job's own required quantity for the material."
 msgstr "这个工单所需的原材料数量。"
 
+msgid "This line has no routing to schedule."
+msgstr "此行没有要排程的工艺路线。"
+
 msgid "This location only schedules staffed work centers, but this is a lights-out (24×7) station — it is exempt and keeps running unattended."
 msgstr "此地点仅排程有人值守的工作中心，但这是一个无人值守工作站（24×7）— 它被豁免并保持无人运行。"
 
@@ -18115,6 +18443,15 @@ msgstr "此路径仅决定接下来运行什么"
 
 msgid "This period has no journal entries posted to it and can be permanently deleted. This cannot be undone."
 msgstr "此期间没有已过账的凭证，可以永久删除。此操作无法撤销。"
+
+msgid "This PIN will not be shown again."
+msgstr "此PIN将不再显示。"
+
+msgid "This PIN will not be shown again. If it is lost, reset it from the operators list."
+msgstr "此PIN将不再显示。如果丢失，可从操作员列表中重置。"
+
+msgid "This PIN will not be shown again. You will need it to exit console mode on MES terminals."
+msgstr "此PIN将不再显示。您需要它来在MES终端上退出控制台模式。"
 
 msgid "this purchase order"
 msgstr "此采购订单"
@@ -18362,6 +18699,9 @@ msgstr "今天"
 
 msgid "Today:"
 msgstr "今天："
+
+msgid "Todo"
+msgstr ""
 
 msgid "Toggle"
 msgstr "切换"
@@ -18678,6 +19018,9 @@ msgstr "输入 '{' 以表示变量"
 msgid "Type {TRIGGER} to insert a variable"
 msgstr "输入 {TRIGGER} 以插入变量"
 
+msgid "Type <0>\"{confirmPhrase}\"</0> to continue."
+msgstr ""
+
 msgid "Type a message..."
 msgstr "输入消息..."
 
@@ -18897,6 +19240,9 @@ msgstr "未命名图表"
 msgid "Untitled line"
 msgstr "未命名行"
 
+msgid "Untitled step"
+msgstr ""
+
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "未使用的已拣货物料从工作中心冲回至仓库。"
 
@@ -19087,6 +19433,9 @@ msgstr "使用不同的账户"
 msgid "Use a different email"
 msgstr "使用不同的电子邮件"
 
+msgid "Use Current View"
+msgstr ""
+
 msgid "Use metric system for default material dimensions."
 msgstr "使用公制作为默认原材料尺寸。"
 
@@ -19224,6 +19573,9 @@ msgstr "增值税号"
 
 msgid "Vendor Write-Off Income"
 msgstr "供应商核销收益"
+
+msgid "Verdict"
+msgstr "结果"
 
 msgid "Verification Error"
 msgstr "验证错误"
@@ -20004,6 +20356,9 @@ msgstr "为什么库存在变化 — 正向（发现）、负向（丢失/报废
 msgid "Why this backup failed"
 msgstr "备份失败原因"
 
+msgid "Why this failed"
+msgstr "为什么失败"
+
 msgid "Why this line is being declined; surfaced on the printable quote and recorded for win-loss reporting."
 msgstr "该行被拒绝的原因;显示在可打印报价上,并为损益报告记录。"
 
@@ -20245,6 +20600,9 @@ msgstr "您的客户列表"
 
 msgid "Your customer-facing price lists"
 msgstr "您面向客户的价格表"
+
+msgid "Your data from before the demo data was applied will be permanently deleted. You won't be able to revert or recover it."
+msgstr ""
 
 msgid "Your data is accessible and reasonably clean"
 msgstr "您的数据可访问且相对干净"
