@@ -1,4 +1,5 @@
 import {
+  netsuiteSyncerRegistry,
   ProviderID,
   qboSyncerRegistry,
   REQUIRED_SYNC_SUBSCRIPTIONS,
@@ -23,7 +24,8 @@ import { TABLE_TO_ENTITY_MAP } from "./sync-tables";
 const SYNCER_REGISTRIES = {
   [ProviderID.XERO]: xeroSyncerRegistry,
   [ProviderID.QUICKBOOKS]: qboSyncerRegistry,
-  [ProviderID.RILLET]: rilletSyncerRegistry
+  [ProviderID.RILLET]: rilletSyncerRegistry,
+  [ProviderID.NETSUITE]: netsuiteSyncerRegistry
 } as const;
 
 describe("REQUIRED_SYNC_SUBSCRIPTIONS ↔ TABLE_TO_ENTITY_MAP ↔ syncer registries", () => {

@@ -81,7 +81,10 @@ export const REQUIRED_SYNC_SUBSCRIPTIONS: Record<
     // payment write-back: push on the transition to Posted/Voided. Inbound
     // payments still ride the CDC pull sweep + webhook.
     { table: "payment", operations: ["INSERT", "UPDATE"] }
-  ]
+  ],
+  // Journals only. Document syncers are not registered, so subscribing
+  // customer/invoice/payment would enqueue events nothing can push.
+  [ProviderID.NETSUITE]: [JOURNAL_SUBSCRIPTION]
 };
 
 export function getSyncSubscriptionName(providerId: ProviderID): string {

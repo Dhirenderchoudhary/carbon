@@ -2,7 +2,11 @@ import { assertIsPost, error, success } from "@carbon/auth";
 import { requirePermissions } from "@carbon/auth/auth.server";
 import { flash } from "@carbon/auth/session.server";
 import type { Database, Json } from "@carbon/database";
-import { integrations as availableIntegrations } from "@carbon/ee";
+import {
+  integrations as availableIntegrations,
+  foldNetSuiteCredentials,
+  unfoldNetSuiteCredentials
+} from "@carbon/ee";
 import {
   buildDimensionValueMappingEntityId,
   buildRilletFieldTarget,
@@ -20,6 +24,7 @@ import {
   loadAccountDefaultAccountIds,
   matchAccountsByCode,
   matchDimensionValuesByName,
+  type NetSuiteProvider,
   POSTING_POLICY,
   ProviderID,
   QBO_DIMENSION_TARGET_CLASS,
@@ -791,6 +796,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (integrationId === "rillet") {
     flattenedMetadata = unfoldRilletCredentials(flattenedMetadata);
   }
+  if (integrationId === "netsuite") {
+    flattenedMetadata = unfoldNetSuiteCredentials(flattenedMetadata);
+  }
   // Ramp keeps its client-credentials pair under metadata.credentials; unfold
   // them into the flat form fields so the drawer prefills.
   if (integrationId === "ramp") {
@@ -975,6 +983,29 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       console.error("Failed to fetch Rillet accounts for settings:", error);
       // Continue without chart accounts — the Account Mapping tab renders
       // with Carbon accounts only
+    }
+  }
+
+  if (integrationId === "netsuite" && integrationData.data.active) {
+    try {
+      const netsuiteIntegration = await getAccountingIntegration(
+        client,
+        companyId,
+        ProviderID.NETSUITE
+      );
+
+      const provider = getProviderIntegration(
+        client,
+        companyId,
+        netsuiteIntegration.id,
+        netsuiteIntegration.metadata
+      ) as NetSuiteProvider;
+
+      chartAccounts = await provider.listChartOfAccounts();
+    } catch (error) {
+      logger.error("Failed to fetch NetSuite accounts for settings", {
+        error
+      });
     }
   }
 
@@ -1614,6 +1645,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (integrationId === "rillet") {
     metadata = foldRilletCredentials(metadata);
   }
+  if (integrationId === "netsuite") {
+    metadata = foldNetSuiteCredentials(metadata);
+  }
   if (integrationId === "ramp") {
     metadata = foldRampCredentials(metadata);
   }
@@ -1644,7 +1678,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
     "paperless-parts",
     "email",
     "ramp",
-    "rillet"
+    "rillet",
+    "netsuite"
   ]);
   if (FORM_SECRET_INTEGRATIONS.has(integrationId)) {
     const alreadyVaulted = existing.data?.secretRef != null;

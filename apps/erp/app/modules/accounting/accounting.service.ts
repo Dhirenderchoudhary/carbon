@@ -2935,7 +2935,12 @@ export type PeriodCloseUnpostedDocument = {
 const UNPOSTED_DOCUMENT_LIMIT = 25;
 
 /** companyIntegration ids that can carry accounting posting sync. */
-const ACCOUNTING_SYNC_INTEGRATION_IDS = ["xero", "quickbooks", "rillet"];
+const ACCOUNTING_SYNC_INTEGRATION_IDS = [
+  "xero",
+  "quickbooks",
+  "rillet",
+  "netsuite"
+];
 
 /** Terminal sync dispositions — the journal is accounted for externally. */
 const TERMINAL_SYNC_OPERATION_STATUSES = new Set([

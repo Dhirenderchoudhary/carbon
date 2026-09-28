@@ -48,7 +48,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       .select("id")
       .eq("companyId", companyId)
       .eq("active", true)
-      .in("id", ["xero", "quickbooks", "rillet"])
+      .in("id", ["xero", "quickbooks", "rillet", "netsuite"])
   ]);
 
   if (accounts.error) {

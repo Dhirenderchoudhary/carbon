@@ -1,6 +1,7 @@
 import { Email } from "./email/config";
 import { Jira } from "./jira/config";
 import { Linear } from "./linear/config";
+import { NetSuite } from "./netsuite/config";
 import { Onshape } from "./onshape/config";
 import { PaperlessParts } from "./paperless-parts/config";
 import { QuickBooks } from "./quickbooks/config";
@@ -34,6 +35,7 @@ export const integrations = [
   Email,
   Jira,
   Linear,
+  NetSuite,
   Onshape,
   PaperlessParts,
   QuickBooks,
@@ -48,6 +50,11 @@ export const integrations = [
 export type IntegrationID = (typeof integrations)[number]["id"];
 
 export { Jira } from "./jira/config";
+export { NetSuite } from "./netsuite/config";
+export {
+  foldNetSuiteCredentials,
+  unfoldNetSuiteCredentials
+} from "./netsuite/credentials";
 export { Logo as OnshapeLogo, Onshape } from "./onshape/config";
 // TODO: export as @carbon/ee/paperless
 export { PaperlessPartsClient } from "./paperless-parts/lib/client";
