@@ -7,6 +7,7 @@ import {
 import { DEFAULT_SYNC_CONFIG } from "../../core/models";
 import { JournalEntrySyncError } from "../../core/posting";
 import type { Accounting, ProviderCredentials } from "../../core/types";
+import { AccountingApiError } from "../../core/utils";
 import {
   netSuiteSignatureBaseString,
   netsuiteOrigin,
@@ -328,6 +329,54 @@ describe("NetSuiteProvider", () => {
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain(
       "/journalEntry/eid:je-1"
     );
+  });
+
+  it("treats a missing journal as absent and fails any other lookup", async () => {
+    fetchMock.mockResolvedValueOnce(new Response("missing", { status: 404 }));
+    await expect(provider().getJournalEntry("9")).resolves.toBeNull();
+
+    fetchMock.mockResolvedValueOnce(
+      new Response("down", { status: 500, statusText: "Server Error" })
+    );
+    await expect(provider().getJournalEntry("9")).rejects.toBeInstanceOf(
+      AccountingApiError
+    );
+  });
+
+  it("creates a journal when the external id is missing", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response("missing", { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: "100" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        })
+      );
+
+    await expect(
+      provider().upsertJournalEntry({
+        externalId: "je-1",
+        tranDate: "2026-07-01",
+        currency: { id: "1" },
+        line: { items: [] }
+      })
+    ).resolves.toBe("100");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not create a journal when the external-id lookup fails", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response("down", { status: 500, statusText: "Server Error" })
+    );
+    await expect(
+      provider().upsertJournalEntry({
+        externalId: "je-1",
+        tranDate: "2026-07-01",
+        currency: { id: "1" },
+        line: { items: [] }
+      })
+    ).rejects.toBeInstanceOf(AccountingApiError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("returns no accounts when the call fails", async () => {

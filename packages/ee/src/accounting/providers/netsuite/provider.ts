@@ -1,3 +1,4 @@
+import { getLogger } from "@carbon/logger";
 import { ProviderID } from "../../core/models";
 import type {
   AccountingEntityType,
@@ -14,6 +15,8 @@ import {
   type HttpResponse
 } from "../../core/utils";
 import { netsuiteOrigin, netsuiteRealm, signNetSuiteRequest } from "./auth";
+
+const logger = getLogger("ee", "accounting", "netsuite");
 
 const SUITEQL_PAGE = 1000;
 
@@ -242,7 +245,8 @@ export class NetSuiteProvider extends BaseProvider {
           }
         ];
       });
-    } catch {
+    } catch (error) {
+      logger.error("Failed to list NetSuite accounts", { error });
       return [];
     }
   }
@@ -270,7 +274,11 @@ export class NetSuiteProvider extends BaseProvider {
       "GET",
       `/services/rest/record/v1/journalEntry/${encodeURIComponent(id)}?expandSubResources=true`
     );
-    if (response.error || !response.data?.id) return null;
+    if (response.error) {
+      if (response.code === 404) return null;
+      failNetSuite("get journal entry", response);
+    }
+    if (!response.data?.id) return null;
     return response.data;
   }
 
@@ -297,7 +305,13 @@ export class NetSuiteProvider extends BaseProvider {
       "GET",
       `/services/rest/record/v1/journalEntry/eid:${encodeURIComponent(externalId)}?expandSubResources=true`
     );
-    if (response.error || !response.data?.id) return null;
+    if (response.error) {
+      if (response.code === 404) return null;
+      failNetSuite("lookup journal entry", response);
+    }
+    if (!response.data?.id) {
+      failNetSuite("lookup journal entry", response);
+    }
     return response.data;
   }
 
