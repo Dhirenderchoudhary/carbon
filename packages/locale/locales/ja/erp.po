@@ -4704,8 +4704,10 @@ msgstr "保存できませんでした"
 msgid "Couldn't complete the Onshape connection"
 msgstr "Onshape 接続を完了できませんでした"
 
-msgid "Couldn't load delay analysis."
 msgid "Couldn't complete the Onshape Government connection"
+msgstr ""
+
+msgid "Couldn't load delay analysis."
 msgstr ""
 
 msgid "Couldn't load documents"
@@ -6484,9 +6486,6 @@ msgstr "1 日後が納期"
 
 msgid "due now"
 msgstr "本日が納期"
-
-msgid "Due within"
-msgstr "期限内"
 
 msgid "Duplicate"
 msgstr "複製"

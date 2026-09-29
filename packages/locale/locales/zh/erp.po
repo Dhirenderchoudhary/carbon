@@ -4704,8 +4704,10 @@ msgstr "无法保存"
 msgid "Couldn't complete the Onshape connection"
 msgstr "无法完成 Onshape 连接"
 
-msgid "Couldn't load delay analysis."
 msgid "Couldn't complete the Onshape Government connection"
+msgstr ""
+
+msgid "Couldn't load delay analysis."
 msgstr ""
 
 msgid "Couldn't load documents"
@@ -6484,9 +6486,6 @@ msgstr "明天到期"
 
 msgid "due now"
 msgstr "立即到期"
-
-msgid "Due within"
-msgstr "应收期限"
 
 msgid "Duplicate"
 msgstr "复制"

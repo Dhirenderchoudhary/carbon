@@ -4704,8 +4704,10 @@ msgstr "Kaydedilemedi"
 msgid "Couldn't complete the Onshape connection"
 msgstr "Onshape bağlantısı tamamlanamadı"
 
-msgid "Couldn't load delay analysis."
 msgid "Couldn't complete the Onshape Government connection"
+msgstr ""
+
+msgid "Couldn't load delay analysis."
 msgstr ""
 
 msgid "Couldn't load documents"
@@ -6484,9 +6486,6 @@ msgstr "1 gün içinde teslim"
 
 msgid "due now"
 msgstr "hemen teslim"
-
-msgid "Due within"
-msgstr "Süresi içinde"
 
 msgid "Duplicate"
 msgstr "Çoğalt"

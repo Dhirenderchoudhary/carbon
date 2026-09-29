@@ -4704,8 +4704,10 @@ msgstr "저장할 수 없습니다"
 msgid "Couldn't complete the Onshape connection"
 msgstr "Onshape 연결을 완료할 수 없습니다"
 
-msgid "Couldn't load delay analysis."
 msgid "Couldn't complete the Onshape Government connection"
+msgstr ""
+
+msgid "Couldn't load delay analysis."
 msgstr ""
 
 msgid "Couldn't load documents"
@@ -6484,9 +6486,6 @@ msgstr "1일 후 예정"
 
 msgid "due now"
 msgstr "즉시"
-
-msgid "Due within"
-msgstr "다음 기간 이내"
 
 msgid "Duplicate"
 msgstr "복제"

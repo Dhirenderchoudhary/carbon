@@ -4704,8 +4704,10 @@ msgstr "Impossibile salvare"
 msgid "Couldn't complete the Onshape connection"
 msgstr "Impossibile completare la connessione a Onshape"
 
-msgid "Couldn't load delay analysis."
 msgid "Couldn't complete the Onshape Government connection"
+msgstr ""
+
+msgid "Couldn't load delay analysis."
 msgstr ""
 
 msgid "Couldn't load documents"
@@ -6484,9 +6486,6 @@ msgstr "dovuto tra 1 giorno"
 
 msgid "due now"
 msgstr "dovuto ora"
-
-msgid "Due within"
-msgstr "Scadenza entro"
 
 msgid "Duplicate"
 msgstr "Duplica"
