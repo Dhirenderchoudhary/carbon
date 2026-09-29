@@ -464,7 +464,11 @@ const SalesOrderProperties = () => {
         tags={[]}
         onUpdate={onUpdateCustomFields}
       />
-      <DelayAnalysis type="sales-order" id={orderId} />
+      <DelayAnalysis
+        key={`sales-order:${orderId}`}
+        type="sales-order"
+        id={orderId}
+      />
     </VStack>
   );
 };

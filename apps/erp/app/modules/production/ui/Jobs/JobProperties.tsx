@@ -619,7 +619,7 @@ const JobProperties = () => {
         onUpdate={onUpdateCustomFields}
       />
 
-      <DelayAnalysis type="job" id={jobId} />
+      <DelayAnalysis key={`job:${jobId}`} type="job" id={jobId} />
 
       {unlinkDisclosure.isOpen && (
         <Modal

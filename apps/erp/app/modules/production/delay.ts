@@ -568,6 +568,20 @@ function hide<T extends { label?: string; href?: string }>(
   return next;
 }
 
+/** Session users follow their own permissions. An API key must also hold
+ *  `<module>_view` for this company, or a production-only key still shows
+ *  purchasing rows its owner can see. */
+export function canViewDelayModule(
+  userCan: boolean,
+  keyScopes: Record<string, string[]> | null,
+  module: string,
+  companyId: string
+): boolean {
+  if (!userCan) return false;
+  if (!keyScopes) return true;
+  return keyScopes[`${module}_view`]?.includes(companyId) === true;
+}
+
 export function redactDelay(
   result: DelayResult,
   canView: (module: string) => boolean

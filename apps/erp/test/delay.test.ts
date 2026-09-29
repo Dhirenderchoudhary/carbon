@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   analyzeDelay,
+  canViewDelayModule,
   redactDelay,
   type DelayLink,
   type DelayNode
@@ -365,6 +366,24 @@ describe("analyzeDelay", () => {
     expect(why(nodes, links, "job")).toEqual(
       why([...nodes].reverse(), links, "job")
     );
+  });
+});
+
+describe("canViewDelayModule", () => {
+  it("hides a module the API key cannot view even when the user can", () => {
+    expect(
+      canViewDelayModule(true, { production_view: ["co"] }, "purchasing", "co")
+    ).toBe(false);
+    expect(
+      canViewDelayModule(true, { purchasing_view: ["co"] }, "purchasing", "co")
+    ).toBe(true);
+    expect(
+      canViewDelayModule(true, { purchasing_view: ["other"] }, "purchasing", "co")
+    ).toBe(false);
+    expect(canViewDelayModule(true, null, "purchasing", "co")).toBe(true);
+    expect(
+      canViewDelayModule(false, { purchasing_view: ["co"] }, "purchasing", "co")
+    ).toBe(false);
   });
 });
 

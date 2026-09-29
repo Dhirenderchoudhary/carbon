@@ -490,7 +490,11 @@ const PurchaseOrderProperties = () => {
         tags={[]}
         onUpdate={onUpdateCustomFields}
       />
-      <DelayAnalysis type="purchase-order" id={orderId} />
+      <DelayAnalysis
+        key={`purchase-order:${orderId}`}
+        type="purchase-order"
+        id={orderId}
+      />
     </VStack>
   );
 };
