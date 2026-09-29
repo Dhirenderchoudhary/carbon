@@ -1,6 +1,7 @@
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
 import { round } from "@carbon/utils";
 import { getAccountMappings } from "../../core/account-mapping";
+import { resolveMemoJournalPartyFromDatabase } from "../../core/memo-party";
 import {
   getPostingSyncSourceTypeSkipReason,
   JournalEntrySyncError,
@@ -320,11 +321,27 @@ export class NetSuiteJournalEntrySyncer extends BaseEntitySyncer<
       settings,
       {
         inventoryAdjustmentEntitySyncEnabled:
-          this.provider.getSyncConfig("inventoryAdjustment")?.enabled ?? false
+          this.provider.getSyncConfig("inventoryAdjustment")?.enabled ?? false,
+        memoParty: await this.resolveMemoJournalParty(local)
       }
     );
     if (sourceTypeSkipReason) return sourceTypeSkipReason;
     return true;
+  }
+
+  private async resolveMemoJournalParty(
+    journal: Accounting.JournalEntry
+  ): Promise<"customer" | "supplier" | null> {
+    if (
+      journal.sourceType !== "Credit Memo" &&
+      journal.sourceType !== "Debit Memo"
+    ) {
+      return null;
+    }
+    return resolveMemoJournalPartyFromDatabase(this.database, {
+      companyId: this.companyId,
+      journalId: journal.id
+    });
   }
 
   protected async mapToRemote(

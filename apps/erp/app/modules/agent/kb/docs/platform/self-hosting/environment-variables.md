@@ -12,7 +12,7 @@ as you need them.
 Platform-wide behavior and edition.
 
 One of `community`, `cloud`, `enterprise`, or `test`. Gates edition-specific features.
-Enables ITAR / controlled-environment restrictions: the US-Person certification gate, ITAR hostnames and branding, Slack and analytics disabled, and mandatory `docs/reference/two-factor` that a company admin cannot turn off.
+Enables ITAR / controlled-environment restrictions: the US-Person certification gate, ITAR hostnames and branding, Slack and analytics disabled, and mandatory `docs/reference/two-factor` that a company admin cannot turn off. It is also what makes the Onshape Government integration available — see `docs/integrations/cad`.
 Allowed sign-in methods: `email`, `google`, `azure`, `passkey`, `sso` (`docs/reference/single-sign-on`, Enterprise edition only).
 Base domain the apps are served from.
 Public URL of the ERP app.
@@ -44,8 +44,12 @@ Enterprise `docs/reference/single-sign-on` adds two more:
 Turns on the SAML engine in the auth service.
 SAML signing key — base64-encoded PKCS#1 DER RSA, minimum 2048-bit; the generation command is in `.env.example`.
 
-Sign-in bot protection uses Cloudflare Turnstile: `CLOUDFLARE_TURNSTILE_SITE_KEY` and
-`CLOUDFLARE_TURNSTILE_SECRET_KEY`.
+Sign-in bot protection is Cloudflare Turnstile off Vercel: set both
+`CLOUDFLARE_TURNSTILE_SITE_KEY` and `CLOUDFLARE_TURNSTILE_SECRET_KEY` and every login form
+shows the widget and verifies its token. With neither set there is no bot check, and the
+per-IP rate limit and per-account lockout are all that apply. `BOT_PROTECTION`
+chooses explicitly: `turnstile`, or `botid` for Vercel BotID, which is invisible but runs
+only on Vercel.
 
 ## Jobs & cache
 

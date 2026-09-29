@@ -1,6 +1,7 @@
 import { emailHealthcheck } from "./email/hooks.server";
 import { jiraHealthcheck } from "./jira/hooks.server";
 import { linearHealthcheck } from "./linear/hooks.server";
+import { mountHealthcheck } from "./mount/hooks.server";
 import {
   netsuiteHealthcheck,
   netsuiteOnInstall,
@@ -61,7 +62,13 @@ const serverHooks: Record<string, IntegrationServerHooks> = {
   linear: {
     onHealthcheck: linearHealthcheck
   },
+  mount: {
+    onHealthcheck: mountHealthcheck
+  },
   onshape: {
+    onUninstall: onshapeOnUninstall
+  },
+  "onshape-government": {
     onUninstall: onshapeOnUninstall
   },
   // The accounting providers' onUpdate re-runs the same subscription

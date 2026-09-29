@@ -8,8 +8,8 @@ Server-only Inngest jobs for event draining, integrations, notifications, workfl
 - MUST dispatch from app code with `trigger()`/`batchTrigger()` from `@carbon/jobs`; event names and payloads come from `Events` in `@carbon/lib/events`.
 - MUST keep event handlers idempotent (`event.data.msgId`) and preserve their per-record/company concurrency keys.
 - MUST use `getJobDatabaseClient()` from `src/db.ts` in runtime jobs; the import-light backup compatibility CLI is the deliberate standalone exception.
-- MUST use `patchRampCursor()` for `cursors.*`; never read and replace the whole Ramp metadata object.
-- MUST keep `ramp-sync.ts` as the durable coordinator only. Family logic belongs in `ramp-sync-{card,bill,reimbursement-family,repayment,outbound}.ts`; shared tenant/currency helpers belong in `ramp-sync-shared.ts`; transactional staging belongs in `ramp-sync-{card-stage,bill-stage,payment,reimbursement}.ts`.
+- MUST use `patchRampCursor()` for `cursors.*`; never read and replace the whole Ramp metadata object. Only `repaymentsRepaidAt` remains — Ramp's outbound push is ledger-driven, not cursor-driven.
+- MUST keep `ramp-sync.ts` as the durable coordinator only. Family logic belongs in `ramp-sync-{card,bill,reimbursement-family,repayment}.ts` (the outbound PO/bill WIRE left this package for `@carbon/ee/ramp/entities` syncers on the event engine; the outbound candidate walk behind the `ramp-outbound-reconcile` step is `ramp-sync-outbound.ts`); shared tenant/currency helpers belong in `ramp-sync-shared.ts`; transactional staging belongs in `ramp-sync-{card-stage,bill-stage,payment,reimbursement}.ts`.
 - MUST keep workflow business reads/writes on the owner-scoped client from `getOwnerClient()`. The privileged DB is limited to the workflow run/step ledger.
 
 ## Ask First
@@ -34,6 +34,7 @@ pnpm --filter @carbon/jobs test
 pnpm --filter @carbon/jobs typecheck
 pnpm --filter @carbon/jobs dev:jobs
 pnpm db:check:backups
+pnpm --filter @carbon/jobs plan:company -- --company <id> --user <id>   # MRP + schedule one company
 ```
 
 ## Key Exports
@@ -68,6 +69,7 @@ pnpm db:check:backups
 - `src/workflows/actions/dispatcher.ts` is filled by `apps/erp/app/routes/api+/inngest.ts` with the canonical `callOperation` seam. Missing registration fails cleanly.
 - `src/workflows/engine/log.ts` redacts secret/token/password/header values before persisting step input.
 - Bare `tsx` scripts cannot rely on Vite's CJS/ESM interop. Keep runtime imports from packages without `"type":"module"` out of script dependency chains; type-only imports are safe.
+- `src/demo-planning.ts` `planDemoCompany` runs MRP + `runLocationSchedule` over a company after a demo template commits; it never throws. Called by the `company-template` job's non-fatal `plan-template` step and by the `plan:company` script (`src/scripts/plan-company.ts`, spawned by `db:seed:dev`), which loads it through `createRequire` for the reason above. See `.claude/rules/onboarding-company-templates.md`.
 - `db:check:backups` is read-only when run directly. The pre-commit hook passes `--stage` and regenerates/stages `packages/jobs/manifests/schema.json` after a successful live-schema comparison.
 
 ## Cross-References

@@ -16,6 +16,7 @@ export const NetSuite = defineIntegration({
   id: "netsuite",
   active: true,
   category: "Accounting",
+  providerRole: "accounting" as const,
   logo: Logo,
   setupInstructions: SetupInstructions,
   description:

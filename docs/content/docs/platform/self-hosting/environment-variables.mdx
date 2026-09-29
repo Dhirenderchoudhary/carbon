@@ -14,7 +14,7 @@ Platform-wide behavior and edition.
 
 <EnvVars>
 <EnvVar name="CARBON_EDITION" type="enum">One of `community`, `cloud`, `enterprise`, or `test`. Gates edition-specific features.</EnvVar>
-<EnvVar name="CONTROLLED_ENVIRONMENT" type="boolean">Enables ITAR / controlled-environment restrictions: the US-Person certification gate, ITAR hostnames and branding, Slack and analytics disabled, and mandatory [two-factor authentication](/docs/reference/two-factor) that a company admin cannot turn off.</EnvVar>
+<EnvVar name="CONTROLLED_ENVIRONMENT" type="boolean">Enables ITAR / controlled-environment restrictions: the US-Person certification gate, ITAR hostnames and branding, Slack and analytics disabled, and mandatory [two-factor authentication](/docs/reference/two-factor) that a company admin cannot turn off. It is also what makes the Onshape Government integration available — see [CAD](/docs/integrations/cad#onshape-government).</EnvVar>
 <EnvVar name="AUTH_PROVIDERS" type="enum[]">Allowed sign-in methods: `email`, `google`, `azure`, `passkey`, `sso` ([single sign-on](/docs/reference/single-sign-on), Enterprise edition only).</EnvVar>
 <EnvVar name="DOMAIN" type="string">Base domain the apps are served from.</EnvVar>
 <EnvVar name="ERP_URL" type="url">Public URL of the ERP app.</EnvVar>
@@ -53,8 +53,12 @@ Enterprise [SAML single sign-on](/docs/reference/single-sign-on) adds two more:
 <EnvVar name="SAML_PRIVATE_KEY" type="string">SAML signing key — base64-encoded PKCS#1 DER RSA, minimum 2048-bit; the generation command is in `.env.example`.</EnvVar>
 </EnvVars>
 
-Sign-in bot protection uses Cloudflare Turnstile: `CLOUDFLARE_TURNSTILE_SITE_KEY` and
-`CLOUDFLARE_TURNSTILE_SECRET_KEY`.
+Sign-in bot protection is Cloudflare Turnstile off Vercel: set both
+`CLOUDFLARE_TURNSTILE_SITE_KEY` and `CLOUDFLARE_TURNSTILE_SECRET_KEY` and every login form
+shows the widget and verifies its token. With neither set there is no bot check, and the
+per-IP rate limit and per-account lockout are all that apply. `BOT_PROTECTION`
+chooses explicitly: `turnstile`, or `botid` for Vercel BotID, which is invisible but runs
+only on Vercel.
 
 ## Jobs & cache
 

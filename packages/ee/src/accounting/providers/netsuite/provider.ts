@@ -28,7 +28,10 @@ const DISABLED_ENTITIES = [
   "invoice",
   "payment",
   "inventoryAdjustment",
-  "charge"
+  "charge",
+  "creditMemo",
+  "supplierCredit",
+  "reimbursement"
 ] as const satisfies readonly AccountingEntityType[];
 
 type TbaCredentials = Extract<ProviderCredentials, { type: "tba" }>;
@@ -147,6 +150,7 @@ export class NetSuiteProvider extends BaseProvider {
   static id = ProviderID.NETSUITE;
 
   readonly capabilities: ProviderCapabilities = {
+    role: "accounting",
     transport: "rest",
     supportsWebhooks: false,
     supportsJournalPush: true

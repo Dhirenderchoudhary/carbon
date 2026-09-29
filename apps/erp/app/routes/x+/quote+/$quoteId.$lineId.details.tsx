@@ -70,6 +70,7 @@ import {
 import QuoteLinePricingHistory from "~/modules/sales/ui/Quotes/QuoteLinePricingHistory";
 import QuoteLineRiskRegister from "~/modules/sales/ui/Quotes/QuoteLineRiskRegister";
 import { getTagsList, type SupplierPriceMap } from "~/modules/shared";
+import { requireCompanyRecord } from "~/modules/shared/shared.server";
 import { getCustomFields, setCustomFields } from "~/utils/form";
 import { requireUnlocked } from "~/utils/lockedGuard.server";
 import { path } from "~/utils/path";
@@ -85,6 +86,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   if (!lineId) throw new Error("Could not find lineId");
 
   const serviceRole = await getCarbonServiceRole();
+  // Every read below uses the service role and keys on the URL line id.
+  await requireCompanyRecord(serviceRole, "quoteLine", companyId, {
+    id: lineId,
+    quoteId
+  });
 
   const [line, operations, prices] = await Promise.all([
     getQuoteLine(serviceRole, lineId),
@@ -146,7 +152,15 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     : null;
 
   return {
-    line: line.data,
+    line: {
+      ...line.data,
+      // Present quantity breaks least-to-greatest everywhere they're consumed
+      // (line form, costing grid, pricing grid). Preserve null so the `?? [1]`
+      // fallbacks downstream still apply.
+      quantity: line.data.quantity
+        ? [...line.data.quantity].sort((a, b) => a - b)
+        : line.data.quantity
+    },
     operations: operations?.data ?? [],
     files: getOpportunityLineDocuments(serviceRole, companyId, lineId, itemId),
     pricesByQuantity: (prices?.data ?? []).reduce<
@@ -171,6 +185,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const { quoteId, lineId } = params;
   if (!quoteId) throw new Error("Could not find quoteId");
   if (!lineId) throw new Error("Could not find lineId");
+
+  // The rule evaluation, evidence and price writes below use the service role
+  // (or Kysely) and key on the URL ids.
+  await requireCompanyRecord(getCarbonServiceRole(), "quoteLine", companyId, {
+    id: lineId,
+    quoteId
+  });
 
   const { client: viewClient } = await requirePermissions(request, {
     view: "sales"
@@ -239,7 +260,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const existingPrices = await serviceRole
     .from("quoteLinePrice")
     .select("quantity")
-    .eq("quoteLineId", lineId);
+    .eq("quoteLineId", lineId)
+    .eq("companyId", companyId);
 
   if (existingPrices.error) {
     throw redirect(
@@ -320,6 +342,8 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   try {
     await saveQuoteLineWithPrices({
+      companyId,
+      quoteId,
       lineId,
       line: {
         ...sanitize({ ...d, updatedBy: userId }),
