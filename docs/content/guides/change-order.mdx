@@ -80,11 +80,12 @@ For the bracket we want the wall change to carry a new drawing revision and phas
 **Revision**. You thicken the wall in the attributes, drop the extra fastener line from the BoM, and attach
 the updated drawing — all on the draft.
 
-<Callout tone="amber" badge="PURCHASED PARTS NEED A SUPPLIER" title="A bought revision releases un-buyable unless you set its supplier up first.">
-If the revised part were purchased instead of made, its line would carry a **Supplier Parts** grid. The draft
-starts with none, because the old revision's suppliers aren't copied over. Leave it empty and the new part
-releases with nowhere to buy it — no purchase order can reference it. So for a **Buy** revision you add the
-supplier, part number, price, and order quantities on the line before you release.
+<Callout tone="green" badge="PURCHASED PARTS KEEP THEIR SUPPLIERS" title="A bought revision inherits the old revision's suppliers.">
+If the revised part were purchased instead of made, its line would carry a **Supplier Parts** grid. A Revision
+draft starts with the old revision's supplier parts and price breaks, along with its lead time, batch size, and
+reordering policy, so it releases ready to buy. You change the grid only where the new revision differs, such
+as a new supplier part number. A **Replacement Part** or **New Part** starts with an empty grid, and that one
+you fill in before you release.
 </Callout>
 
 ## Review the diff
