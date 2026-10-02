@@ -217,6 +217,21 @@ export async function copyItemPostingGroup(
     .eq("companyId", args.companyId);
 }
 
+// Kysely bypasses RLS, so before a Kysely write the caller's client vouches for
+// it: the permission the table's RLS policy would have asked for, in that
+// company. A service-role client passes.
+async function requireCompanyPermission(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  permission: string
+): Promise<{ error: ServiceError | null }> {
+  const gate = await client.rpc("assert_company_access", {
+    p_company_id: companyId,
+    p_permission: permission
+  });
+  return { error: gate.error };
+}
+
 // What a new revision inherits from the revision it was copied from, beyond the
 // item row and the method: replenishment (batch size, scrap percent, lead time,
 // the preferred supplier and its purchasing unit), each location's reorder
@@ -410,13 +425,13 @@ export async function createRevision(
     return { data: null, error: { message: "Item has no company" } };
   }
 
-  // The revision is written with Kysely, which bypasses RLS, so the caller's
-  // client vouches for it first: the same rule as the item INSERT policy
-  // (parts_create in the item's company). A service-role client passes.
-  const permitted = await client.rpc("assert_company_access", {
-    p_company_id: companyId,
-    p_permission: "parts_create"
-  });
+  // The revision is written with Kysely: the item INSERT policy asks for
+  // parts_create in the item's company.
+  const permitted = await requireCompanyPermission(
+    client,
+    companyId,
+    "parts_create"
+  );
   if (permitted.error) return { data: null, error: permitted.error };
 
   // The item and what it inherits land together or not at all: a revision
@@ -583,9 +598,62 @@ export async function deleteConfigurationParameterGroup(
   return client.from("configurationParameterGroup").delete().eq("id", id);
 }
 
+// An item delete cascades to its supplier parts, and a price break restricts
+// the delete of its supplier part, so the price breaks go first. Runs in the
+// caller's transaction: when the item delete is refused (inventory history,
+// tracked entities) the price breaks stay.
+async function deleteItemsWithPriceBreaks(
+  trx: KyselyTx,
+  args: { itemIds: string[]; companyId: string }
+) {
+  const { itemIds, companyId } = args;
+  if (itemIds.length === 0) return;
+
+  await trx
+    .deleteFrom("supplierPartPrice")
+    .where("companyId", "=", companyId)
+    .where("supplierPartId", "in", (eb) =>
+      eb
+        .selectFrom("supplierPart")
+        .select("id")
+        .where("itemId", "in", itemIds)
+        .where("companyId", "=", companyId)
+    )
+    .execute();
+
+  await trx
+    .deleteFrom("item")
+    .where("id", "in", itemIds)
+    .where("companyId", "=", companyId)
+    .execute();
+}
+
 /** @mcp delete */
-export async function deleteItem(client: SupabaseClient<Database>, id: string) {
-  return client.from("item").delete().eq("id", id);
+export async function deleteItem(
+  client: SupabaseClient<Database>,
+  db: Kysely<KyselyDatabase>,
+  id: string,
+  companyId: string
+): Promise<{ data: null; error: ServiceError | null }> {
+  // The item DELETE policy asks for parts_delete in the item's company.
+  const permitted = await requireCompanyPermission(
+    client,
+    companyId,
+    "parts_delete"
+  );
+  if (permitted.error) return { data: null, error: permitted.error };
+
+  try {
+    await db
+      .transaction()
+      .execute((trx) =>
+        deleteItemsWithPriceBreaks(trx, { itemIds: [id], companyId })
+      );
+  } catch (error) {
+    logger.error("Failed to delete item", { companyId, itemId: id, error });
+    return { data: null, error: writeError(error) };
+  }
+  return { data: null, error: null };
 }
 
 /** @mcp delete */
@@ -6878,6 +6946,7 @@ export async function updateChangeNotice(
 /** @mcp delete */
 export async function deleteChangeNotice(
   client: SupabaseClient<Database>,
+  db: Kysely<KyselyDatabase>,
   changeNoticeId: string,
   companyId: string
 ) {
@@ -6891,11 +6960,17 @@ export async function deleteChangeNotice(
     .select("draftMakeMethodId, newItemId")
     .eq("changeOrderId", changeNoticeId)
     .eq("companyId", companyId);
-  if (!affected.error && affected.data) {
-    for (const item of affected.data) {
-      await discardChangeNoticeDraft(client, item, companyId);
-    }
-  }
+  if (affected.error) return { data: null, error: affected.error };
+
+  // A draft that cannot be discarded keeps its change notice: deleting the
+  // notice anyway would leave the draft with nothing pointing at it.
+  const discarded = await discardChangeNoticeDrafts(
+    client,
+    db,
+    affected.data,
+    companyId
+  );
+  if (discarded.error) return { data: null, error: discarded.error };
 
   // Remaining children (affected items, action tasks) cascade via ON DELETE CASCADE.
   return client
@@ -7640,62 +7715,60 @@ export async function createChangeNoticeDraftMethod(
   };
 }
 
-// Discard an affected item's CO-owned Draft (used on change-type switch + when
-// removing the affected item). Deletes the new item for Revision/New Part
-// (cascades its method rows) or the Draft method for Version.
-async function discardChangeNoticeDraft(
+// Discard affected items' CO-owned Drafts (on a change-type switch, and when an
+// affected item or its change notice is removed): the new item for a
+// Revision / Replacement Part / New Part, which cascades its method rows, or
+// the Draft method for a Version. One transaction, so a failure leaves every
+// draft in place and the caller can stop instead of orphaning one.
+async function discardChangeNoticeDrafts(
   client: SupabaseClient<Database>,
-  affected: {
+  db: Kysely<KyselyDatabase>,
+  drafts: {
     draftMakeMethodId: string | null;
     newItemId: string | null;
-  },
+  }[],
   companyId: string
-): Promise<void> {
-  if (affected.newItemId) {
-    // The item delete cascades to its supplier parts, and a price break
-    // restricts the delete of its supplier part. A Revision draft inherits its
-    // source's price breaks, so they have to go first or the draft survives.
-    const supplierParts = await client
-      .from("supplierPart")
-      .select("id")
-      .eq("itemId", affected.newItemId)
-      .eq("companyId", companyId);
-    const supplierPartIds = (supplierParts.data ?? []).map((part) => part.id);
-    if (supplierPartIds.length > 0) {
-      const prices = await client
-        .from("supplierPartPrice")
-        .delete()
-        .in("supplierPartId", supplierPartIds)
-        .eq("companyId", companyId);
-      if (prices.error) {
-        logger.error("Failed to delete a draft item's supplier price breaks", {
-          companyId,
-          itemId: affected.newItemId,
-          error: prices.error
-        });
+): Promise<{ error: ServiceError | null }> {
+  const itemIds = drafts.flatMap((draft) =>
+    draft.newItemId ? [draft.newItemId] : []
+  );
+  const makeMethodIds = drafts.flatMap((draft) =>
+    !draft.newItemId && draft.draftMakeMethodId ? [draft.draftMakeMethodId] : []
+  );
+  if (itemIds.length === 0 && makeMethodIds.length === 0) {
+    return { error: null };
+  }
+
+  // The item and makeMethod DELETE policies both ask for parts_delete.
+  const permitted = await requireCompanyPermission(
+    client,
+    companyId,
+    "parts_delete"
+  );
+  if (permitted.error) return permitted;
+
+  try {
+    await db.transaction().execute(async (trx) => {
+      // A Revision draft inherits its source's price breaks.
+      await deleteItemsWithPriceBreaks(trx, { itemIds, companyId });
+      if (makeMethodIds.length > 0) {
+        await trx
+          .deleteFrom("makeMethod")
+          .where("id", "in", makeMethodIds)
+          .where("companyId", "=", companyId)
+          .execute();
       }
-    }
-    const item = await client
-      .from("item")
-      .delete()
-      .eq("id", affected.newItemId)
-      .eq("companyId", companyId);
-    if (supplierParts.error || item.error) {
-      logger.error("Failed to discard a change notice draft item", {
-        companyId,
-        itemId: affected.newItemId,
-        error: supplierParts.error ?? item.error
-      });
-    }
-    return;
+    });
+  } catch (error) {
+    logger.error("Failed to discard change notice drafts", {
+      companyId,
+      itemIds,
+      makeMethodIds,
+      error
+    });
+    return { error: writeError(error) };
   }
-  if (affected.draftMakeMethodId) {
-    await client
-      .from("makeMethod")
-      .delete()
-      .eq("id", affected.draftMakeMethodId)
-      .eq("companyId", companyId);
-  }
+  return { error: null };
 }
 
 // Add an affected item to a CO: insert the row, then spin its CO-owned Draft
@@ -7902,6 +7975,15 @@ export async function updateChangeNoticeAffectedItemChangeType(
     return { data: { id }, error: null };
   }
 
+  // The current Draft is deleted at the end, which takes parts_delete. Refuse
+  // now rather than after the swap, when the old draft could only be orphaned.
+  const canDiscard = await requireCompanyPermission(
+    client,
+    companyId,
+    "parts_delete"
+  );
+  if (canDiscard.error) return { data: null, error: canDiscard.error };
+
   // Create the replacement Draft BEFORE destroying the current one, so a failure
   // in creation or the ref swap leaves the affected row still pointing at a valid
   // (undeleted) draft instead of a dangling reference. The old draft is discarded
@@ -7936,8 +8018,15 @@ export async function updateChangeNoticeAffectedItemChangeType(
     .eq("companyId", companyId);
   if (updated.error) return { data: null, error: updated.error };
 
-  // Swap succeeded — now safe to discard the superseded draft.
-  await discardChangeNoticeDraft(client, previousDraft, companyId);
+  // Swap succeeded — now safe to discard the superseded draft. The type has
+  // changed either way; a draft that could not be removed is reported.
+  const discarded = await discardChangeNoticeDrafts(
+    client,
+    db,
+    [previousDraft],
+    companyId
+  );
+  if (discarded.error) return { data: null, error: discarded.error };
   return { data: { id }, error: null };
 }
 
@@ -8060,6 +8149,7 @@ export async function getChangeNoticeAffectedItems(
 /** @mcp action destructive */
 export async function removeChangeNoticeAffectedItem(
   client: SupabaseClient<Database>,
+  db: Kysely<KyselyDatabase>,
   id: string,
   companyId: string
 ) {
@@ -8069,8 +8159,17 @@ export async function removeChangeNoticeAffectedItem(
     .eq("id", id)
     .eq("companyId", companyId)
     .maybeSingle();
-  if (!affected.error && affected.data) {
-    await discardChangeNoticeDraft(client, affected.data, companyId);
+  if (affected.error) return { data: null, error: affected.error };
+  if (affected.data) {
+    // The affected row is the only pointer at its draft, so it stays until the
+    // draft is gone.
+    const discarded = await discardChangeNoticeDrafts(
+      client,
+      db,
+      [affected.data],
+      companyId
+    );
+    if (discarded.error) return { data: null, error: discarded.error };
   }
   return client
     .from("changeOrderAffectedItem")

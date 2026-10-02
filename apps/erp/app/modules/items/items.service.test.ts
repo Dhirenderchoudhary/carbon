@@ -28,8 +28,13 @@ vi.mock("@carbon/content/glossary", () => ({
   termSlug: vi.fn()
 }));
 
-const { createRevision, diffMethod, duplicateMethodOperationStep } =
-  await import("./items.service");
+const {
+  createRevision,
+  deleteItem,
+  diffMethod,
+  duplicateMethodOperationStep,
+  removeChangeNoticeAffectedItem
+} = await import("./items.service");
 
 // A minimal live methodMaterial row (only the fields diffMethod compares + id).
 function baseMaterial(over: Record<string, unknown> = {}) {
@@ -564,11 +569,14 @@ describe("diffMethod — supplier parts", () => {
 // The boundary is the Postgres wire: a driver that records what Kysely sends
 // and answers the item insert with the id the database would have generated.
 // `failOn` makes the first statement containing that text throw, as the
-// database would on a constraint violation.
+// database would on a constraint violation (`code` is its SQLSTATE).
 class RecordingDriver extends DummyDriver {
   readonly sent: CompiledQuery[] = [];
   readonly log: string[] = [];
-  constructor(private readonly failOn?: string) {
+  constructor(
+    private readonly failOn?: string,
+    private readonly code?: string
+  ) {
     super();
   }
   override async acquireConnection(): Promise<DatabaseConnection> {
@@ -577,7 +585,10 @@ class RecordingDriver extends DummyDriver {
         query: CompiledQuery
       ): Promise<QueryResult<R>> => {
         if (this.failOn && query.sql.includes(this.failOn)) {
-          throw new Error(`failed: ${this.failOn}`);
+          throw Object.assign(
+            new Error(`failed: ${this.failOn}`),
+            this.code ? { code: this.code } : {}
+          );
         }
         this.sent.push(query);
         this.log.push(query.sql);
@@ -603,8 +614,8 @@ class RecordingDriver extends DummyDriver {
   }
 }
 
-function recordingDatabase(failOn?: string) {
-  const driver = new RecordingDriver(failOn);
+function recordingDatabase(failOn?: string, code?: string) {
+  const driver = new RecordingDriver(failOn, code);
   const db = new KyselyClient<KyselyDatabase>({
     dialect: {
       createAdapter: () => new PostgresAdapter(),
@@ -743,6 +754,157 @@ describe("createRevision", () => {
     expect(result).toEqual({ data: null, error: denied });
     expect(driver.log).toEqual([]);
     expect(invoke).not.toHaveBeenCalled();
+  });
+});
+
+describe("deleteItem", () => {
+  function gateClient(gate: { error: { message: string } | null }) {
+    const rpc = vi.fn().mockResolvedValue({ data: null, ...gate });
+    return { client: { rpc } as never, rpc };
+  }
+
+  it("deletes the item's price breaks and the item in one transaction", async () => {
+    const { client, rpc } = gateClient({ error: null });
+    const { db, driver } = recordingDatabase();
+
+    const result = await deleteItem(client, db, "item-b", "c1");
+
+    expect(result).toEqual({ data: null, error: null });
+    expect(rpc).toHaveBeenCalledWith("assert_company_access", {
+      p_company_id: "c1",
+      p_permission: "parts_delete"
+    });
+    // A price break restricts the delete of its supplier part, which the item
+    // delete cascades to, so the price breaks go first.
+    expect(driver.log).toEqual([
+      "BEGIN",
+      'delete from "supplierPartPrice" where "companyId" = $1 and "supplierPartId" in (select "id" from "supplierPart" where "itemId" in ($2) and "companyId" = $3)',
+      'delete from "item" where "id" in ($1) and "companyId" = $2',
+      "COMMIT"
+    ]);
+    expect(driver.sent.map((query) => query.parameters)).toEqual([
+      ["c1", "item-b", "c1"],
+      ["item-b", "c1"]
+    ]);
+  });
+
+  it("keeps the price breaks when the item itself cannot be deleted", async () => {
+    const { client } = gateClient({ error: null });
+    const { db, driver } = recordingDatabase('delete from "item"', "23503");
+
+    const result = await deleteItem(client, db, "item-b", "c1");
+
+    // The route maps a 23503 to its friendly message, so the code survives.
+    expect(result).toEqual({
+      data: null,
+      error: { code: "23503", message: 'failed: delete from "item"' }
+    });
+    expect(driver.log.at(-1)).toBe("ROLLBACK");
+    expect(driver.log).not.toContain("COMMIT");
+  });
+
+  it("writes nothing for a caller who cannot delete parts in the company", async () => {
+    const denied = { message: "Not authorized for this company" };
+    const { client } = gateClient({ error: denied });
+    const { db, driver } = recordingDatabase();
+
+    const result = await deleteItem(client, db, "item-b", "c1");
+
+    expect(result).toEqual({ data: null, error: denied });
+    expect(driver.log).toEqual([]);
+  });
+});
+
+describe("removeChangeNoticeAffectedItem", () => {
+  // The caller's supabase client: reads the affected row, vouches for the
+  // delete, and removes the affected row at the end.
+  function affectedItemClient(row: Record<string, unknown>) {
+    const deleted: string[] = [];
+    const client = {
+      rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+      from: (table: string) => {
+        const builder = {
+          select: () => builder,
+          eq: () => builder,
+          maybeSingle: () => Promise.resolve({ data: row, error: null }),
+          delete: () => {
+            deleted.push(table);
+            return builder;
+          },
+          then: (onF: (v: unknown) => unknown) =>
+            Promise.resolve({ data: null, error: null }).then(onF)
+        };
+        return builder;
+      }
+    };
+    return { client: client as never, deleted };
+  }
+
+  it("discards a Revision draft, price breaks first, then removes the row", async () => {
+    const { client, deleted } = affectedItemClient({
+      draftMakeMethodId: "mm-1",
+      newItemId: "item-b"
+    });
+    const { db, driver } = recordingDatabase();
+
+    const result = await removeChangeNoticeAffectedItem(
+      client,
+      db,
+      "aff-1",
+      "c1"
+    );
+
+    expect(result.error).toBeNull();
+    // The draft method goes with its item, so only the item is deleted.
+    expect(
+      driver.log.map((sql) => sql.match(/^delete from "\w+"|^\w+$/)?.[0])
+    ).toEqual([
+      "BEGIN",
+      'delete from "supplierPartPrice"',
+      'delete from "item"',
+      "COMMIT"
+    ]);
+    expect(deleted).toEqual(["changeOrderAffectedItem"]);
+  });
+
+  it("deletes only the Draft method for a Version", async () => {
+    const { client, deleted } = affectedItemClient({
+      draftMakeMethodId: "mm-1",
+      newItemId: null
+    });
+    const { db, driver } = recordingDatabase();
+
+    await removeChangeNoticeAffectedItem(client, db, "aff-1", "c1");
+
+    expect(driver.log).toEqual([
+      "BEGIN",
+      'delete from "makeMethod" where "id" in ($1) and "companyId" = $2',
+      "COMMIT"
+    ]);
+    expect(deleted).toEqual(["changeOrderAffectedItem"]);
+  });
+
+  it("keeps the affected row when its draft cannot be discarded", async () => {
+    const { client, deleted } = affectedItemClient({
+      draftMakeMethodId: "mm-1",
+      newItemId: "item-b"
+    });
+    const { db, driver } = recordingDatabase('delete from "item"', "23503");
+
+    const result = await removeChangeNoticeAffectedItem(
+      client,
+      db,
+      "aff-1",
+      "c1"
+    );
+
+    expect(result.error).toEqual({
+      code: "23503",
+      message: 'failed: delete from "item"'
+    });
+    expect(driver.log.at(-1)).toBe("ROLLBACK");
+    // The row is the only pointer at the draft; it stays with it.
+    expect(deleted).toEqual([]);
   });
 });
 

@@ -69,7 +69,8 @@ the type-scoped `revisions` array.
   (`createChangeNoticeDraftMethod`, `active: false`).
 - **Authorization.** Kysely bypasses RLS, so before the transaction
   `createRevision` calls `assert_company_access(companyId, 'parts_create')`
-  through the caller's `client` — the same predicate as the `item` INSERT policy
+  through the caller's `client` (`requireCompanyPermission`, shared with the
+  delete paths below) — the same predicate as the `item` INSERT policy
   (`inCompany("companyId", "parts_create")`), and a no-op for a service-role
   client. It matters: two change-notice routes (`$id.affected`,
   `…change-type`) only require `parts_update`, so without the gate a user who
@@ -93,11 +94,25 @@ the type-scoped `revisions` array.
     `supplierId` (unique per item).
   NOT copied: costs, `itemUnitSalePrice`, `requiresConfiguration` and the
   blocked flags, `minimumReserveQuantity`, supersession, pick method, shelf life.
-- **Deleting an item that has price breaks fails** unless the price breaks go
-  first: `supplierPart.itemId` cascades from `item`, but
-  `supplierPartPrice → supplierPart` is `ON DELETE RESTRICT`. Every revision of
-  an item with price breaks now carries them, so `discardChangeNoticeDraft`
-  deletes the draft item's `supplierPartPrice` rows before the item.
+- **Deleting an item deletes its price breaks first.** `supplierPart.itemId`
+  cascades from `item`, but `supplierPartPrice → supplierPart` is
+  `ON DELETE RESTRICT`, and every revision of an item with price breaks now
+  carries them. `deleteItemsWithPriceBreaks(trx, { itemIds, companyId })` deletes
+  the price breaks and then the items, scoped to the company, inside the
+  caller's Kysely transaction — so an item delete Postgres refuses (ledger
+  history, tracked entities) leaves the price breaks in place. Two callers, both
+  gated by `assert_company_access(companyId, 'parts_delete')` (the `item` /
+  `makeMethod` DELETE rule):
+  - `deleteItem(client, db, id, companyId)` — the Item Master delete. A refusal
+    keeps its SQLSTATE (`23503`), which the route maps to its message.
+  - `discardChangeNoticeDrafts(client, db, drafts, companyId)` — every draft of
+    the call (draft items, and Version draft methods) in ONE transaction, and it
+    returns the error. `removeChangeNoticeAffectedItem` and `deleteChangeNotice`
+    stop on it, so the affected row / notice is never removed while its draft
+    survives; `updateChangeNoticeAffectedItemChangeType` checks `parts_delete`
+    before it creates the replacement draft, and reports a late failure.
+  Deleting a single **supplier part** that has price breaks
+  (`deleteSupplierPart`) is still refused by the same constraint.
 - UI form: `RevisionForm.tsx`; version switcher menus ("Versions" submenu) live in
   the type tables (`PartsTable.tsx`, etc.), shown only when `revisions.length > 1`,
   linking each sibling by its item id. Badge component: `ItemWithRevision.tsx`.
