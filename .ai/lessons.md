@@ -2025,7 +2025,7 @@ full-screen ERP route.
 
 **Rule:** A retry wrapper must never blindly retry a write with real side effects and no idempotency key. `fetchWithRetry` already carved out `isStorageUpload` for this exact reason ("re-sending a multi-GB PUT ... is wasteful"); the same reasoning applies even harder to Edge Function invocations, which routinely do multi-table, multi-transaction writes (`get-method`, `convert`, every `post-*` function). Added `isEdgeFunctionInvoke` (matches `/functions/v1/`) alongside it — one attempt only, honoring the caller's own signal, no retry on status or network error. When debugging "op failed but extra copies appeared," check for exactly this shape (one incoming request, several committed results) before assuming a client-side double-submit or a browser retry.
 
-**Applies to:** `packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry`, `isEdgeFunctionInvoke`); any future retry/timeout wrapper placed in front of `client.functions.invoke`. Also: `$quoteId.duplicate.tsx` and similar routes that discard the real error into a generic message — add `logger.error` there so a recurrence is diagnosable from Vercel logs alone, without needing Supabase edge-function log access.
+**Applies to:** `packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry` and `isEdgeFunctionInvoke` were removed with the supabase-js 2.117 upgrade; `storageReadFetch` retries storage reads only and never touches `/functions/v1/`); any future retry/timeout wrapper placed in front of `client.functions.invoke`. Also: `$quoteId.duplicate.tsx` and similar routes that discard the real error into a generic message — add `logger.error` there so a recurrence is diagnosable from Vercel logs alone, without needing Supabase edge-function log access.
 ## pdfjs rejects Node Buffer by constructor check
 
 **Context:** `@carbon/files/pdf` and the shared image pipeline feed bytes from `fs.readFile` / `storage.download().arrayBuffer()` into pdfjs (via unpdf) and jSquash codecs.
@@ -2124,7 +2124,7 @@ full-screen ERP route.
 
 **Rule:** A retry wrapper must never blindly retry a write with real side effects and no idempotency key. `fetchWithRetry` already carved out `isStorageUpload` for this exact reason ("re-sending a multi-GB PUT ... is wasteful"); the same reasoning applies even harder to Edge Function invocations, which routinely do multi-table, multi-transaction writes (`get-method`, `convert`, every `post-*` function). Added `isEdgeFunctionInvoke` (matches `/functions/v1/`) alongside it — one attempt only, honoring the caller's own signal, no retry on status or network error. When debugging "op failed but extra copies appeared," check for exactly this shape (one incoming request, several committed results) before assuming a client-side double-submit or a browser retry.
 
-**Applies to:** `packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry`, `isEdgeFunctionInvoke`); any future retry/timeout wrapper placed in front of `client.functions.invoke`. Also: `$quoteId.duplicate.tsx` and similar routes that discard the real error into a generic message — add `logger.error` there so a recurrence is diagnosable from Vercel logs alone, without needing Supabase edge-function log access.
+**Applies to:** `packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry` and `isEdgeFunctionInvoke` were removed with the supabase-js 2.117 upgrade; `storageReadFetch` retries storage reads only and never touches `/functions/v1/`); any future retry/timeout wrapper placed in front of `client.functions.invoke`. Also: `$quoteId.duplicate.tsx` and similar routes that discard the real error into a generic message — add `logger.error` there so a recurrence is diagnosable from Vercel logs alone, without needing Supabase edge-function log access.
 
 ## A fetcher's redirect is dropped when anything revalidates during the action
 
@@ -2628,7 +2628,9 @@ failed but extra copies appeared", check all four before assuming a browser doub
 `isDisabled` bound to any-old-boolean is not a guard: name the submit state.
 
 **Applies to:** `packages/react/src/Button.tsx`, `packages/form/src/ValidatedForm.tsx`,
-`packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry`, `isReplayable`),
+`packages/auth/src/lib/supabase/client.ts` (`fetchWithRetry`, `isReplayable` — both
+since removed: database reads now use supabase-js's own retry, which never replays a
+write, and only storage reads go through `storageReadFetch`),
 `packages/jobs/src/inngest/functions/notifications/send-{email,slack}.ts`, and any
 `<Button type="submit">` — enforced by `no-unguarded-submit` (`@carbon/checks`).
 
@@ -2647,6 +2649,37 @@ tiebreak (a label, a sort order, then the id). Never rely on insertion order sur
 
 **Applies to:** any list ordered by `createdAt` whose rows are written together — RPCs,
 Kysely transactions, `insertInto(...).values([...])`, seeds.
+
+## `scripts/one-off/` is executed in production
+
+**Context:** A codemod that added `@mcp` tags to service files was saved as
+`scripts/one-off/tag-mcp-exposure.ts` — "a script run once".
+
+**Problem:** That folder is a registry, not a scratch area. `ci/src/migrations.ts` runs
+every `.ts` file in it against every workspace database on the next deploy and records it
+in `scriptRun`. A source-rewriting codemod there would have been executed by the deploy
+workflow.
+
+**Rule:** `scripts/one-off/` is only for one-time DATA migrations (see its README). A
+codemod is run locally and deleted, or lives in `scripts/` if it is worth keeping.
+
+**Applies to:** anything added under `scripts/one-off/`.
+
+## A lookup table keyed by source text must be a `Map`
+
+**Context:** The MCP generator decided "is this call a database write" with
+`WRITES[memberName]` over an object literal.
+
+**Problem:** `memberName` comes from the code being analysed, so `x.toString()` looked up
+`WRITES["toString"]`, found `Object.prototype.toString`, and counted as a write. Five read
+tools silently left the manifest until the digest diff showed them missing.
+
+**Rule:** When the key is arbitrary input (an identifier from parsed source, a column name,
+a user string), use a `Map`/`Set` or `Object.hasOwn`, never `obj[key]` truthiness. And diff
+the generated manifest against the previous one before trusting a generator change.
+
+**Applies to:** `scripts/lib/service-ast.ts`, and any analyser or dispatcher that indexes a
+record by a name it did not choose.
 
 ## A JS array bound for a jsonb column must be stringified on the Kysely path
 
@@ -2706,6 +2739,90 @@ awaited.
 drawer (`foo.tsx` + `foo.new.tsx`). A list loader reads the whole query string, so it passes
 `search: "all"`. A loader that reads the pathname, a cookie or a header must not use the
 helper.
+
+## A write that changes nothing still costs a queue message, an Inngest event and a function run
+
+**Context:** `/api/inngest` was the largest consumer on the ERP deployment (2026-10-01
+traces). The audit handler's log was mostly "Skipping: no meaningful diff for UPDATE on
+jobOperation".
+
+**Problem:** The scheduler's `persistChanges` issued one `UPDATE jobOperation` per operation on
+every regen, always setting `updatedAt`, and re-stamped `status = 'Ready'` on operations that
+were already Ready. `dispatch_event_batch()` queued every one of those updates, the drainer
+sent them to Inngest ten at a time, and the audit, search and embedding handlers then threw
+them away. Nothing was wrong in any single place; the waste was the sum.
+
+**Rule:** A bulk writer guards its UPDATE on the values it writes (`isDistinctFromAny` in
+`scheduling-engine.ts` compares in Postgres, so DATE and timestamptz are matched in their own
+type) rather than writing every row and bumping `updatedAt`. The trigger is the backstop: an
+UPDATE that changes only `updatedAt` / `updatedBy` / `embedding` is not queued for AUDIT,
+SEARCH or EMBEDDING (`20261001195204`). When forking `dispatch_event_batch()` into a new
+migration, fork the NEWEST definition; `packages/database/src/event-dispatch.test.ts` fails
+if the filter is lost.
+
+**Applies to:** `packages/planning/src/scheduling/`, any job or route that rewrites many rows
+of a table with event subscriptions, and every migration that redefines
+`dispatch_event_batch()`.
+
+## A cached generator's inputs are everything it executes, not everything it parses
+
+**Context:** The MCP manifest generator was made a cached Turborepo task with `inputs`
+listing the service, models and `types.ts` files it parses.
+
+**Problem:** It also EXECUTES every `*.models.ts` to convert the zod validators, so the
+schemas depend on whatever those files import: `sales.utils.ts`, `accounting.utils.ts`,
+`samplingStandards`, `@carbon/utils`. A change to one of those was a cache hit; turbo
+restored the old manifest (and the old committed digest) over the working tree, and the
+build bundled it. Uncached, this could not happen.
+
+**Rule:** Before caching a task, list what it loads and runs, not only what it reads on
+purpose, and pin that list with a test against the task's real imports. If the true set
+cannot be named, leave the task uncached.
+
+**Applies to:** `//#generate:mcp` in `turbo.json` (pinned by
+`apps/erp/test/mcp-manifest-cache-inputs.test.ts`), and any task given `inputs`.
+
+## A key looked up "anywhere in the payload" finds the wrong one
+
+**Context:** The API dispatcher decides whether an upsert creates or updates from the
+record's `id`. It looked for `id` at the top level and then inside any nested object, to
+support `{ job: { id } }`.
+
+**Problem:** `{ name: "x", customFields: { id: "z" } }` matched the nested `id`, so a
+create was stamped as an update and went down the service's update branch.
+
+**Rule:** Read a record's key only where the record can be: the body itself or the wrapper
+named by the service's payload parameter. A search that descends into arbitrary objects
+will eventually match user data.
+
+**Applies to:** `resolveUpsertOperation` / `recordField` in
+`apps/erp/app/routes/api+/v1+/lib/dispatch.server.ts`.
+
+## A git merge can move a doc comment onto a different function
+
+**Context:** Every API tool is declared by an `@mcp` line in its function's doc comment.
+Main inserted a new function directly under an existing doc block.
+
+**Problem:** The merge was clean, but the doc block (and its `@mcp` line) now sat above
+the NEW function, and the function it described had none. That function silently stopped
+being a tool. Nothing fails: an untagged export is simply not exposed.
+
+**Rule:** After merging into a branch that touches service files, regenerate the manifest
+and diff the tool NAMES against the pre-merge list. A name that disappears is a displaced
+tag until proven otherwise.
+
+**Applies to:** `apps/erp/app/modules/*/*.service.ts`, `pnpm run generate:mcp`.
+
+
+## A cast that silences excess-property errors hides failed writes
+
+**Context:** supabase-js 2.117 types reject keys a table does not have (`RejectExcessProperties`). The upgrade wrapped ~75 failing write payloads in `unchecked()` (a cast to `never`) to get typecheck green.
+
+**Problem:** About 30 of those were typed payloads (a zod validator spread into an insert/update) carrying fields the table lacks: `item.shelfLifeCalculateFromBom`, `ability.name`, `quote.notes`, `salesOrder.promisedDate`, `batchProperty.batchPropertyGroupId`, and more. PostgREST rejects any unknown column with PGRST204, so every such write failed whenever the field was present, and `itemValidator`'s always-present checkbox made the BoM explorer's item edit (`api+/item.$type.ts` → `updateItem`) fail on every save. The cast had removed the only warning. The 2.80 types never rejected excess keys, so these were latent all along.
+
+**Rule:** Never cast a typed payload past the table's type. When the compiler names an extra key, destructure it out at the write, where every caller is covered, and say where the value actually lives. `unchecked()` is only for a column or table chosen at runtime (`{ [field]: value }`, `.from(table)`). To list every extra key at once rather than one per error, probe with `Exclude<keyof Payload, keyof Database["public"]["Tables"][T]["Update"]>`.
+
+**Applies to:** every `{module}.service.ts` write, MES `services/*.service.ts`, `packages/utils/src/object.ts` (`unchecked`).
 
 ## Copying child rows onto a new record can make that record undeletable
 

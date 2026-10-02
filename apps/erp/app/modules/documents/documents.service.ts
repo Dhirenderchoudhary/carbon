@@ -23,6 +23,7 @@ import {
   parseStagedUploadPath
 } from "./documents.models";
 
+/** @mcp delete */
 export async function deleteDocument(
   client: SupabaseClient<Database>,
   id: string
@@ -54,6 +55,7 @@ export async function deleteDocumentLabel(
     .eq("label", label);
 }
 
+/** @mcp read */
 export async function getDocument(
   client: SupabaseClient<Database>,
   documentId: string
@@ -61,6 +63,7 @@ export async function getDocument(
   return client.from("documents").select("*").eq("id", documentId).single();
 }
 
+/** @mcp read */
 export async function getDocuments(
   client: SupabaseClient<Database>,
   companyId: string,
@@ -101,10 +104,15 @@ export async function getDocuments(
   return query;
 }
 
-export async function getDocumentExtensions(client: SupabaseClient<Database>) {
-  return client.from("documentExtensions").select("extension");
+/** @mcp read */
+export async function getDocumentExtensions(
+  client: SupabaseClient<Database>,
+  companyId: string
+) {
+  return client.rpc("get_document_extensions", { company_id: companyId });
 }
 
+/** @mcp read */
 export async function getDocumentLabels(
   client: SupabaseClient<Database>,
   userId: string
@@ -132,6 +140,7 @@ export async function insertDocumentLabel(
     .insert({ documentId: id, label, companyId, userId });
 }
 
+/** @mcp update */
 export async function moveDocumentToTrash(
   client: SupabaseClient<Database>,
   id: string,
@@ -147,6 +156,7 @@ export async function moveDocumentToTrash(
     .eq("id", id);
 }
 
+/** @mcp action */
 export async function restoreDocument(
   client: SupabaseClient<Database>,
   id: string,
@@ -167,6 +177,7 @@ type SourceDocumentData = {
   sourceDocumentId?: string;
 };
 
+/** @mcp upsert */
 export async function upsertDocument(
   client: SupabaseClient<Database>,
   document:
@@ -193,8 +204,8 @@ export async function upsertDocument(
     );
   }
 
-  // biome-ignore lint/correctness/noUnusedVariables: suppressed due to migration
-  const { extension, ...data } = document;
+  // Labels live in documentLabel, not on the document row.
+  const { extension: _extension, labels: _labels, ...data } = document;
   return client
     .from("document")
     .update(
@@ -220,6 +231,9 @@ export async function upsertDocument(
  * bytes to JPEG at the real path. The caller's flow is unchanged: PUT to the
  * signed URL, register the returned `path`, receive a `.jpg` document row.
  * Abandoned staged uploads are swept nightly.
+ * @mcp create — part of the documented MCP signed-URL upload flow
+ *       (packages/files/AGENTS.md): a non-browser caller mints a staged
+ *       upload URL, then insertUploadedDocument converts and lands it.
  */
 export async function createDocumentUploadUrl(
   client: SupabaseClient<Database>,
@@ -246,6 +260,9 @@ export async function createDocumentUploadUrl(
  * `document.size` column and the browser upload hooks. A path minted for a
  * HEIC name is a staged upload: the bytes are converted to JPEG and moved to
  * the real document path here, so the registered row is never HEIC.
+ * @mcp create — part of the documented MCP signed-URL upload flow
+ *       (packages/files/AGENTS.md): a non-browser caller mints a staged
+ *       upload URL, then insertUploadedDocument converts and lands it.
  */
 export async function insertUploadedDocument(
   client: SupabaseClient<Database>,
@@ -328,6 +345,7 @@ export async function insertUploadedDocument(
   });
 }
 
+/** @mcp update destructive */
 export async function updateDocumentFavorite(
   client: SupabaseClient<Database>,
   args: {
@@ -350,6 +368,7 @@ export async function updateDocumentFavorite(
   }
 }
 
+/** @mcp update destructive */
 export async function updateDocumentLabels(
   client: SupabaseClient<Database>,
   document: z.infer<typeof documentLabelsValidator> & {
@@ -377,6 +396,7 @@ export async function updateDocumentLabels(
     });
 }
 
+/** @mcp create */
 export async function insertDocumentExtraction(
   client: SupabaseClient<Database>,
   data: {
