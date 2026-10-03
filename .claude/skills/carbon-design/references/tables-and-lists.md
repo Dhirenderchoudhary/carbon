@@ -184,7 +184,9 @@ const WidgetsTable = memo(({ data, count }: Props) => {
 - **Filters:** per column `meta.filter` — `static` options (label may be the cell component,
   e.g. the Status pill), `fetcher` (endpoint), `custom`, `dateRange` (From / To pickers on a
   DATE column, `?filter=col:between:from,to`, either side open). Active filters show as chips
-  under the toolbar. `pluralHeader` for the chip label.
+  under the toolbar. `pluralHeader` for the chip label. The From / To pickers themselves are
+  `DateRangeFields` (`components/DateRangeFields.tsx`) — reuse it for a date range kept in
+  local state rather than the URL (e.g. the batch builder's Custom due filter).
 - **Sort:** header click menu; `?sort=`; `meta.sortBy` to redirect.
 - **Views:** `withSavedView` + `table="…"` on every top-level module list; views appear in the
   module sub-nav under the matching submodule (same `table` key).
