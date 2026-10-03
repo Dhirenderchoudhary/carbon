@@ -33,6 +33,8 @@ const DatePicker = (
     helperText?: string;
     closeOnSelect?: boolean;
     size?: "sm" | "md" | "lg";
+    /** Days to flag with a dot in the calendar, e.g. days that have work due. */
+    isDateMarked?: (date: CalendarDate) => boolean;
   }
 ) => {
   const state = useDatePickerState({
@@ -142,7 +144,7 @@ const DatePicker = (
           )}
         </HStack>
         <PopoverContent align="end" {...dialogProps}>
-          <Calendar {...calendarProps} />
+          <Calendar {...calendarProps} isDateMarked={props.isDateMarked} />
           <PopoverFooter>
             <Button onClick={() => state.setValue(null)} variant="secondary">
               Clear
