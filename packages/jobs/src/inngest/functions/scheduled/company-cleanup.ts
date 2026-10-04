@@ -17,7 +17,11 @@ import {
   type CompanyCandidate,
   selectInactiveCompanies
 } from "./inactive-companies";
-import { purgeCompany, removeCompanyLeftovers } from "./purge-company";
+import {
+  purgeCompany,
+  removeCompanyFiles,
+  removeCompanySecrets
+} from "./purge-company";
 
 // What the weekly cleanup and the manual purge share: which companies are
 // inactive, the check that one still is, and the delete itself.
@@ -207,11 +211,12 @@ export async function inactiveCompanyOwner(
 type CleanupTarget = Pick<CompanyCandidate, "id" | "name" | "companyGroupId">;
 
 /**
- * Delete each company with everything it owns: its rows, Vault secrets, storage
- * bucket and legacy files in one transaction, then its search index and audit
- * log tables. `stillDue` is asked inside that transaction, so a plan bought since
- * the list was built stops the delete. A company that cannot be deleted is
- * logged and skipped; the table catalog is read once for the whole list.
+ * Delete each company with everything it owns: its storage bucket and legacy
+ * files first, then its rows and Vault secrets in one transaction, then its
+ * search index and audit log tables. `stillDue` is asked before the files go and
+ * again inside the transaction, so a plan bought since the list was built stops
+ * the delete. A company that cannot be deleted is logged and skipped; the table
+ * catalog is read once for the whole list.
  */
 export async function deleteCompanies(
   companies: CleanupTarget[],
@@ -229,28 +234,30 @@ export async function deleteCompanies(
 
   for (const company of companies) {
     try {
+      // Asked before the files go (they cannot be brought back) and again in
+      // the transaction, which is what the delete itself rests on.
+      if (!(await stillDue(db, company.id))) {
+        logger.info("Company no longer due for deletion; kept", company);
+        results.push({ id: company.id, deleted: false });
+        continue;
+      }
+      // Outside the transaction: see `removeCompanyFiles`.
+      const failures = await removeCompanyFiles(serviceRole, company.id);
+      if (failures.length > 0) {
+        for (const failure of failures) {
+          logger.error("Failed to remove company {failurePart}", {
+            failurePart: failure.part,
+            ...company,
+            error: failure.error
+          });
+        }
+        results.push({ id: company.id, deleted: false });
+        continue;
+      }
       const purged = await db.transaction().execute(async (trx) => {
         if (!(await stillDue(trx, company.id))) return false;
         await purgeCompany(trx, catalog, company.id, { replica });
-        // Before the commit: when any of it fails the delete rolls back, and
-        // the company, still due, is retried on the next run.
-        const failures = await removeCompanyLeftovers(
-          trx,
-          serviceRole,
-          company.id
-        );
-        if (failures.length > 0) {
-          for (const failure of failures) {
-            logger.error("Failed to remove company {failurePart}", {
-              failurePart: failure.part,
-              ...company,
-              error: failure.error
-            });
-          }
-          throw new Error(
-            `Company cleanup incomplete: ${failures.map((f) => f.part).join(", ")}`
-          );
-        }
+        await removeCompanySecrets(trx, company.id);
         return true;
       });
       if (!purged) {
