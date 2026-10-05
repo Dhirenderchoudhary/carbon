@@ -11,7 +11,10 @@ import { useCallback, useEffect, useRef } from "react";
 
 const log = getLogger("react", "realtime-channel");
 
-const RECONNECT_AFTER_HIDDEN_MS = 10_000;
+// Browsers throttle a hidden tab's timers hard after five minutes, so the
+// socket's heartbeat can no longer vouch for it. Before that a joined channel
+// is live and still receiving, and reconnecting it only reloads the page.
+const RECONNECT_AFTER_HIDDEN_MS = 5 * 60_000;
 
 function formatSubscribeErr(err: unknown): string {
   if (err == null) return "No error details";
@@ -229,8 +232,8 @@ export const useRealtimeChannel = <TDeps extends any[]>(
     };
 
     // A tab that was hidden for long may hold a dead socket, so it reconnects.
-    // A glance at another tab does not: every reconnect reloads the page's
-    // data, since nothing is replayed.
+    // Time in another tab does not: every reconnect reloads the page's data,
+    // since nothing is replayed.
     let hiddenAt: number | null = null;
     const handleVisibilityChange = () => {
       if (document.visibilityState !== "visible") {

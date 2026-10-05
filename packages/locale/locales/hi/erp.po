@@ -2260,7 +2260,7 @@ msgstr "क्या आप सुनिश्चित हैं कि आप 
 msgid "Are you sure you want to cancel {0}? It will be closed and read-only until you reopen it."
 msgstr "क्या आप {0} को रद्द करना चाहते हैं? यह बंद हो जाएगी और पढ़ने के लिए केवल तब तक होगी जब तक आप इसे फिर से खोलेंगे।"
 
-#. placeholder {0}: routeData?.rfqSummary ?.rfqId!
+#. placeholder {0}: routeData?.rfqSummary ?.rfqId
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "क्या आप {0} को रद्द करना चाहते हैं? यह सभी संबंधित आपूर्तिकर्ता कोटेशन को भी रद्द कर देगा।"
 
@@ -2633,8 +2633,8 @@ msgstr "क्या आप वाकई इस पृष्ठ को छोड
 msgid "Are you sure you want to pass this checkpoint? The {0} phase still has unfinished tasks."
 msgstr "क्या आप सुनिश्चित हैं कि आप इस चेकपॉइंट को पास करना चाहते हैं? {0} चरण में अभी भी अधूरे कार्य हैं।"
 
-#. placeholder {0}: selectedPurchaseInvoice.invoiceId!
-#. placeholder {0}: selectedSalesInvoice.invoiceId!
+#. placeholder {0}: selectedPurchaseInvoice.invoiceId
+#. placeholder {0}: selectedSalesInvoice.invoiceId
 msgid "Are you sure you want to permanently delete {0}?"
 msgstr "क्या आप {0} को स्थायी रूप से हटाना चाहते हैं?"
 
@@ -17068,11 +17068,17 @@ msgstr "समाधान इंजीनियर"
 msgid "Some lines extracted from the PDF could not be automatically mapped to your inventory items. Review and map each line below."
 msgstr "PDF से निकाली गई कुछ पंक्तियों को आपकी इन्वेंटरी आइटम्स से स्वचालित रूप से मैप नहीं किया जा सका। नीचे प्रत्येक पंक्ति की समीक्षा करें और मैप करें।"
 
+msgid "Some quantities are negative."
+msgstr ""
+
 msgid "Some records won't come back. Type <0>{CONFIRM_WORD}</0> to continue."
 msgstr "कुछ रिकॉर्ड वापस नहीं आएंगे। जारी रखने के लिए <0>{CONFIRM_WORD}</0> टाइप करें।"
 
 msgid "Some Shifts"
 msgstr "कुछ शिफ्ट"
+
+msgid "Some stock has no storage unit."
+msgstr ""
 
 msgid "Something went wrong. Please try again."
 msgstr "कुछ गलत हो गया। कृपया पुनः प्रयास करें।"
@@ -19610,9 +19616,6 @@ msgstr "ट्रैक की गई सामग्री को पिकि�
 msgid "Tracking"
 msgstr "ट्रैकिंग"
 
-msgid "Tracking ID"
-msgstr "ट्रैकिंग आईडी"
-
 msgid "Tracking method"
 msgstr "ट्रैकिंग विधि"
 
@@ -19999,6 +20002,9 @@ msgstr "बिना शीर्षक की पंक्ति"
 
 msgid "Untitled step"
 msgstr "बिना शीर्षक वाला चरण"
+
+msgid "Untracked"
+msgstr ""
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "अप्रयुक्त सामग्री को वर्क सेंटर से गोदाम में वापस भेजा गया।"
@@ -21337,13 +21343,11 @@ msgstr "आप इस कुंजी को केवल एक बार द�
 
 #. placeholder {0}: leftoverQuantity === 1 ? "part" : "parts"
 #. placeholder {1}: job.quantity
-msgid ""
-"You completed {leftoverQuantity} more \n"
+msgid "You completed {leftoverQuantity} more \n"
 "                        {0} than the\n"
 "                        ordered quantity of {1}. What would you like\n"
 "                        to do with the extra parts?"
-msgstr ""
-"आप {leftoverQuantity} अधिक \n"
+msgstr "आप {leftoverQuantity} अधिक \n"
 "                        {0} को {1} की ऑर्डर की गई \n"
 "                        मात्रा से पूरा कर चुके हैं। आप अतिरिक्त पार्ट्स के साथ \n"
 "                        क्या करना चाहेंगे?"

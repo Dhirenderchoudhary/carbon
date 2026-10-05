@@ -129,6 +129,9 @@ export function useLiveList<Row extends { id: string }>(
 
 const EMPTY: never[] = [];
 
+// How long a reconnect waits for the rest of the lists' channels to rejoin.
+const REJOIN_WAIT_MS = 3_000;
+
 function Subscription({
   companyId,
   table,
@@ -344,10 +347,18 @@ export function LiveLists({
     };
   }, [companyId, userId, ready, lists, storage, queryClient, rowsOf, sync]);
 
+  // Every (list, table) pair has its own topic, and so its own channel.
+  const topicCount = lists.reduce(
+    (count, list) => count + 1 + (list.related?.length ?? 0),
+    0
+  );
   const resync = useRef<{
     lists: Set<AnyLiveList>;
-    pending: Promise<void> | null;
-  }>({ lists: new Set(), pending: null });
+    rejoined: Set<string>;
+    timer: ReturnType<typeof setTimeout> | null;
+    run: () => void;
+    pending: Promise<void>;
+  } | null>(null);
 
   const onChange = useCallback(
     async (
@@ -356,17 +367,37 @@ export function LiveLists({
       change: BroadcastChange | null
     ) => {
       // A reconnect or a bulk change: the log knows exactly what was missed.
-      // Every channel reconnects together, so the lists ask the log once.
       if (!change?.ids) {
-        resync.current.lists.add(list);
-        resync.current.pending ??= new Promise<void>((resolve) =>
-          setTimeout(resolve, 50)
-        ).then(() => {
-          const targets = [...resync.current.lists];
-          resync.current = { lists: new Set(), pending: null };
-          return sync(targets);
-        });
-        await resync.current.pending;
+        if (!resync.current) {
+          const { promise, resolve: run } = Promise.withResolvers<void>();
+          const pending = promise.then(() => {
+            const batch = resync.current;
+            resync.current = null;
+            if (!batch) return;
+            if (batch.timer) clearTimeout(batch.timer);
+            return sync([...batch.lists]);
+          });
+          resync.current = {
+            lists: new Set(),
+            rejoined: new Set(),
+            timer: null,
+            run,
+            pending
+          };
+        }
+        const batch = resync.current;
+        batch.lists.add(list);
+        if (change) {
+          batch.timer ??= setTimeout(batch.run, 50);
+        } else {
+          // The channels rejoin one after another, a round trip each. Asking
+          // once, after the last of them, covers what all of them missed; a
+          // channel that never rejoins does not hold the others up for long.
+          batch.rejoined.add(`${list.name}:${table}`);
+          if (batch.rejoined.size >= topicCount) batch.run();
+          else batch.timer ??= setTimeout(batch.run, REJOIN_WAIT_MS);
+        }
+        await batch.pending;
         return;
       }
       const { ids } = change;
@@ -381,7 +412,7 @@ export function LiveLists({
         )
       );
     },
-    [sync, readIds, commit, inTurn]
+    [sync, readIds, commit, inTurn, topicCount]
   );
 
   if (!ready) return null;

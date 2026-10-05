@@ -2260,7 +2260,7 @@ msgstr "Tem certeza de que deseja ativar este instrumento de medição?."
 msgid "Are you sure you want to cancel {0}? It will be closed and read-only until you reopen it."
 msgstr "Tem certeza de que deseja cancelar {0}? Será fechado e somente leitura até que você o reabra."
 
-#. placeholder {0}: routeData?.rfqSummary ?.rfqId!
+#. placeholder {0}: routeData?.rfqSummary ?.rfqId
 msgid "Are you sure you want to cancel {0}? This will also cancel all related supplier quotes."
 msgstr "Tem a certeza de que deseja cancelar {0}? Isto também cancelará todas as cotações de fornecedores relacionadas."
 
@@ -2633,8 +2633,8 @@ msgstr "Tem certeza que deseja sair desta página?"
 msgid "Are you sure you want to pass this checkpoint? The {0} phase still has unfinished tasks."
 msgstr "Tem a certeza de que deseja passar neste checkpoint? A fase {0} ainda tem tarefas inacabadas."
 
-#. placeholder {0}: selectedPurchaseInvoice.invoiceId!
-#. placeholder {0}: selectedSalesInvoice.invoiceId!
+#. placeholder {0}: selectedPurchaseInvoice.invoiceId
+#. placeholder {0}: selectedSalesInvoice.invoiceId
 msgid "Are you sure you want to permanently delete {0}?"
 msgstr "Tem certeza de que deseja excluir permanentemente {0}?"
 
@@ -17068,11 +17068,17 @@ msgstr "Engenheiro de Soluções"
 msgid "Some lines extracted from the PDF could not be automatically mapped to your inventory items. Review and map each line below."
 msgstr "Algumas linhas extraídas do PDF não puderam ser mapeadas automaticamente para seus itens de inventário. Revise e mapeie cada linha abaixo."
 
+msgid "Some quantities are negative."
+msgstr ""
+
 msgid "Some records won't come back. Type <0>{CONFIRM_WORD}</0> to continue."
 msgstr "Alguns registros não voltarão. Digite <0>{CONFIRM_WORD}</0> para continuar."
 
 msgid "Some Shifts"
 msgstr "Alguns Turnos"
+
+msgid "Some stock has no storage unit."
+msgstr ""
 
 msgid "Something went wrong. Please try again."
 msgstr "Algo deu errado. Tente novamente."
@@ -19610,9 +19616,6 @@ msgstr "Material rastreado é pré-selecionado por ordem de separação (FEFO), 
 msgid "Tracking"
 msgstr "Rastreamento"
 
-msgid "Tracking ID"
-msgstr "ID de Rastreamento"
-
 msgid "Tracking method"
 msgstr "Método de rastreamento"
 
@@ -19999,6 +20002,9 @@ msgstr "Linha sem título"
 
 msgid "Untitled step"
 msgstr "Etapa sem título"
+
+msgid "Untracked"
+msgstr ""
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "Material coletado não utilizado devolvido do centro de trabalho para o armazém."
@@ -21337,8 +21343,7 @@ msgstr "Você só pode ver esta chave uma vez. Guarde-a com segurança."
 
 #. placeholder {0}: leftoverQuantity === 1 ? "part" : "parts"
 #. placeholder {1}: job.quantity
-msgid ""
-"You completed {leftoverQuantity} more \n"
+msgid "You completed {leftoverQuantity} more \n"
 "                        {0} than the\n"
 "                        ordered quantity of {1}. What would you like\n"
 "                        to do with the extra parts?"
