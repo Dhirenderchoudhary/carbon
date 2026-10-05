@@ -23,13 +23,22 @@ import {
 import { noDbClientInService } from "./conformance/no-db-client-in-service";
 import { noDefaultOnEffects } from "./conformance/no-default-on-effects";
 import { noDerivedPercentColumn } from "./conformance/no-derived-percent-column";
+import {
+  findDuplicatedAppFiles,
+  NO_DUPLICATED_APP_FILE,
+  SHARED_APP_DIRS
+} from "./conformance/no-duplicated-app-file";
 import { noInlineFractionDigits } from "./conformance/no-inline-fraction-digits";
 import { noIntegrationIdBranching } from "./conformance/no-integration-id-branching";
+import { noInterpolatedErrorLog } from "./conformance/no-interpolated-error-log";
 import { noLegacyRls } from "./conformance/no-legacy-rls";
 import { noLocalTimezone } from "./conformance/no-local-timezone";
 import { noMissingAuditColumn } from "./conformance/no-missing-audit-column";
+import { noNoopOpenChange } from "./conformance/no-noop-open-change";
 import { noNumericPrecision } from "./conformance/no-numeric-precision";
+import { noPostgresChanges } from "./conformance/no-postgres-changes";
 import { noRawForwardedHeaders } from "./conformance/no-raw-forwarded-headers";
+import { noRawRedirect } from "./conformance/no-raw-redirect";
 import { noRawRounding } from "./conformance/no-raw-rounding";
 import { noRequiredColumnWithoutDefault } from "./conformance/no-required-column-without-default";
 import { noUnguardedSubmit } from "./conformance/no-unguarded-submit";
@@ -37,9 +46,13 @@ import { noUnroundedTrackedQuantity } from "./conformance/no-unrounded-tracked-q
 import { noUnscopedKyselyWrite } from "./conformance/no-unscoped-kysely-write";
 import { noViewWithoutInvoker } from "./conformance/no-view-without-invoker";
 import { noZeroConcurrency } from "./conformance/no-zero-concurrency";
+import { serverFnAuthorizesCaller } from "./conformance/server-fn-authorizes-caller";
 import { spdxLicenseHeader } from "./conformance/spdx-license-header";
 import { loadDbTableColumns } from "./sources/db-columns";
-import { loadEdgeFunctions } from "./sources/edge-functions";
+import {
+  loadEdgeFunctions,
+  loadServerFunctions
+} from "./sources/edge-functions";
 import { loadLicenseFiles } from "./sources/license-files";
 import { loadSqlFiles, migrationsDir, repoRoot } from "./sources/migrations";
 import { loadModules, modulesDir } from "./sources/modules";
@@ -73,13 +86,18 @@ export const TS_CHECKS: ConformanceCheck[] = [
   noUnroundedTrackedQuantity,
   noIntegrationIdBranching,
   noUnscopedKyselyWrite,
-  noUnguardedSubmit
+  noUnguardedSubmit,
+  noNoopOpenChange,
+  noPostgresChanges
 ];
 
 /** Checks that run once per edge function, over all of its .ts files. */
 export const EDGE_FUNCTION_CHECKS: ConformanceCheck[] = [
   edgeFunctionAuthorizesCaller
 ];
+
+/** Checks that run once per `@carbon/server-functions` entry point. */
+export const SERVER_FN_CHECKS: ConformanceCheck[] = [serverFnAuthorizesCaller];
 
 export const STRUCTURE_CHECKS: StructureCheck[] = [moduleShape];
 
@@ -149,13 +167,19 @@ export function collectFindings(root: string = repoRoot()): Finding[] {
       noMissingAuditColumn(loadDbTableColumns(root))
     ]),
     ...scanAll(loadTypescriptFiles(root, REQUEST_HANDLING_ROOTS), [
-      noRawForwardedHeaders
+      noRawForwardedHeaders,
+      noInterpolatedErrorLog,
+      noRawRedirect
     ]),
     ...scanAll(loadTypescriptFiles(root, ROUTE_ROOTS), [
       indexRedirectBeforeLoaders
     ]),
     ...scanAll(loadEdgeFunctions(root), EDGE_FUNCTION_CHECKS),
-    ...scanAll(loadLicenseFiles(root), [spdxLicenseHeader])
+    ...scanAll(loadServerFunctions(root), SERVER_FN_CHECKS),
+    ...scanAll(loadLicenseFiles(root), [spdxLicenseHeader]),
+    ...findDuplicatedAppFiles(loadTypescriptFiles(root, SHARED_APP_DIRS)).map(
+      (violation) => ({ checkId: NO_DUPLICATED_APP_FILE, violation })
+    )
   ];
 }
 

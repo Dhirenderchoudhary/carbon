@@ -2,7 +2,7 @@
 // Carbon (github.com/crbnos/carbon). Modified or adapted versions of this file,
 // including ports, remain AGPLv3; serving them over a network requires releasing their source.
 
-import { box, intro, log, outro, progress, tasks } from "@clack/prompts";
+import { box, intro, log, outro } from "@clack/prompts";
 import { config as loadDotenv } from "dotenv";
 import { type ExecaChildProcess, execa } from "execa";
 import { join } from "pathe";
@@ -35,6 +35,7 @@ import {
   listContainers,
   pullStack,
   restartServices,
+  type StackSize,
   tailServiceLogs
 } from "../services/compose.js";
 import {
@@ -44,6 +45,7 @@ import {
   ensureSmokeTestUser,
   syncAuthz,
   waitForPostgres,
+  waitForServiceSchemas,
   waitForStorageReady,
   waitForTcp
 } from "../services/migrations.js";
@@ -59,7 +61,7 @@ import {
   syncHostsFile,
   waitForProxyReady
 } from "../services/portless.js";
-import { summaryLines } from "../ui.js";
+import { progress, summaryLines, tasks } from "../ui.js";
 import {
   ensureSlugAvailable,
   getSlot,
@@ -102,12 +104,8 @@ type UpOpts = {
    * hosts where the Supabase dashboard and email testing UI aren't needed.
    */
   minimal?: boolean;
-  /**
-   * Boot a local headless Chromium container (compose `chrome` profile) and
-   * flag the model-thumbnail job to render locally against it, so the thumbnail
-   * flow is testable in dev. Off by default (the job skips on local otherwise).
-   */
-  thumbnails?: boolean;
+  /** Also start Studio, Postgres-Meta and the edge runtime. */
+  full?: boolean;
 };
 
 type Ctx = {
@@ -126,7 +124,7 @@ export async function up(opts: UpOpts = {}) {
   const shouldRegen = shouldMigrate && (opts.regen ?? true);
   const shouldBorrow = opts.borrow === true;
   const minimal = opts.minimal ?? false;
-  const thumbnails = opts.thumbnails === true;
+  const size = { minimal, full: !minimal && opts.full === true };
   // Services-only mode: boot compose stack + portless aliases (api/studio/
   // mail/inngest URLs still useful), skip spawnApps + auto-`down` on Ctrl+C.
   // Triggered by --no-apps OR by deselecting everything in the picker.
@@ -169,16 +167,6 @@ export async function up(opts: UpOpts = {}) {
     await ensureProxyPrivileges();
   } else {
     log.info("portless disabled (CARBON_PORTLESS=0) — using localhost URLs");
-  }
-
-  // The chrome container reaches the ERP through the portless proxy (the raw
-  // dev port only binds 127.0.0.1). Without portless there's no reachable ERP
-  // URL, so local thumbnail rendering can't work — don't boot chrome for nothing.
-  const chromeEnabled = thumbnails && portless;
-  if (thumbnails && !portless) {
-    log.warn(
-      "--thumbnails needs portless (chrome reaches the ERP via the proxy) — ignoring"
-    );
   }
 
   const allApps = opts.all === true;
@@ -234,14 +222,13 @@ export async function up(opts: UpOpts = {}) {
     slug,
     portless,
     selectedApps.includes("assembler"),
-    chromeEnabled,
     borrowedEntry
   );
   if (borrowedEntry) {
     await waitForServices(ctx);
   } else {
-    await pullImages(ctx, { force: opts.pull === true, minimal });
-    await bootDockerStack(ctx, { minimal, chrome: chromeEnabled });
+    await pullImages(ctx, { force: opts.pull === true, size });
+    await bootDockerStack(ctx, size);
     await waitForServices(ctx);
   }
   await runDatabaseMigrations(ctx, { shouldMigrate, shouldRegen });
@@ -269,7 +256,8 @@ export async function up(opts: UpOpts = {}) {
   const summary = summaryLines(
     ctx.ports,
     selectedApps,
-    portless ? ctx.branchPrefix : undefined
+    portless ? ctx.branchPrefix : undefined,
+    size.full
   );
   // `box()` derives its padding from `process.stdout.columns`; some
   // non-interactive terminals (e.g. Conductor's run pane) report a width of 0,
@@ -373,7 +361,6 @@ async function provisionSlot(
   slug: string,
   portless: boolean,
   includeAssembler: boolean,
-  thumbnails: boolean,
   borrowedEntry?: { ports: PortMap; redisDb: number; jwt: JwtCreds }
 ): Promise<Ctx> {
   let ctx!: Ctx;
@@ -419,7 +406,6 @@ async function provisionSlot(
             portless,
             branchPrefix,
             includeAssembler,
-            thumbnails,
             ...slot
           })
         );
@@ -456,27 +442,22 @@ async function provisionSlot(
 // Pull images outside `tasks()` so we can use clack's progress bar (one
 // tick per `<service> Pulled` event). Spinner subtitle inside `tasks()`
 // can't render a bar, only a single line of text.
-async function pullImages(
-  ctx: Ctx,
-  opts: { force: boolean; minimal: boolean }
-) {
+async function pullImages(ctx: Ctx, opts: { force: boolean; size: StackSize }) {
   if (!opts.force) {
-    const refs = await devComposeImageRefs(ctx.root, ctx.slug, {
-      minimal: opts.minimal
-    });
+    const refs = await devComposeImageRefs(ctx.root, ctx.slug, opts.size);
     if (refs && (await allImagesPresentLocally(refs))) {
       log.info("docker images already present — skipping compose pull");
       return;
     }
   }
 
-  const services = await listComposeServices(ctx.root, ctx.slug, {
-    minimal: opts.minimal
-  });
+  const services = await listComposeServices(ctx.root, ctx.slug, opts.size);
   const max = Math.max(services.length, 1);
   const bar = progress({ style: "heavy", max });
   bar.start(
-    opts.minimal ? "Pulling docker images (minimal)" : "Pulling docker images"
+    opts.size.minimal
+      ? "Pulling docker images (minimal)"
+      : "Pulling docker images"
   );
   try {
     await pullStack(
@@ -486,7 +467,7 @@ async function pullImages(
         bar.message(line.slice(0, 80));
         if (/ Pulled$/.test(line)) bar.advance(1);
       },
-      { minimal: opts.minimal }
+      opts.size
     );
     bar.stop("images up to date");
   } catch (err) {
@@ -495,23 +476,17 @@ async function pullImages(
   }
 }
 
-async function bootDockerStack(
-  ctx: Ctx,
-  opts: { minimal: boolean; chrome?: boolean }
-) {
-  const serviceCount = (opts.minimal ? 8 : 11) + (opts.chrome ? 1 : 0);
-  const label = opts.minimal
-    ? "Boot docker compose stack (minimal — no studio/meta/inbucket)"
-    : "Boot docker compose stack";
+async function bootDockerStack(ctx: Ctx, size: StackSize) {
+  const label = size.minimal
+    ? "Boot docker compose stack (minimal — no inbucket)"
+    : size.full
+      ? "Boot docker compose stack (full — with studio/meta/edge-runtime/imgproxy)"
+      : "Boot docker compose stack";
   await tasks([
     {
       title: label,
-      task: async (msg) => {
-        msg(`starting ${serviceCount} services`);
-        await bootStack(ctx.root, ctx.slug, {
-          minimal: opts.minimal,
-          chrome: opts.chrome
-        });
+      task: async () => {
+        await bootStack(ctx.root, ctx.slug, size);
         return "containers up";
       }
     }
@@ -552,7 +527,9 @@ async function waitForServices(ctx: Ctx) {
       },
       onTimeout: () => dumpStorageDiagnostics(ctx)
     });
-    bar.advance(1, "storage.buckets ready");
+    bar.message("waiting for auth / realtime schemas");
+    await waitForServiceSchemas(ctx.ports.PORT_DB);
+    bar.advance(1, "service schemas ready");
     bar.stop("all services responding");
   } catch (err) {
     bar.stop("services not ready");

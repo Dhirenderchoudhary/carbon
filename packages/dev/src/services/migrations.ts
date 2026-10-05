@@ -283,6 +283,9 @@ async function repairStaleMigrations(
  * stack can't abort the run, which means a missing `storage.objects` would let
  * the restore finish "successfully" with no buckets seeded. Both services must
  * have booted.
+ *
+ * Realtime is the third: `realtime.messages` is built by the Realtime service,
+ * and Carbon's migrations put policies on it.
  */
 export async function serviceSchemasReady(dbPort: number): Promise<boolean> {
   return withClient(dbPort, async (c) => {
@@ -290,6 +293,7 @@ export async function serviceSchemasReady(dbPort: number): Promise<boolean> {
       `SELECT to_regclass('auth.users') IS NOT NULL
                 AND to_regclass('storage.objects') IS NOT NULL
                 AND to_regclass('storage.buckets') IS NOT NULL
+                AND to_regclass('realtime.messages') IS NOT NULL
                 AND EXISTS (
                   SELECT 1 FROM information_schema.columns
                   WHERE table_schema = 'auth' AND table_name = 'users'
@@ -300,11 +304,24 @@ export async function serviceSchemasReady(dbPort: number): Promise<boolean> {
   });
 }
 
-// The singleton "config" row is what SECURITY DEFINER functions
-// (wake_event_queue and the other pg_net callers) read to POST to edge
-// functions via pg_net. Without it those pushes silently no-op, so the
-// event-queue wake never fires in dev — and since webhooks now ride the event
-// system, they don't either. `apiUrl` must be the in-network Kong URL — pg_net
+// Carbon's migrations write into schemas GoTrue, Storage and Realtime build on
+// their first boot, so a fresh volume can't be migrated until all three have.
+export async function waitForServiceSchemas(port: number, timeoutMs = 90_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (await serviceSchemasReady(port).catch(() => false)) return;
+    await sleep(1000);
+  }
+  throw new Error(
+    `auth / storage / realtime schemas not ready within ${timeoutMs}ms — check the gotrue, storage and realtime containers`
+  );
+}
+
+// The singleton "config" row (the API URL and anon key some database
+// functions read), and the Vault `inngest_event_url` that
+// util.send_inngest_event posts database events to. Without the URL the
+// event-queue wake never fires in dev — and since webhooks ride the event
+// system, they don't either. Both URLs are in-network (Kong, Inngest): pg_net
 // runs inside the postgres container, which can't reach host ports.
 export async function ensureConfigRow(
   dbPort: number,
@@ -317,6 +334,12 @@ export async function ensureConfigRow(
        ON CONFLICT ("id") DO UPDATE
          SET "apiUrl" = EXCLUDED."apiUrl", "anonKey" = EXCLUDED."anonKey"`,
       [anonKey]
+    )
+  );
+  // Postgres sends its Inngest events to the dev server on the compose network.
+  await withClient(dbPort, (c) =>
+    c.query(
+      `SELECT public.set_inngest_event_url('http://inngest:8288/e/NO_EVENT_KEY_SET')`
     )
   );
 }

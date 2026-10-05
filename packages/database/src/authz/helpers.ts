@@ -21,7 +21,9 @@ import type { Client } from "pg";
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const HELPERS_DIR = path.join(HERE, "helpers");
 export const EVENT_SYSTEM_DIR = path.join(HERE, "../event-system/functions");
-export const HELPER_DIRS = [HELPERS_DIR, EVENT_SYSTEM_DIR];
+/** The functions attachments.ts attaches to tables: interceptors and statement handlers. */
+export const EVENT_HANDLERS_DIR = path.join(HERE, "../event-system/handlers");
+export const HELPER_DIRS = [HELPERS_DIR, EVENT_SYSTEM_DIR, EVENT_HANDLERS_DIR];
 
 /** `schema` defaults to `public`. */
 export type Helper = { name: string; sql: string; schema?: string };
@@ -36,16 +38,21 @@ export const helperKey = (helper: Helper) =>
 
 /**
  * Helpers that were managed here and have been dropped from the database (by a later
- * migration), each with the one generated migration that shipped its last definition.
+ * migration), keyed like `helperKey`, each with the one generated migration that shipped
+ * its last definition.
  * `unshipped()` accepts a retired definition in that file only; in any other generated
  * migration it is reported, so no later file can bring the helper back. (`has_role` was
  * retired too, but no generated migration ever defined it.)
  */
 const SECURITY_FIXES = "20260927172338_authz-security-fixes.sql";
+const EVENT_SYSTEM_TAKEOVER = "20261002114954_event-system-functions.sql";
 export const RETIRED_HELPERS: Readonly<Record<string, string>> = {
   get_companies_with_permission: SECURITY_FIXES,
   get_permission_companies: SECURITY_FIXES,
-  has_company_permission: SECURITY_FIXES
+  has_company_permission: SECURITY_FIXES,
+  "util.anon_key": EVENT_SYSTEM_TAKEOVER,
+  "util.invoke_edge_function": EVENT_SYSTEM_TAKEOVER,
+  "util.process_embeddings": EVENT_SYSTEM_TAKEOVER
 };
 
 // biome-ignore lint/suspicious/noExplicitAny: libpg-query's AST is untyped JSON
