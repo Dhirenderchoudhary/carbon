@@ -14923,6 +14923,10 @@ msgstr "Yayınlanan revizyon"
 msgid "Released revision is locked"
 msgstr "Yayınlanan revizyon kilitlidir"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "Sorunlarla serbest bırakıldı: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "Partiyi serbest bırakmak iş emirlerini serbest bırakır ve her birinin atölye için hazır olması gerekir."
 

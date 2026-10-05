@@ -6,6 +6,7 @@ import { getCarbonServiceRole } from "@carbon/auth/client.server";
 import type { Database } from "@carbon/database";
 import type { Kysely, KyselyDatabase } from "@carbon/database/client";
 import { ASSEMBLER_SERVICE_URL } from "@carbon/env";
+import { getLogger } from "@carbon/logger";
 import { serverFns } from "@carbon/server-functions";
 import { datetime, getErrorMessage } from "@carbon/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -16,6 +17,8 @@ import {
   updateJobStatus
 } from "./production.service";
 import { jobReleaseProblems } from "./ui/Jobs/job-release-logic";
+
+const logger = getLogger("erp", "production");
 
 // The geometry (assembler) service backs model conversion and motion planning.
 // When it's unreachable those actions can't run, so loaders probe its health and
@@ -75,6 +78,9 @@ export async function isAssemblerServiceHealthy(): Promise<boolean> {
 // supplier's first "new" PO is reused for the jobs after it, so a batch puts
 // each supplier's outside operations from every member job on one PO. The map
 // is returned with those POs filled in, for a caller releasing job by job.
+// `releasedJobIds` are the jobs that ARE Ready when this returns — on an error
+// after the status flip (purchase orders) the job is released, and the caller
+// must still schedule it and say so.
 // Validation (getJobReleaseReadiness) is the caller's, BEFORE this runs.
 export async function releaseJobs({
   client,
@@ -93,9 +99,16 @@ export async function releaseJobs({
 }): Promise<{
   error: string | null;
   purchaseOrdersBySupplierId: Record<string, string>;
+  releasedJobIds: string[];
 }> {
   const serviceRole = getCarbonServiceRole();
   const purchaseOrders = { ...purchaseOrdersBySupplierId };
+  const releasedJobIds: string[] = [];
+  const fail = (error: string) => ({
+    error,
+    purchaseOrdersBySupplierId: purchaseOrders,
+    releasedJobIds
+  });
 
   for (const id of jobIds) {
     const recalc = await recalculateJobRequirements(serviceRole, db, {
@@ -103,27 +116,39 @@ export async function releaseJobs({
       companyId,
       userId
     });
-    if (recalc.error) {
-      return {
-        error: `Failed to recalculate job ${id}`,
-        purchaseOrdersBySupplierId: purchaseOrders
-      };
+    if (recalc.error) return fail(`Failed to recalculate job ${id}`);
+
+    // A failed plan never blocks a release: the scheduled MRP run (every 3
+    // hours) and Material Planning's Recalculate both repair it.
+    const mrp = await runMRP(serviceRole, db, {
+      type: "job",
+      id,
+      companyId,
+      userId
+    });
+    if (mrp.error) {
+      logger.error("MRP failed during job release", {
+        companyId,
+        jobId: id,
+        error: mrp.error
+      });
     }
 
-    await runMRP(serviceRole, db, { type: "job", id, companyId, userId });
-
+    // Only a job still waiting for release flips: the caller checked the
+    // status before the recalculation and MRP above, and someone may have
+    // cancelled or released it since.
     const update = await updateJobStatus(client, {
       id,
       companyId,
       status: "Ready",
-      updatedBy: userId
+      updatedBy: userId,
+      fromStatuses: ["Draft", "Planned"]
     });
-    if (update.error) {
-      return {
-        error: `Failed to release job ${id}`,
-        purchaseOrdersBySupplierId: purchaseOrders
-      };
+    if (update.error) return fail(`Failed to release job ${id}`);
+    if (!update.updated) {
+      return fail(`Job ${id} is no longer Draft or Planned`);
     }
+    releasedJobIds.push(id);
 
     const purchaseOrder = await serverFns
       .system({ db, companyId, userId })
@@ -133,26 +158,41 @@ export async function releaseJobs({
         purchaseOrdersBySupplierId: purchaseOrders
       });
     if (purchaseOrder.error) {
-      return {
-        error: getErrorMessage(
+      return fail(
+        `Job ${id} is released, but its purchase orders could not be created: ${getErrorMessage(
           purchaseOrder.error,
-          `Failed to create purchase orders for job ${id}`
-        ),
-        purchaseOrdersBySupplierId: purchaseOrders
-      };
+          "unknown error"
+        )}`
+      );
     }
     Object.assign(
       purchaseOrders,
       purchaseOrder.data?.purchaseOrderIdsBySupplierId ?? {}
     );
 
-    await client
+    // The date feeds the completion-time KPI and nothing else writes it, so a
+    // silent failure would be permanent.
+    const stamped = await client
       .from("job")
       .update({ releasedDate: datetime.timestamp() })
       .eq("id", id)
       .eq("companyId", companyId);
+    if (stamped.error) {
+      logger.error("Failed to stamp the release date", {
+        companyId,
+        jobId: id,
+        error: stamped.error
+      });
+      return fail(
+        `Job ${id} is released, but its release date could not be saved`
+      );
+    }
   }
-  return { error: null, purchaseOrdersBySupplierId: purchaseOrders };
+  return {
+    error: null,
+    purchaseOrdersBySupplierId: purchaseOrders,
+    releasedJobIds
+  };
 }
 
 // Releasing a batch releases its Draft/Planned member jobs through the same

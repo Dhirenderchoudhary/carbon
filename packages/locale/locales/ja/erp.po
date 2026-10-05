@@ -14923,6 +14923,10 @@ msgstr "リリースされたリビジョン"
 msgid "Released revision is locked"
 msgstr "発行済みリビジョンはロック中です"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "リリース済（警告あり）: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "バッチをリリースするとその製造指図がリリースされ、それぞれが製造現場に対応可能である必要があります。"
 

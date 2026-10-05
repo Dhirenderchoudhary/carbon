@@ -14923,6 +14923,10 @@ msgstr "Freigegebene Revision"
 msgid "Released revision is locked"
 msgstr "Freigegebene Revision ist gesperrt"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "Freigegeben mit Problemen: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "Die Freigabe des Loses gibt seine Fertigungsaufträge frei, und jeder muss für die Werkstatt bereit sein."
 

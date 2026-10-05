@@ -14923,6 +14923,10 @@ msgstr "릴리스된 리비전"
 msgid "Released revision is locked"
 msgstr "릴리스된 리비전은 잠김입니다."
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "릴리스됨 (문제 있음): {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "배치를 릴리스하면 포함된 작업 지시들도 릴리스되고, 각각은 현장에 준비되어야 합니다."
 

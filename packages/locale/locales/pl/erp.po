@@ -14923,6 +14923,10 @@ msgstr "Zwolniona rewizja"
 msgid "Released revision is locked"
 msgstr "Zwolniona rewizja jest zablokowana"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "Zwolniono z problemami: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "Zwolnienie partii produkcyjnej zwalnia jej zlecenia produkcyjne, a każde musi być gotowe na halę produkcyjną."
 

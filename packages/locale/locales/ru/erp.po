@@ -14923,6 +14923,10 @@ msgstr "Выпущенная ревизия"
 msgid "Released revision is locked"
 msgstr "Выпущенная ревизия заблокирована"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "Запущено с проблемами: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "Запуск серии запускает её производственные заказы, и каждый должен быть готов к цеху."
 

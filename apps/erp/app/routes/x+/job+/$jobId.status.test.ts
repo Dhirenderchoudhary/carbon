@@ -88,7 +88,11 @@ vi.mock("~/modules/production/production.server", async () => {
           updatedBy: userId
         });
       }
-      return { error: null, purchaseOrdersBySupplierId: {} };
+      return {
+        error: null,
+        purchaseOrdersBySupplierId: {},
+        releasedJobIds: jobIds
+      };
     })
   };
 });

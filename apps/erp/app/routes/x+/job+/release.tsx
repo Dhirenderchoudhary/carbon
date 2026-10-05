@@ -92,6 +92,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
   let released = 0;
   const failed: { readableId: string; message: string }[] = [];
+  // Released, with something left to fix on the job (its purchase orders).
+  const warnings: { readableId: string; message: string }[] = [];
   const locationIds = new Set<string>();
   for (const job of releasable) {
     const ready = readinessByJobId.get(job.id);
@@ -129,8 +131,15 @@ export async function action({ request }: ActionFunctionArgs) {
         jobId: job.id,
         error: result.error
       });
-      failed.push({ readableId: job.jobId, message: result.error });
+    }
+    // The job is Ready when its id came back released, error or not; a job
+    // that is Ready must be scheduled and counted, whatever failed after.
+    if (!result.releasedJobIds.includes(job.id)) {
+      failed.push({ readableId: job.jobId, message: result.error ?? "" });
       continue;
+    }
+    if (result.error) {
+      warnings.push({ readableId: job.jobId, message: result.error });
     }
 
     locationIds.add(job.locationId);
@@ -159,5 +168,5 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   }
 
-  return { success: true as const, released, failed, scheduled };
+  return { success: true as const, released, warnings, failed, scheduled };
 }

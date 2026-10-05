@@ -14923,6 +14923,10 @@ msgstr "Revisione rilasciata"
 msgid "Released revision is locked"
 msgstr "La revisione rilasciata è bloccata"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "Rilasciato con problemi: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "Rilasciare il lotto di produzione rilascia i suoi ordini di produzione, e ognuno deve essere pronto per l'officina."
 

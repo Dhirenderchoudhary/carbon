@@ -703,6 +703,13 @@ const JobsTable = memo((props: JobsTableProps) => {
             : t`Released ${result.released} jobs`
         );
       }
+      if (result.warnings.length) {
+        toast.error(
+          t`Released with problems: ${result.warnings
+            .map((w) => `${w.readableId} (${w.message})`)
+            .join(", ")}`
+        );
+      }
       if (result.failed.length) {
         toast.error(
           t`Could not release ${result.failed.length}: ${result.failed

@@ -14923,6 +14923,10 @@ msgstr "जारी रिवीजन"
 msgid "Released revision is locked"
 msgstr "जारी रिवीजन लॉक है"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "समस्याओं के साथ जारी: {0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "बैच जारी करने से इसकी जॉब्स जारी हो जाती हैं, और प्रत्येक को शॉप फ्लोर के लिए तैयार होना चाहिए।"
 
@@ -18770,7 +18774,7 @@ msgid "The SAML metadata URL published by your identity provider"
 msgstr "आपके आइडेंटिटी प्रदाता द्वारा प्रकाशित SAML मेटाडेटा URL"
 
 msgid "The schedule could not be updated after the release"
-msgstr "रिलीज के बाद शेड्यूल को अपडेट नहीं किया जा सका"
+msgstr "जारी करने के बाद शेड्यूल को अपडेट नहीं किया जा सका"
 
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "यह शेड्यूल जिसका उपयोग इस संपत्ति की लागत को इसके उपयोगी जीवन (सीधी लाइन मूल्यह्रास, ह्रासमान शेष, उत्पादन की इकाई) पर फैलाने के लिए किया जाता है।"

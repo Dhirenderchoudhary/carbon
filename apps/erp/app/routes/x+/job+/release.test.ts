@@ -107,9 +107,10 @@ const run = (jobIds: string[]) =>
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(releaseJobs).mockImplementation(
-    async ({ purchaseOrdersBySupplierId }) => ({
+    async ({ jobIds, purchaseOrdersBySupplierId }) => ({
       error: null,
-      purchaseOrdersBySupplierId
+      purchaseOrdersBySupplierId,
+      releasedJobIds: jobIds
     })
   );
 });
@@ -138,6 +139,7 @@ describe("bulk job release", () => {
     expect(result).toEqual({
       success: true,
       released: 2,
+      warnings: [],
       failed: [],
       scheduled: true
     });
@@ -219,10 +221,11 @@ describe("bulk job release", () => {
       },
       error: null
     });
-    vi.mocked(releaseJobs).mockResolvedValue({
+    vi.mocked(releaseJobs).mockImplementation(async ({ jobIds }) => ({
       error: null,
-      purchaseOrdersBySupplierId: { "supplier-a": "po-new" }
-    });
+      purchaseOrdersBySupplierId: { "supplier-a": "po-new" },
+      releasedJobIds: jobIds
+    }));
 
     await run(["j1", "j2"]);
 
@@ -249,7 +252,8 @@ describe("bulk job release", () => {
     });
     vi.mocked(releaseJobs).mockImplementation(async ({ jobIds }) => ({
       error: jobIds[0] === "j2" ? "Failed to recalculate job j2" : null,
-      purchaseOrdersBySupplierId: {}
+      purchaseOrdersBySupplierId: {},
+      releasedJobIds: jobIds[0] === "j2" ? [] : jobIds
     }));
 
     const result = await run(["j1", "j2", "j3", "j4"]);
@@ -258,6 +262,39 @@ describe("bulk job release", () => {
       released: 3,
       failed: [{ readableId: "J2", message: "Failed to recalculate job j2" }],
       scheduled: true
+    });
+    expect(
+      vi.mocked(runLocationSchedule).mock.calls.map(([args]) => args.locationId)
+    ).toEqual(["location-1", "location-2"]);
+  });
+
+  it("counts and schedules a job released before its purchase orders failed", async () => {
+    setup([job("j1"), job("j2", { locationId: "location-2" })]);
+    vi.mocked(getJobReleaseReadiness).mockResolvedValue({
+      data: { jobs: [ready("j1"), ready("j2")], suppliers: [] },
+      error: null
+    });
+    vi.mocked(releaseJobs).mockImplementation(async ({ jobIds }) => ({
+      error:
+        jobIds[0] === "j1"
+          ? "Job j1 is released, but its purchase orders could not be created: no supplier currency"
+          : null,
+      purchaseOrdersBySupplierId: {},
+      releasedJobIds: jobIds
+    }));
+
+    const result = await run(["j1", "j2"]);
+
+    expect(result).toMatchObject({
+      released: 2,
+      failed: [],
+      warnings: [
+        {
+          readableId: "J1",
+          message:
+            "Job j1 is released, but its purchase orders could not be created: no supplier currency"
+        }
+      ]
     });
     expect(
       vi.mocked(runLocationSchedule).mock.calls.map(([args]) => args.locationId)

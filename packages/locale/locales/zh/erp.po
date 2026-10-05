@@ -14923,6 +14923,10 @@ msgstr "已下达修订版"
 msgid "Released revision is locked"
 msgstr "已下达修订版已锁定"
 
+#. placeholder {0}: result.warnings .map((w) => `${w.readableId} (${w.message})`) .join(", ")
+msgid "Released with problems: {0}"
+msgstr "已下达，存在问题：{0}"
+
 msgid "Releasing the batch releases its jobs, and each one must be ready for the floor."
 msgstr "下达生产批次会下达其工单，每个工单都必须为车间做好准备。"
 

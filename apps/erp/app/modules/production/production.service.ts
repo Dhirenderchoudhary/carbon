@@ -3177,9 +3177,14 @@ export async function updateJobStatus(
     status: (typeof jobStatus)[number];
     assignee?: string | null;
     updatedBy: string;
+    // Flip only from one of these statuses. A release reads the status, then
+    // runs for a while (recalculate, MRP) before it writes; a job someone
+    // cancelled in between must not come back as Ready. `updated` is false
+    // when the row no longer matched.
+    fromStatuses?: (typeof jobStatus)[number][];
   }
 ) {
-  const { id, companyId, status, assignee, updatedBy } = params;
+  const { id, companyId, status, assignee, updatedBy, fromStatuses } = params;
 
   // Reopening a job (leaving a completed state) must clear completedDate so it
   // isn't left stale. Done in the same UPDATE as status so the job event
@@ -3196,7 +3201,7 @@ export async function updateJobStatus(
     .eq("companyId", companyId)
     .maybeSingle();
 
-  const result = await client
+  const update = client
     .from("job")
     .update({
       status,
@@ -3205,9 +3210,15 @@ export async function updateJobStatus(
       updatedAt: new Date().toISOString(),
       ...(clearsCompletion ? { completedDate: null } : {})
     })
-    .eq("id", id);
+    .eq("id", id)
+    .eq("companyId", companyId);
+  const result = fromStatuses
+    ? await update.in("status", fromStatuses).select("id")
+    : await update;
+  const updated =
+    !result.error && (!fromStatuses || (result.data?.length ?? 0) > 0);
 
-  if (!result.error && prior.data && prior.data.status !== status) {
+  if (updated && prior.data && prior.data.status !== status) {
     if (status === "Ready") {
       await raiseMoment("production.jobReleased", {
         outputs: { job: { id }, releasedBy: { id: updatedBy } },
@@ -3231,7 +3242,7 @@ export async function updateJobStatus(
     }
   }
 
-  return result;
+  return { ...result, updated };
 }
 
 /** @mcp update */
