@@ -42,6 +42,15 @@ import { path } from "~/utils/path";
 const logger = getLogger("erp", "issue-detail");
 
 export const handle: Handle = {
+  realtime: [
+    { table: "nonConformance", column: "id", param: "id" },
+    {
+      table: "nonConformanceActionTask",
+      column: "nonConformanceId",
+      param: "id"
+    },
+    { table: "nonConformanceItem", column: "nonConformanceId", param: "id" }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Issues`, to: path.to.issues },
     (data) => data?.nonConformance?.nonConformanceId

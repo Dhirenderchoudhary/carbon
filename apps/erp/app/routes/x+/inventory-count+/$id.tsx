@@ -31,6 +31,10 @@ import { path } from "~/utils/path";
 import { getGenericQueryFilters } from "~/utils/query";
 
 export const handle: Handle = {
+  realtime: [
+    { table: "inventoryCount", column: "id", param: "id" },
+    { table: "inventoryCountLine", column: "inventoryCountId", param: "id" }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Inventory Count`, to: path.to.inventoryCounts },
     (data) => data?.inventoryCount?.inventoryCountId

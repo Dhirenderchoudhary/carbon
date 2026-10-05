@@ -39,6 +39,18 @@ import { detailBreadcrumb, type Handle } from "~/utils/handle";
 import { path, requestReferrer } from "~/utils/path";
 
 export const handle: Handle = {
+  realtime: [
+    { table: "salesInvoice", column: "id", param: "invoiceId" },
+    { table: "salesInvoiceLine", column: "invoiceId", param: "invoiceId" },
+    // What is applied to this invoice, and the payments behind it: voiding a
+    // payment changes the payment row only.
+    {
+      table: "invoiceSettlement",
+      column: "targetSalesInvoiceId",
+      param: "invoiceId"
+    },
+    { table: "payment", column: "targetSalesInvoiceId", param: "invoiceId" }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Sales Invoices`, to: path.to.invoicingSales },
     (data) => data?.salesInvoice?.invoiceId

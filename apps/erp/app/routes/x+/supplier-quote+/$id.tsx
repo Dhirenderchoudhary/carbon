@@ -35,6 +35,10 @@ import { detailBreadcrumb, type Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 
 export const handle: Handle = {
+  realtime: [
+    { table: "supplierQuote", column: "id", param: "id" },
+    { table: "supplierQuoteLine", column: "supplierQuoteId", param: "id" }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Supplier Quotes`, to: path.to.supplierQuotes },
     (data) => data?.quote?.supplierQuoteId
@@ -76,19 +80,31 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  const [lines, prices, siblingQuotes] = await Promise.all([
+  const [
+    lines,
+    prices,
+    siblingQuotes,
+    supplierInteraction,
+    presentationCurrency,
+    supplier,
+    companySettings,
+    rate
+  ] = await Promise.all([
     getSupplierQuoteLines(serviceRole, id),
     getSupplierQuoteLinePricesByQuoteId(serviceRole, id),
-    getSiblingQuotesForQuote(serviceRole, id)
+    getSiblingQuotesForQuote(serviceRole, id),
+    getSupplierInteraction(serviceRole, quote.data.supplierInteractionId!),
+    getCurrencyByCode(serviceRole, companyGroupId, quote.data.currencyCode!),
+    getSupplier(serviceRole, quote.data.supplierId!),
+    getCompanySettings(serviceRole, companyId),
+    quote.data.currencyCode
+      ? getExchangeRate(
+          serviceRole,
+          quote.data.companyId,
+          quote.data.currencyCode
+        )
+      : null
   ]);
-
-  const [supplierInteraction, presentationCurrency, supplier, companySettings] =
-    await Promise.all([
-      getSupplierInteraction(serviceRole, quote.data.supplierInteractionId!),
-      getCurrencyByCode(serviceRole, companyGroupId, quote.data.currencyCode!),
-      getSupplier(serviceRole, quote.data.supplierId!),
-      getCompanySettings(serviceRole, companyId)
-    ]);
 
   if (supplierInteraction.error) {
     throw redirect(
@@ -103,21 +119,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     );
   }
 
-  let exchangeRate = 1;
-  if (quote.data?.currencyCode) {
-    const rate = await getExchangeRate(
-      serviceRole,
-      quote.data.companyId,
-      quote.data.currencyCode
-    );
-    // A missing LIVE rate must not make the quote unopenable — this page hosts
-    // the refresh button that fixes it. Fall back to the document's own stamped
-    // snapshot (the PDF routes' policy); writes still refuse.
-    exchangeRate =
-      rate.error || rate.data === null
-        ? (quote.data.exchangeRate ?? 1)
-        : rate.data;
-  }
+  // A missing LIVE rate must not make the quote unopenable — this page hosts
+  // the refresh button that fixes it. Fall back to the document's own stamped
+  // snapshot (the PDF routes' policy); writes still refuse.
+  const exchangeRate = !rate
+    ? 1
+    : rate.error || rate.data === null
+      ? (quote.data.exchangeRate ?? 1)
+      : rate.data;
 
   // Extract sibling quotes from the linked data
   const siblingQuotesData =

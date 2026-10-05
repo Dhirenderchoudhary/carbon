@@ -65,6 +65,26 @@ import { stripSpecialCharacters } from "~/utils/string";
 const logger = getLogger("erp", "purchase-order");
 
 export const handle: Handle = {
+  realtime: [
+    { table: "purchaseOrder", column: "id", param: "orderId" },
+    { table: "purchaseOrderLine", column: "purchaseOrderId", param: "orderId" },
+    {
+      // Receipts and invoices of this order share its supplier interaction
+      // (`usePurchaseOrder`, `getSupplierInteraction`).
+      table: "receipt",
+      filter: ({ data }) =>
+        data?.purchaseOrder?.supplierInteractionId
+          ? `supplierInteractionId=eq.${data.purchaseOrder.supplierInteractionId}`
+          : undefined
+    },
+    {
+      table: "purchaseInvoice",
+      filter: ({ data }) =>
+        data?.purchaseOrder?.supplierInteractionId
+          ? `supplierInteractionId=eq.${data.purchaseOrder.supplierInteractionId}`
+          : undefined
+    }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Orders`, to: path.to.purchaseOrders },
     (data) => data?.purchaseOrder?.purchaseOrderId

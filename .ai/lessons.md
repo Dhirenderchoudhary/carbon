@@ -2923,3 +2923,68 @@ tag until proven otherwise.
 **Rule:** When a transform plugin misbehaves only on route modules, look at the id's query. Verify a build-plugin change with a real `react-router build` of ERP, not with vitest.
 
 **Applies to:** `packages/dev/vite.js` (`linguiWithoutIdQuery`), `apps/*/vite.config.ts`.
+
+
+## A realtime subscription to a table that is not published fails silently
+
+**Context:** The ERP job page did not show an operation completed in the MES until a reload. It subscribed with `postgres_changes` to `jobOperationStep` and `jobOperationStepRecord`, which were never in the `supabase_realtime` publication, and it had no subscription to `jobOperation` or `job` at all.
+
+**Problem:** Realtime accepts a `postgres_changes` subscription for any table name. For an unpublished table it joins, delivers nothing and reports nothing. The code looked wired and typecheck, lint and tests were all green.
+
+**Rule:** Realtime goes through broadcast topics (`@carbon/query`). Declare a route's tables in `handle.realtime`; the table type is derived from `event-system/attachments.ts`, so a table with no broadcast handler does not compile, and `no-postgres-changes` fails the old API. Verify a "live" page by changing the row while the page is open, not by reading the subscription code.
+
+**Applies to:** `apps/*/app/routes/**` `handle.realtime`, `useRealtime`, `useChangedRows`, `.claude/rules/realtime-system.md`.
+
+
+## `getCompanyId()` read an httpOnly cookie in the browser and always returned null
+
+**Context:** The client cache scoped its keys with `getCompanyId()`, which parsed `document.cookie` for `companyId`.
+
+**Problem:** That cookie is httpOnly, so JavaScript never sees it. Every key was scoped to the string `"null"`, and an invalidation that matched on the real company id matched nothing. It went unnoticed because a company switch reloads the page and empties the in-memory cache.
+
+**Rule:** Never read a session cookie from `document.cookie`. A value the browser needs comes from loader data: the shell layout calls `setClientCompanyId(company.id)` during render (`@carbon/query/cache`).
+
+**Applies to:** `packages/query/src/cache.ts`, both `apps/*/app/routes/x+/_layout.tsx`, any new client-side tenant scoping.
+
+
+## A `.client.ts` module is empty on the server, even for a value a route only calls at load
+
+**Context:** The invalidation middleware factory lived in `invalidate.client.ts`, next to `flash.client.ts`. `root.tsx` calls `createInvalidationMiddleware(...)` while the module is evaluated.
+
+**Problem:** React Router replaces a `.client` module's exports with `undefined` on the server. `flash.client.ts` survives because `root.tsx` only REFERENCES its export; a factory is CALLED, so SSR died with "is not a function". Typecheck, lint and unit tests passed.
+
+**Rule:** A module whose export is called at module load of a route must not be named `.client` or `.server`. After adding anything to `root.tsx` or a shell layout, load the page from a running dev server before calling it done.
+
+**Applies to:** `apps/*/app/root.tsx`, `packages/query/src/invalidation.ts`, any shared module imported by a route.
+
+
+## Two hooks that open the same Realtime topic close each other's channel
+
+**Context:** The shell, the live lists and individual components each called `carbon.channel(topic)` for `company:<id>:<table>`.
+
+**Problem:** `RealtimeClient.channel()` returns the EXISTING channel when the topic is already open. Two hooks then hold one channel object, and the first to unmount calls `removeChannel` and silences the other. A customers page that declared `customer` while the customer list also followed it would have lost one of them at random.
+
+**Rule:** One owner per topic. Listeners register in the registry in `packages/query/src/useRealtime.tsx` (`useTopic`, `useTableChanges`) and `RouteRealtime` owns the channels. Do not call `carbon.channel` or `useRealtimeChannel` for a broadcast topic directly.
+
+**Applies to:** `packages/query/src/useRealtime.tsx`, any new realtime listener.
+
+
+## Chained Supabase writes in a route action are not a transaction
+
+**Context:** RFQ finalize and supplier quote finalize each wrote a quote, its lines, a share link and a price list as separate `client.from(...)` calls in a loop, logging and skipping any that failed.
+
+**Problem:** Every statement was its own PostgREST request (about 34 ms each), and a failure partway left quotes without lines or half a price list while the action still reported success. The checks that made the write safe (every line priced, the RFQ still Draft) lived in the route, so the API tool for the same operation skipped them.
+
+**Rule:** A write that spans tables is a server function (`packages/server-functions`) with one Kysely transaction. Its preconditions are checked inside it, on a locked read of the document (`forUpdate()`), so a double submit and every other caller get the same answer. The route keeps only what is about the request: the form, the flash, the email.
+
+**Applies to:** any route action with more than one write; `finalize-purchasing-rfq`, `finalize-supplier-quote`.
+
+## A stored copy of server data belongs to a user, not a browser
+
+**Context:** The live lists (items, customers, suppliers, people) were kept in IndexedDB under `<list>:<companyId>` and patched from a change log.
+
+**Problem:** The rows a user holds are their RLS view. The next person to sign in on that browser hydrated the previous user's rows, and patching only the changed ids never removed them. The in-memory query cache had the same hole inside one tab.
+
+**Rule:** Key anything stored on the device by user as well as company, and empty the in-memory cache when the user changes (`setClientCompanyId(companyId, userId)`). A cache that is only ever patched needs a path that replaces it.
+
+**Applies to:** `packages/query/src/useLiveList.tsx`, `packages/query/src/cache.ts`, any new client-side persistence.

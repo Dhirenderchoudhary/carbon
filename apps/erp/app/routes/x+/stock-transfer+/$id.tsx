@@ -23,6 +23,10 @@ import { detailBreadcrumb, type Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 
 export const handle: Handle = {
+  realtime: [
+    { table: "stockTransfer", column: "id", param: "id" },
+    { table: "stockTransferLine", column: "stockTransferId", param: "id" }
+  ],
   breadcrumb: detailBreadcrumb(
     { breadcrumb: msg`Stock Transfers`, to: path.to.stockTransfers },
     (data) => data?.stockTransfer?.stockTransferId

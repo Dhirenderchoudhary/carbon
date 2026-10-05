@@ -9,6 +9,7 @@ import { getCompanyPrivateBucket, storage } from "@carbon/files";
 import { convertHeicToJpeg, isHeic } from "@carbon/files/media";
 import { Array as ArrayInput, Input, ValidatedForm } from "@carbon/form";
 import { getLogger } from "@carbon/logger";
+import { useAction, useChangedRows } from "@carbon/query";
 import type { JSONContent } from "@carbon/react";
 import {
   Alert,
@@ -52,7 +53,6 @@ import {
   useDebounce,
   useDisclosure,
   useMount,
-  useRealtimeChannel,
   VStack
 } from "@carbon/react";
 import { Editor } from "@carbon/react/Editor";
@@ -741,76 +741,27 @@ const JobBillOfProcess = ({
   const [hasMore, setHasMore] = useState(true);
   const addOperationButtonRef = useRef<HTMLButtonElement>(null);
 
-  useRealtimeChannel({
-    topic: `production-events:${selectedItemId}`,
+  useChangedRows<Database["public"]["Tables"]["productionEvent"]["Row"]>({
+    companyId,
+    table: "productionEvent",
     enabled: !!selectedItemId && !temporaryItems[selectedItemId],
-    setup(channel) {
-      return channel.on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "productionEvent",
-          filter: `jobOperationId=eq.${selectedItemId}`
-        },
-        (payload) => {
-          switch (payload.eventType) {
-            case "INSERT":
-              const { new: inserted } = payload;
-              setProductionEvents((prevEvents) => [
-                ...prevEvents,
-                inserted as Database["public"]["Tables"]["productionEvent"]["Row"]
-              ]);
-              break;
-            case "UPDATE":
-              const { new: updated } = payload;
-              setProductionEvents((prevEvents) =>
-                prevEvents.map((event) =>
-                  event.id === updated.id
-                    ? (updated as Database["public"]["Tables"]["productionEvent"]["Row"])
-                    : event
-                )
-              );
-              break;
-            case "DELETE":
-              const { old: deleted } = payload;
-              setProductionEvents((prevEvents) =>
-                prevEvents.filter((event) => event.id !== deleted.id)
-              );
-              break;
-            default:
-              break;
-          }
-        }
-      );
-    }
-  });
-
-  // Phase 3: keep the live job's BOP steps fresh without closing the panel. When steps are
-  // added/edited/reordered for the open operation, or an operator records a step on the shop
-  // floor (jobOperationStepRecord), revalidate so the loader re-serves the latest steps.
-  const revalidator = useRevalidator();
-  useRealtimeChannel({
-    topic: `bop-steps:${selectedItemId}`,
-    enabled: !!selectedItemId && !temporaryItems[selectedItemId],
-    setup(channel) {
-      const refresh = () => revalidator.revalidate();
-      return channel
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "jobOperationStep",
-            filter: `operationId=eq.${selectedItemId}`
-          },
-          refresh
-        )
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "jobOperationStepRecord" },
-          refresh
+    onChange: ({ op, ids, rows }) => {
+      if (op === "DELETE") {
+        setProductionEvents((prevEvents) =>
+          prevEvents.filter((event) => !ids.includes(event.id))
         );
+        return;
+      }
+      const mine = rows.filter((row) => row.jobOperationId === selectedItemId);
+      setProductionEvents((prevEvents) => {
+        let next = prevEvents;
+        for (const row of mine) {
+          next = next.some((event) => event.id === row.id)
+            ? next.map((event) => (event.id === row.id ? row : event))
+            : [...next, row];
+        }
+        return next;
+      });
     }
   });
 
@@ -2120,7 +2071,14 @@ function StepsListItem({
   const disclosure = useDisclosure();
   const deleteModalDisclosure = useDisclosure();
   const submitted = useRef(false);
-  const fetcher = useFetcher<typeof editJobOperationStepAction>();
+  const fetcher = useAction<typeof editJobOperationStepAction>({
+    onSettled: () => {
+      if (submitted.current) {
+        disclosure.onClose();
+        submitted.current = false;
+      }
+    }
+  });
   const duplicateStepFetcher = useFetcher();
   const { t } = useLingui();
   const [description, setDescription] = useState<JSONContent>(() => {
@@ -2136,14 +2094,6 @@ function StepsListItem({
       return {};
     }
   });
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: suppressed due to migration
-  useEffect(() => {
-    if (submitted.current && fetcher.state === "idle") {
-      disclosure.onClose();
-      submitted.current = false;
-    }
-  }, [fetcher.state]);
 
   const [type, setType] = useState<OperationStep["type"]>(attribute.type);
   const [numericControls, setNumericControls] = useState<string[]>(() => {
@@ -2666,16 +2616,15 @@ function ParametersListItem({
   const disclosure = useDisclosure();
   const deleteModalDisclosure = useDisclosure();
   const submitted = useRef(false);
-  const fetcher = useFetcher<typeof editJobOperationParameterAction>();
-  const { t } = useLingui();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: suppressed due to migration
-  useEffect(() => {
-    if (submitted.current && fetcher.state === "idle") {
-      disclosure.onClose();
-      submitted.current = false;
+  const fetcher = useAction<typeof editJobOperationParameterAction>({
+    onSettled: () => {
+      if (submitted.current) {
+        disclosure.onClose();
+        submitted.current = false;
+      }
     }
-  }, [fetcher.state]);
+  });
+  const { t } = useLingui();
 
   const isUpdated = updatedBy !== null;
   const person = isUpdated ? updatedBy : createdBy;
@@ -3758,13 +3707,13 @@ function ProcedureSyncModal({
   procedureId: string;
   onClose: () => void;
 }) {
-  const fetcher = useFetcher<{ success: boolean }>();
-  useEffect(() => {
-    if (fetcher.data?.success) {
-      onClose();
+  const fetcher = useAction<{ success: boolean }>({
+    onSuccess: (data) => {
+      if (data?.success) {
+        onClose();
+      }
     }
-  }, [fetcher.data?.success, onClose]);
-
+  });
   return (
     <Modal
       open
@@ -3831,13 +3780,13 @@ function AssemblyStepsSyncModal({
   assemblyInstructionId: string;
   onClose: () => void;
 }) {
-  const fetcher = useFetcher<{ success: boolean }>();
-  useEffect(() => {
-    if (fetcher.data?.success) {
-      onClose();
+  const fetcher = useAction<{ success: boolean }>({
+    onSuccess: (data) => {
+      if (data?.success) {
+        onClose();
+      }
     }
-  }, [fetcher.data?.success, onClose]);
-
+  });
   return (
     <Modal
       open
@@ -3954,16 +3903,15 @@ function ToolsListItem({
   const disclosure = useDisclosure();
   const deleteModalDisclosure = useDisclosure();
   const submitted = useRef(false);
-  const fetcher = useFetcher<typeof editJobOperationToolAction>();
-  const { t } = useLingui();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: suppressed due to migration
-  useEffect(() => {
-    if (submitted.current && fetcher.state === "idle") {
-      disclosure.onClose();
-      submitted.current = false;
+  const fetcher = useAction<typeof editJobOperationToolAction>({
+    onSettled: () => {
+      if (submitted.current) {
+        disclosure.onClose();
+        submitted.current = false;
+      }
     }
-  }, [fetcher.state]);
+  });
+  const { t } = useLingui();
 
   const tools = useTools();
   const tool = tools.find((t) => t.id === toolId);
@@ -4217,26 +4165,17 @@ function OperationChat({ jobOperationId }: { jobOperationId: string }) {
     fetchChat();
   });
 
-  useRealtimeChannel({
-    topic: `job-operation-notes-${jobOperationId}`,
-    setup(channel) {
-      return channel.on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "jobOperationNote",
-          filter: `jobOperationId=eq.${jobOperationId}`
-        },
-        (payload) => {
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === payload.new.id)) {
-              return prev;
-            }
-            return [...prev, payload.new as Message];
-          });
-        }
-      );
+  useChangedRows<Message & { jobOperationId: string }>({
+    companyId: user.company.id,
+    table: "jobOperationNote",
+    onResync: fetchChat,
+    onChange: ({ op, rows }) => {
+      if (op !== "INSERT") return;
+      const notes = rows.filter((row) => row.jobOperationId === jobOperationId);
+      setMessages((prev) => [
+        ...prev,
+        ...notes.filter((note) => !prev.some((m) => m.id === note.id))
+      ]);
     }
   });
 

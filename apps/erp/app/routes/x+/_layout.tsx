@@ -27,6 +27,8 @@ import { getLogger } from "@carbon/logger";
 import { getImplementationCheckStates } from "@carbon/onboarding/server";
 import type { PrintingSettings } from "@carbon/printing";
 import { PrintingProvider } from "@carbon/printing/ui";
+import { RouteRealtime } from "@carbon/query";
+import { setClientCompanyId } from "@carbon/query/cache";
 import {
   ItarEntityCertification,
   ItarEntityPendingBlock,
@@ -373,6 +375,8 @@ export default function AuthenticatedRoute() {
     mfaEnrollment,
     sessionTimeout
   } = loaderData;
+  // During render, not in an effect: clientLoaders and the first child read it.
+  setClientCompanyId(company?.id ?? null, user?.id ?? null);
   // biome-ignore lint/correctness/useExhaustiveDependencies: runs each time the loader does
   useEffect(() => {
     shellLoadedAt = Date.now();
@@ -513,6 +517,7 @@ export default function AuthenticatedRoute() {
             }}
           >
             <RealtimeDataProvider>
+              {company?.id && <RouteRealtime companyId={company.id} />}
               <TooltipProvider>
                 <SidebarProvider
                   defaultOpen={false}
