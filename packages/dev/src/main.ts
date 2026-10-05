@@ -89,6 +89,12 @@ const main = defineCommand({
           default: false,
           description:
             "Also skip Inbucket, for headless/CI builds that sign in by bypass"
+        },
+        hibernate: {
+          type: "boolean",
+          default: true,
+          description:
+            "Stop the containers after 30 min without ERP/MES traffic, and the dev servers after 2 h; the next request starts them again (--no-hibernate to keep them up; CRBN_IDLE_MINUTES / CRBN_APPS_IDLE_MINUTES change the waits)"
         }
       },
       run: ({ args }) =>
@@ -103,7 +109,8 @@ const main = defineCommand({
           run: typeof args.run === "string" ? args.run : undefined,
           volumes: args.volumes === true,
           full: args.full === true,
-          minimal: args.minimal === true
+          minimal: args.minimal === true,
+          hibernate: args.hibernate !== false
         })
     }),
     down: defineCommand({
@@ -361,9 +368,16 @@ const main = defineCommand({
           default: false,
           description:
             "Destroy EVERY crbn stack on this machine, running ones included. Worktrees, branches and live slots are kept; the next `crbn up` rebuilds the database"
+        },
+        tree: {
+          type: "boolean",
+          default: false,
+          description:
+            "Also clean up git worktrees: forget ones whose directory is gone; with --all, remove this repo's linked worktrees too (never the main checkout, the current one, or one with uncommitted changes; branches are kept)"
         }
       },
-      run: ({ args }) => prune({ all: args.all === true })
+      run: ({ args }) =>
+        prune({ all: args.all === true, tree: args.tree === true })
     }),
     copy: defineCommand({
       meta: {

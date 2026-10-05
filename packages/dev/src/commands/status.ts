@@ -5,6 +5,7 @@
 import { intro, log, outro } from "@clack/prompts";
 import pc from "picocolors";
 import { listContainers } from "../services/compose.js";
+import { isAsleep } from "../services/hibernate.js";
 import { portsTable, servicesTable } from "../ui.js";
 import {
   getSlot,
@@ -43,6 +44,10 @@ export async function status(opts: { json?: boolean } = {}) {
   log.message("\n" + portsTable(slot.ports, slot.redisDb), {
     symbol: pc.bold(pc.yellow("Portless"))
   });
+
+  if (isAsleep(slug)) {
+    log.info("hibernated — the next ERP/MES request wakes it");
+  }
 
   const containers = await listContainers(root, slug);
   if (containers.length === 0) {
