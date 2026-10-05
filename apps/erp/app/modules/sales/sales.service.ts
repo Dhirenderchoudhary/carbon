@@ -2267,7 +2267,7 @@ export async function releaseSalesOrder(
     .eq("id", salesOrderId);
 }
 
-/** @mcp action */
+/** @mcp read */
 export async function resolvePrice(
   client: SupabaseClient<Database>,
   companyId: string,
@@ -2502,7 +2502,7 @@ async function resolvePostingGroupFilter(
   return { itemIds, filters: remaining };
 }
 
-/** @mcp action */
+/** @mcp read */
 export async function resolvePriceList(
   client: SupabaseClient<Database>,
   companyId: string,
@@ -4893,7 +4893,7 @@ export async function calculatePricesForQuantities(
   return { error: null };
 }
 
-/** @mcp action */
+/** @mcp read */
 export async function buildPullFromInventoryPriceRows(
   client: SupabaseClient<Database>,
   companyId: string,
@@ -4993,7 +4993,7 @@ export async function resolveQuoteLinePrices(
   return { error: null };
 }
 
-/** @mcp action */
+/** @mcp read */
 export async function buildPurchaseToOrderPriceRows(
   client: SupabaseClient<Database>,
   companyId: string,

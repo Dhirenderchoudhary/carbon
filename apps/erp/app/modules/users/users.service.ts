@@ -508,7 +508,7 @@ export async function searchUsersForSelect(
   return query;
 }
 
-/** @mcp action */
+/** @mcp read */
 export async function resolveUserSelectIds(
   client: SupabaseClient<Database>,
   companyId: string,
