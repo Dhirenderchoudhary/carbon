@@ -78,6 +78,8 @@ export async function action({ request }: ActionFunctionArgs) {
         };
       }
 
+      // A supplier with no currency keeps the invoice's own. The contact and
+      // location belonged to the previous invoice supplier.
       return await client
         .from("purchaseInvoice")
         .update({
