@@ -34,8 +34,13 @@ const DateRangeFilter = ({ accessorKey }: DateRangeFilterProps) => {
     return { from: toCalendarDate(from), to: toCalendarDate(to) };
   });
 
-  const apply = ({ from, to }: DateRangeValue) => {
-    const value = formatRangeFilter(from?.toString(), to?.toString());
+  const apply = (range: DateRangeValue | null) => {
+    // From after To: keep whatever the URL already says
+    if (!range) return;
+    const value = formatRangeFilter(
+      range.from?.toString(),
+      range.to?.toString()
+    );
     // Already what the URL says — closing the popover replays the last change
     if (value === getFilterValue(accessorKey)) return;
     if (value) {
@@ -51,7 +56,7 @@ const DateRangeFilter = ({ accessorKey }: DateRangeFilterProps) => {
   const applyRef = useRef(apply);
   applyRef.current = apply;
   const debouncedApply = useDebounce(
-    (next: DateRangeValue) => applyRef.current(next),
+    (next: DateRangeValue | null) => applyRef.current(next),
     400,
     true
   );

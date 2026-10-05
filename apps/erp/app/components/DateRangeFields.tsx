@@ -15,8 +15,13 @@ export type DateRangeValue = {
 type DateRangeFieldsProps = {
   /** Read once on mount; the fields hold the draft from then on. */
   defaultValue?: DateRangeValue;
-  /** Called with every complete range — a From after To is never emitted. */
-  onChange: (value: DateRangeValue) => void;
+  /**
+   * Called on every change. `null` while From is after To: there is nothing
+   * to apply, and the caller keeps its last range. It is still a change, so a
+   * debounced caller restarts its timer instead of firing a value typed on the
+   * way to the invalid one.
+   */
+  onChange: (value: DateRangeValue | null) => void;
   /** `stacked` for a popover, `inline` for a toolbar. */
   layout?: "stacked" | "inline";
   /** Open the From calendar on mount, for a control the user just picked. */
@@ -45,9 +50,9 @@ const DateRangeFields = ({
 
   const update = (next: DateRangeValue) => {
     setRange(next);
-    // From after To is flagged on the pickers and never reaches the caller
-    if (next.from && next.to && next.from.compare(next.to) > 0) return;
-    onChange(next);
+    // From after To is flagged on the pickers and is never applied
+    const isValid = !(next.from && next.to && next.from.compare(next.to) > 0);
+    onChange(isValid ? next : null);
   };
 
   const inline = layout === "inline";

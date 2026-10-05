@@ -1720,7 +1720,8 @@ function ComposePanel({
               layout="inline"
               autoOpen
               defaultValue={dueRange ?? undefined}
-              onChange={onDueRangeChange}
+              // From after To: keep filtering by the last valid range
+              onChange={(range) => range && onDueRangeChange(range)}
               isDateMarked={isDueDay}
             />
           )}
