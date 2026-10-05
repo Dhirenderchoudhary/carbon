@@ -30,6 +30,7 @@ import {
   getPreferenceHeaders,
   isSearchParamOnlyNavigation,
   modeValidator,
+  prefetchCacheMiddleware,
   themes
 } from "@carbon/utils";
 import { faviconLinks } from "@carbon/utils/favicon";
@@ -73,7 +74,8 @@ export const middleware = timedMiddleware({
   request: requestMiddleware,
   security: securityMiddleware,
   formBody: formBodyMiddleware,
-  flash: flashMiddleware
+  flash: flashMiddleware,
+  prefetchCache: prefetchCacheMiddleware
 });
 export const clientMiddleware = [
   flashClientMiddleware,
