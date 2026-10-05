@@ -115,7 +115,7 @@ const DatePicker = (
                 >
                   <DateField {...fieldProps} size={props.size} />
                   {state.isInvalid && (
-                    <LuBan className="!text-destructive-foreground absolute right-[12px] top-[12px]" />
+                    <LuBan className="!text-destructive-foreground ml-auto shrink-0 self-center" />
                   )}
                 </div>
                 {/* Anchor (not Trigger) so the calendar button isn't wrapped
