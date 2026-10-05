@@ -12175,11 +12175,17 @@ msgstr "Нет запасов"
 msgid "No stock at this location"
 msgstr "Нет запасов в этом месте"
 
+msgid "No stock on hand at this location."
+msgstr ""
+
 msgid "No stockout projected in the next 48 weeks"
 msgstr "Отсутствие дефицита запасов не прогнозируется в течение следующих 48 недель"
 
 msgid "No storage unit"
 msgstr "Нет единицы хранения"
+
+msgid "No storage units or tracking numbers match."
+msgstr ""
 
 msgid "No suppliers yet"
 msgstr "Поставщиков еще нет"
@@ -16127,6 +16133,9 @@ msgstr "Поиск записей…"
 
 msgid "Search related items..."
 msgstr "Поиск связанных элементов..."
+
+msgid "Search storage units and tracking numbers"
+msgstr ""
 
 msgid "Search suppliers..."
 msgstr "Поиск поставщиков..."

@@ -12175,11 +12175,17 @@ msgstr "No stock"
 msgid "No stock at this location"
 msgstr "No stock at this location"
 
+msgid "No stock on hand at this location."
+msgstr "No stock on hand at this location."
+
 msgid "No stockout projected in the next 48 weeks"
 msgstr "No stockout projected in the next 48 weeks"
 
 msgid "No storage unit"
 msgstr "No storage unit"
+
+msgid "No storage units or tracking numbers match."
+msgstr "No storage units or tracking numbers match."
 
 msgid "No suppliers yet"
 msgstr "No suppliers yet"
@@ -16127,6 +16133,9 @@ msgstr "Search records…"
 
 msgid "Search related items..."
 msgstr "Search related items..."
+
+msgid "Search storage units and tracking numbers"
+msgstr "Search storage units and tracking numbers"
 
 msgid "Search suppliers..."
 msgstr "Search suppliers..."

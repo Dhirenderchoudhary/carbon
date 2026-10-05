@@ -12175,11 +12175,17 @@ msgstr "Stok yok"
 msgid "No stock at this location"
 msgstr "Bu konumda stok yok"
 
+msgid "No stock on hand at this location."
+msgstr ""
+
 msgid "No stockout projected in the next 48 weeks"
 msgstr "Sonraki 48 hafta içinde stoksuzluk öngörülmedi"
 
 msgid "No storage unit"
 msgstr "Depolama birimi yok"
+
+msgid "No storage units or tracking numbers match."
+msgstr ""
 
 msgid "No suppliers yet"
 msgstr "Henüz tedarikçi yok"
@@ -16127,6 +16133,9 @@ msgstr "Kayıtları ara…"
 
 msgid "Search related items..."
 msgstr "İlgili öğeleri ara..."
+
+msgid "Search storage units and tracking numbers"
+msgstr ""
 
 msgid "Search suppliers..."
 msgstr "Tedarikçileri ara..."

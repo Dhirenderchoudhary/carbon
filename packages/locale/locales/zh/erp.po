@@ -12175,11 +12175,17 @@ msgstr "无库存"
 msgid "No stock at this location"
 msgstr "此位置没有库存"
 
+msgid "No stock on hand at this location."
+msgstr ""
+
 msgid "No stockout projected in the next 48 weeks"
 msgstr "未来 48 周内没有预计缺货"
 
 msgid "No storage unit"
 msgstr "无存储单元"
+
+msgid "No storage units or tracking numbers match."
+msgstr ""
 
 msgid "No suppliers yet"
 msgstr "还没有供应商"
@@ -16127,6 +16133,9 @@ msgstr "搜索记录…"
 
 msgid "Search related items..."
 msgstr "搜索相关物料..."
+
+msgid "Search storage units and tracking numbers"
+msgstr ""
 
 msgid "Search suppliers..."
 msgstr "搜索供应商..."
