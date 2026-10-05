@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "文書が読み込めません: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "{0}をリリースできませんでした: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "解散"
 msgid "Dissolve {0} batches"
 msgstr "バッチ {0} を解散"
 
+msgid "Dissolve 1 batch"
+msgstr "1 バッチを解散"
+
 msgid "Dissolve batch"
 msgstr "バッチを解除"
 
@@ -6403,6 +6408,9 @@ msgstr "バッチを解散"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "{0} バッチを解散しました"
+
+msgid "Dissolved 1 batch"
+msgstr "1 バッチを解散しました"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "この場所には在庫がありません"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "この拠点に在庫がありません。"
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "今後48週間に欠品は予測されていません"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "保管ユニットがありません"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "保管ユニットまたはトラッキング番号に一致するものはありません。"
 
 msgid "No suppliers yet"
 msgstr "仕入先がまだありません"
@@ -14863,6 +14871,9 @@ msgstr "リリース"
 msgid "Release {0} batches"
 msgstr "{0}個のバッチをリリース"
 
+msgid "Release 1 batch"
+msgstr "1 バッチをリリース"
+
 msgid "Release Batch"
 msgstr "バッチをリリース"
 
@@ -14883,12 +14894,25 @@ msgstr "リリース管理"
 msgid "Release Job"
 msgstr "ジョブをリリース"
 
+msgid "Release Jobs"
+msgstr "製造指図をリリース"
+
 msgid "Released"
 msgstr "リリース済み"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "{0}個のバッチがリリース済"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "{0} 件の製造指図をリリースしました"
+
+msgid "Released 1 batch"
+msgstr "1 バッチをリリースしました"
+
+msgid "Released 1 job"
+msgstr "1 件の製造指図をリリースしました"
 
 msgid "Released date"
 msgstr "リリース日"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "関連アイテムを検索..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "保管ユニットとトラッキング番号を検索"
 
 msgid "Search suppliers..."
 msgstr "仕入先を検索..."
@@ -18745,6 +18769,9 @@ msgstr "同じ個人が検査できます"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "あなたのアイデンティティプロバイダーによって公開されたSAMLメタデータURL"
 
+msgid "The schedule could not be updated after the release"
+msgstr "リリース後、スケジュールを更新できませんでした。"
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "この資産の原価を耐用年数にわたって配分するために使用されるスケジュール（定額法、定率法、生産単位法）。"
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "無題のステップ"
 
 msgid "Untracked"
-msgstr ""
+msgstr "未追跡"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "未使用のピッキング済み材料が作業区から倉庫に戻されました。"

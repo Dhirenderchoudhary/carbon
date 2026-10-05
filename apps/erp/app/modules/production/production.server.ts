@@ -15,6 +15,7 @@ import {
   runMRP,
   updateJobStatus
 } from "./production.service";
+import { jobReleaseProblems } from "./ui/Jobs/job-release-logic";
 
 // The geometry (assembler) service backs model conversion and motion planning.
 // When it's unreachable those actions can't run, so loaders probe its health and
@@ -72,7 +73,8 @@ export async function isAssemblerServiceHealthy(): Promise<boolean> {
 //
 // `purchaseOrdersBySupplierId` maps a supplier to "new" or a Draft PO id; a
 // supplier's first "new" PO is reused for the jobs after it, so a batch puts
-// each supplier's outside operations from every member job on one PO.
+// each supplier's outside operations from every member job on one PO. The map
+// is returned with those POs filled in, for a caller releasing job by job.
 // Validation (getJobReleaseReadiness) is the caller's, BEFORE this runs.
 export async function releaseJobs({
   client,
@@ -88,7 +90,10 @@ export async function releaseJobs({
   companyId: string;
   userId: string;
   purchaseOrdersBySupplierId: Record<string, string>;
-}): Promise<{ error: string | null }> {
+}): Promise<{
+  error: string | null;
+  purchaseOrdersBySupplierId: Record<string, string>;
+}> {
   const serviceRole = getCarbonServiceRole();
   const purchaseOrders = { ...purchaseOrdersBySupplierId };
 
@@ -98,7 +103,12 @@ export async function releaseJobs({
       companyId,
       userId
     });
-    if (recalc.error) return { error: `Failed to recalculate job ${id}` };
+    if (recalc.error) {
+      return {
+        error: `Failed to recalculate job ${id}`,
+        purchaseOrdersBySupplierId: purchaseOrders
+      };
+    }
 
     await runMRP(serviceRole, db, { type: "job", id, companyId, userId });
 
@@ -108,7 +118,12 @@ export async function releaseJobs({
       status: "Ready",
       updatedBy: userId
     });
-    if (update.error) return { error: `Failed to release job ${id}` };
+    if (update.error) {
+      return {
+        error: `Failed to release job ${id}`,
+        purchaseOrdersBySupplierId: purchaseOrders
+      };
+    }
 
     const purchaseOrder = await serverFns
       .system({ db, companyId, userId })
@@ -122,7 +137,8 @@ export async function releaseJobs({
         error: getErrorMessage(
           purchaseOrder.error,
           `Failed to create purchase orders for job ${id}`
-        )
+        ),
+        purchaseOrdersBySupplierId: purchaseOrders
       };
     }
     Object.assign(
@@ -136,7 +152,7 @@ export async function releaseJobs({
       .eq("id", id)
       .eq("companyId", companyId);
   }
-  return { error: null };
+  return { error: null, purchaseOrdersBySupplierId: purchaseOrders };
 }
 
 // Releasing a batch releases its Draft/Planned member jobs through the same
@@ -177,25 +193,9 @@ export async function releaseBatchMemberJobs({
     return { error: "Failed to validate the batch's jobs" };
   }
 
-  const problems = readiness.data.jobs.flatMap((job) => [
-    ...(job.manufacturingBlocked
-      ? [`${job.jobId}: manufacturing is blocked`]
-      : []),
-    ...(job.missingAssemblies.length > 0
-      ? [
-          `${job.jobId}: no operations on ${job.missingAssemblies
-            .map((m) => m.description)
-            .join(", ")}`
-        ]
-      : []),
-    // No per-operation supplier picker here: an ambiguous or missing supplier
-    // is settled on the job's own Release.
-    ...job.outsideOperationsWithoutSupplier.map((op) =>
-      op.missing === "choose"
-        ? `${job.jobId}: choose a supplier for ${op.description} on the job`
-        : `${job.jobId}: ${op.description} has no supplier`
-    )
-  ]);
+  const problems = readiness.data.jobs.flatMap((job) =>
+    jobReleaseProblems(job).map((problem) => `${job.jobId}: ${problem}`)
+  );
   if (problems.length > 0) {
     return { error: `Fix these jobs before releasing: ${problems.join("; ")}` };
   }

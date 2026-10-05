@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "Belge okunamadı: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "{0} serbest bırakılamadı: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "Çöz"
 msgid "Dissolve {0} batches"
 msgstr "{0} parti çöz"
 
+msgid "Dissolve 1 batch"
+msgstr "1 Partiyi Çöz"
+
 msgid "Dissolve batch"
 msgstr "Toplu İşi Kaldır"
 
@@ -6403,6 +6408,9 @@ msgstr "Toplu İşi Çöz"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "{0} parti çözüldü"
+
+msgid "Dissolved 1 batch"
+msgstr "1 Parti Çözüldü"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "Bu konumda stok yok"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "Bu lokasyonda stok yoktur."
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "Sonraki 48 hafta içinde stoksuzluk öngörülmedi"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "Depolama birimi yok"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "Depolama birimleri veya takip numaraları eşleşmiyor."
 
 msgid "No suppliers yet"
 msgstr "Henüz tedarikçi yok"
@@ -14863,6 +14871,9 @@ msgstr "Serbest Bırakma"
 msgid "Release {0} batches"
 msgstr "{0} partiyi serbest bırak"
 
+msgid "Release 1 batch"
+msgstr "1 Partiyi Serbest Bırak"
+
 msgid "Release Batch"
 msgstr "Partiyi Serbest Bırak"
 
@@ -14883,12 +14894,25 @@ msgstr "Serbest Bırakma Kontrolü"
 msgid "Release Job"
 msgstr "İş emrini serbest bırak"
 
+msgid "Release Jobs"
+msgstr "İş emirlerini Serbest Bırak"
+
 msgid "Released"
 msgstr "Yayınlandı"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "{0} parti serbest bırakıldı"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "{0} İş emri serbest bırakıldı"
+
+msgid "Released 1 batch"
+msgstr "1 Parti serbest bırakıldı"
+
+msgid "Released 1 job"
+msgstr "1 İş emri serbest bırakıldı"
 
 msgid "Released date"
 msgstr "Yayın tarihi"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "İlgili öğeleri ara..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "Depolama birimlerini ve takip numaralarını ara"
 
 msgid "Search suppliers..."
 msgstr "Tedarikçileri ara..."
@@ -18745,6 +18769,9 @@ msgstr "Aynı kişi denetim yapabilir"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "Kimlik sağlayıcınız tarafından yayınlanan SAML meta veri URL'si"
 
+msgid "The schedule could not be updated after the release"
+msgstr "Serbest bırakıldıktan sonra çizelge güncellenemedi."
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "Bu varlığın Maliyetini Faydalı ömrü boyunca yaymak için kullanılan amortisman yöntemi (doğrusal, Azalan bakiye, üretim birimleri)."
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "Başlıksız Adım"
 
 msgid "Untracked"
-msgstr ""
+msgstr "İzlenmeyen"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "İş merkezinden depoya geri gönderilen kullanılmayan alınan malzeme."

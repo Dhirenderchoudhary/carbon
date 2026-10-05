@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "दस्तावेज़ नहीं पढ़ा जा सका: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "जारी नहीं कर सके {0}: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "भंग करना"
 msgid "Dissolve {0} batches"
 msgstr "{0} बैच को भंग करें"
 
+msgid "Dissolve 1 batch"
+msgstr "1 बैच को भंग करें"
+
 msgid "Dissolve batch"
 msgstr "बैच को भंग करें"
 
@@ -6403,6 +6408,9 @@ msgstr "बैच भंग करना"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "{0} बैच भंग कर दिए गए"
+
+msgid "Dissolved 1 batch"
+msgstr "1 बैच भंग किया गया"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "इस स्थान पर कोई स्टॉक नहीं"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "इस स्थान पर कोई स्टॉक उपलब्ध नहीं है।"
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "अगले 48 सप्ताह में कोई स्टॉकआउट प्रक्षेपित नहीं है"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "कोई भंडारण इकाई नहीं"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "कोई भंडारण इकाई या ट्रैकिंग संख्या मेल नहीं खाती।"
 
 msgid "No suppliers yet"
 msgstr "अभी तक कोई आपूर्तिकर्ता नहीं"
@@ -14863,6 +14871,9 @@ msgstr "जारी करें"
 msgid "Release {0} batches"
 msgstr "{0} बैच जारी करें"
 
+msgid "Release 1 batch"
+msgstr "1 बैच को जारी करें"
+
 msgid "Release Batch"
 msgstr "बैच जारी करें"
 
@@ -14883,12 +14894,25 @@ msgstr "नियंत्रण जारी करें"
 msgid "Release Job"
 msgstr "जॉब जारी करें"
 
+msgid "Release Jobs"
+msgstr "जॉब को जारी करें"
+
 msgid "Released"
 msgstr "जारी किया गया"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "{0} बैच जारी किए गए"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "{0} जॉब जारी किए गए"
+
+msgid "Released 1 batch"
+msgstr "1 बैच जारी किया गया"
+
+msgid "Released 1 job"
+msgstr "1 जॉब जारी किया गया"
 
 msgid "Released date"
 msgstr "जारी की गई तारीख"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "संबंधित आइटम खोजें..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "भंडारण इकाइयों और ट्रैकिंग संख्याओं को खोजें"
 
 msgid "Search suppliers..."
 msgstr "आपूर्तिकर्ताओं को खोजें..."
@@ -18745,6 +18769,9 @@ msgstr "एक ही व्यक्ति निरीक्षण कर स�
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "आपके आइडेंटिटी प्रदाता द्वारा प्रकाशित SAML मेटाडेटा URL"
 
+msgid "The schedule could not be updated after the release"
+msgstr "रिलीज के बाद शेड्यूल को अपडेट नहीं किया जा सका"
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "यह शेड्यूल जिसका उपयोग इस संपत्ति की लागत को इसके उपयोगी जीवन (सीधी लाइन मूल्यह्रास, ह्रासमान शेष, उत्पादन की इकाई) पर फैलाने के लिए किया जाता है।"
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "बिना शीर्षक वाला चरण"
 
 msgid "Untracked"
-msgstr ""
+msgstr "अनट्रैक"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "अप्रयुक्त सामग्री को वर्क सेंटर से गोदाम में वापस भेजा गया।"

@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "Не удалось прочитать документ: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "Не удалось запустить в работу {0}: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "Распустить"
 msgid "Dissolve {0} batches"
 msgstr "Растворить {0} партий"
 
+msgid "Dissolve 1 batch"
+msgstr "Закрыть 1 серию"
+
 msgid "Dissolve batch"
 msgstr "Разбить партию"
 
@@ -6403,6 +6408,9 @@ msgstr "Распустить партию"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "Растворено {0} партий"
+
+msgid "Dissolved 1 batch"
+msgstr "Закрыта 1 серия"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "Нет запасов в этом месте"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "На этой площадке нет запаса."
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "Отсутствие дефицита запасов не прогнозируется в течение следующих 48 недель"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "Нет единицы хранения"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "Единицы хранения или номера отслеживания не совпадают."
 
 msgid "No suppliers yet"
 msgstr "Поставщиков еще нет"
@@ -14863,6 +14871,9 @@ msgstr "Запустить в работу"
 msgid "Release {0} batches"
 msgstr "Запустить в работу {0} серий"
 
+msgid "Release 1 batch"
+msgstr "Запустить в работу 1 серию"
+
 msgid "Release Batch"
 msgstr "Запустить серию в работу"
 
@@ -14883,12 +14894,25 @@ msgstr "Управление запуском в работу"
 msgid "Release Job"
 msgstr "Запустить производственный заказ в работу"
 
+msgid "Release Jobs"
+msgstr "Запустить в работу производственные заказы"
+
 msgid "Released"
 msgstr "Выпущено"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "Запущено {0} серий"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "Запущено {0} производственных заказов"
+
+msgid "Released 1 batch"
+msgstr "Запущена 1 серия"
+
+msgid "Released 1 job"
+msgstr "Запущен 1 производственный заказ"
 
 msgid "Released date"
 msgstr "Дата выпуска"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "Поиск связанных элементов..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "Поиск единиц хранения и номеров отслеживания"
 
 msgid "Search suppliers..."
 msgstr "Поиск поставщиков..."
@@ -18745,6 +18769,9 @@ msgstr "Тот же инспектор может проверять"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "URL метаданных SAML, опубликованный вашим поставщиком удостоверений"
 
+msgid "The schedule could not be updated after the release"
+msgstr "График не удалось обновить после запуска в работу"
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "График, используемый для распределения Себестоимости этого актива в течение его Срока полезного использования (линейный, Уменьшаемый остаток, единицы производства)."
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "Шаг без названия"
 
 msgid "Untracked"
-msgstr ""
+msgstr "Без отслеживания"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "Неиспользованный отобранный материал поступает обратно из рабочего центра на склад."

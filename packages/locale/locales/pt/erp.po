@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "Não foi possível ler o documento: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "Não foi possível liberar {0}: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "Dissolver"
 msgid "Dissolve {0} batches"
 msgstr "Dissolver {0} lotes"
 
+msgid "Dissolve 1 batch"
+msgstr "Dissolver 1 lote de produção"
+
 msgid "Dissolve batch"
 msgstr "Dissolver lote"
 
@@ -6403,6 +6408,9 @@ msgstr "Dissolver Lote"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "Dissolvido {0} lotes"
+
+msgid "Dissolved 1 batch"
+msgstr "1 lote de produção dissolvido"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "Sem estoque neste local"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "Nenhum estoque disponível neste local."
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "Sem ruptura de estoque projetada nas próximas 48 semanas"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "Sem unidade de armazenamento"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "Nenhuma unidade de armazenamento ou número de rastreamento corresponde."
 
 msgid "No suppliers yet"
 msgstr "Nenhum fornecedor ainda"
@@ -14863,6 +14871,9 @@ msgstr "Liberação"
 msgid "Release {0} batches"
 msgstr "Liberar {0} lotes de produção"
 
+msgid "Release 1 batch"
+msgstr "Liberar 1 lote de produção"
+
 msgid "Release Batch"
 msgstr "Liberar lote de produção"
 
@@ -14883,12 +14894,25 @@ msgstr "Liberar Controle"
 msgid "Release Job"
 msgstr "Liberar Trabalho"
 
+msgid "Release Jobs"
+msgstr "Liberar Ordens de produção"
+
 msgid "Released"
 msgstr "Liberado"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "Liberados {0} lotes de produção"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "Liberado {0} ordens de produção"
+
+msgid "Released 1 batch"
+msgstr "1 lote de produção liberado"
+
+msgid "Released 1 job"
+msgstr "1 ordem de produção liberada"
 
 msgid "Released date"
 msgstr "Data de lançamento"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "Pesquisar itens relacionados..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "Pesquisar unidades de armazenamento e números de rastreamento"
 
 msgid "Search suppliers..."
 msgstr "Pesquisar fornecedores..."
@@ -18745,6 +18769,9 @@ msgstr "A mesma pessoa pode inspecionar"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "O URL de metadados SAML publicado por seu provedor de identidade"
 
+msgid "The schedule could not be updated after the release"
+msgstr "A programação não pôde ser atualizada após a liberação"
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "O cronograma usado para distribuir o custo deste ativo durante sua vida útil (linha reta, saldo decrescente, unidades de produção)."
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "Etapa sem título"
 
 msgid "Untracked"
-msgstr ""
+msgstr "Sem rastreamento"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "Material coletado não utilizado devolvido do centro de trabalho para o armazém."

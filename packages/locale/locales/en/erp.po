@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "Could not read the document: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "Could not release {0}: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "Dissolve"
 msgid "Dissolve {0} batches"
 msgstr "Dissolve {0} batches"
 
+msgid "Dissolve 1 batch"
+msgstr "Dissolve 1 batch"
+
 msgid "Dissolve batch"
 msgstr "Dissolve batch"
 
@@ -6403,6 +6408,9 @@ msgstr "Dissolve Batch"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "Dissolved {0} batches"
+
+msgid "Dissolved 1 batch"
+msgstr "Dissolved 1 batch"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14863,6 +14871,9 @@ msgstr "Release"
 msgid "Release {0} batches"
 msgstr "Release {0} batches"
 
+msgid "Release 1 batch"
+msgstr "Release 1 batch"
+
 msgid "Release Batch"
 msgstr "Release Batch"
 
@@ -14883,12 +14894,25 @@ msgstr "Release Control"
 msgid "Release Job"
 msgstr "Release Job"
 
+msgid "Release Jobs"
+msgstr "Release Jobs"
+
 msgid "Released"
 msgstr "Released"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "Released {0} batches"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "Released {0} jobs"
+
+msgid "Released 1 batch"
+msgstr "Released 1 batch"
+
+msgid "Released 1 job"
+msgstr "Released 1 job"
 
 msgid "Released date"
 msgstr "Released date"
@@ -18744,6 +18768,9 @@ msgstr "The same person may inspect"
 
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "The SAML metadata URL published by your identity provider"
+
+msgid "The schedule could not be updated after the release"
+msgstr "The schedule could not be updated after the release"
 
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."

@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "无法读取文件：{0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "无法下达{0}：{1}"
 
@@ -6394,6 +6396,9 @@ msgstr "解散"
 msgid "Dissolve {0} batches"
 msgstr "解散 {0} 批次"
 
+msgid "Dissolve 1 batch"
+msgstr "取消1个生产批次"
+
 msgid "Dissolve batch"
 msgstr "解散批次"
 
@@ -6403,6 +6408,9 @@ msgstr "解散批次"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "已解散 {0} 批次"
+
+msgid "Dissolved 1 batch"
+msgstr "已取消1个生产批次"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "此位置没有库存"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "此地点没有库存。"
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "未来 48 周内没有预计缺货"
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "无存储单元"
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "没有存储单元或追踪号与之匹配。"
 
 msgid "No suppliers yet"
 msgstr "还没有供应商"
@@ -14863,6 +14871,9 @@ msgstr "下达"
 msgid "Release {0} batches"
 msgstr "下达{0}个生产批次"
 
+msgid "Release 1 batch"
+msgstr "下达1个生产批次"
+
 msgid "Release Batch"
 msgstr "下达生产批次"
 
@@ -14883,12 +14894,25 @@ msgstr "下达控制"
 msgid "Release Job"
 msgstr "下达工单"
 
+msgid "Release Jobs"
+msgstr "下达工单"
+
 msgid "Released"
 msgstr "已下达"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "已下达{0}个生产批次"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "已下达{0}个工单"
+
+msgid "Released 1 batch"
+msgstr "已下达1个生产批次"
+
+msgid "Released 1 job"
+msgstr "已下达1个工单"
 
 msgid "Released date"
 msgstr "下达日期"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "搜索相关物料..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "搜索存储单元和追踪号"
 
 msgid "Search suppliers..."
 msgstr "搜索供应商..."
@@ -18745,6 +18769,9 @@ msgstr "同一个人可以检查"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "您的身份提供商发布的 SAML 元数据 URL"
 
+msgid "The schedule could not be updated after the release"
+msgstr "下达后无法更新排程。"
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "用于在其使用年限内分摊此资产成本的排程（直线法、余额递减法、生产单位法）。"
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "未命名步骤"
 
 msgid "Untracked"
-msgstr ""
+msgstr "未追踪"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "未使用的已拣货物料从工作中心冲回至仓库。"

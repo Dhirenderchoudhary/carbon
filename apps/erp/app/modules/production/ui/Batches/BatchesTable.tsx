@@ -202,7 +202,13 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
       toast.error(d.message);
       return;
     }
-    if (d.dissolved) toast.success(t`Dissolved ${d.dissolved} batches`);
+    if (d.dissolved) {
+      toast.success(
+        d.dissolved === 1
+          ? t`Dissolved 1 batch`
+          : t`Dissolved ${d.dissolved} batches`
+      );
+    }
     if (d.failed?.length) {
       toast.error(
         t`Could not dissolve ${d.failed.length}: ${d.failed
@@ -236,7 +242,13 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
       toast.error(d.message);
       return;
     }
-    if (d.released) toast.success(t`Released ${d.released} batches`);
+    if (d.released) {
+      toast.success(
+        d.released === 1
+          ? t`Released 1 batch`
+          : t`Released ${d.released} batches`
+      );
+    }
     if (d.failed?.length) {
       toast.error(
         t`Could not release ${d.failed.length}: ${d.failed
@@ -272,7 +284,9 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
             }
           >
             <DropdownMenuIcon icon={<LuCirclePlay />} />
-            {t`Release ${releasable.length} batches`}
+            {releasable.length === 1
+              ? t`Release 1 batch`
+              : t`Release ${releasable.length} batches`}
           </DropdownMenuItem>
           <DropdownMenuItem
             destructive
@@ -289,7 +303,9 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
             }
           >
             <DropdownMenuIcon icon={<LuTrash />} />
-            {t`Dissolve ${dissolvable.length} batches`}
+            {dissolvable.length === 1
+              ? t`Dissolve 1 batch`
+              : t`Dissolve ${dissolvable.length} batches`}
           </DropdownMenuItem>
         </DropdownMenuContent>
       );

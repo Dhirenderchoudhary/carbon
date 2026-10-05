@@ -4825,7 +4825,9 @@ msgid "Could not read the document: {0}"
 msgstr "문서를 읽을 수 없습니다: {0}"
 
 #. placeholder {0}: d.failed.length
+#. placeholder {0}: result.failed.length
 #. placeholder {1}: d.failed .map((f) => f.readableId) .join(", ")
+#. placeholder {1}: result.failed .map((f) => `${f.readableId} (${f.message})`) .join(", ")
 msgid "Could not release {0}: {1}"
 msgstr "{0}을 릴리스할 수 없음: {1}"
 
@@ -6394,6 +6396,9 @@ msgstr "해체"
 msgid "Dissolve {0} batches"
 msgstr "{0} 배치 해제"
 
+msgid "Dissolve 1 batch"
+msgstr "배치 1개 해제"
+
 msgid "Dissolve batch"
 msgstr "배치 해제"
 
@@ -6403,6 +6408,9 @@ msgstr "배치 해체"
 #. placeholder {0}: d.dissolved
 msgid "Dissolved {0} batches"
 msgstr "{0} 배치 해제됨"
+
+msgid "Dissolved 1 batch"
+msgstr "배치 1개 해제됨"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -12185,7 +12193,7 @@ msgid "No stock at this location"
 msgstr "이 위치에 재고가 없습니다"
 
 msgid "No stock on hand at this location."
-msgstr ""
+msgstr "이 사업장에 재고가 없습니다."
 
 msgid "No stockout projected in the next 48 weeks"
 msgstr "향후 48주 내에 재고 부족이 예상되지 않습니다."
@@ -12194,7 +12202,7 @@ msgid "No storage unit"
 msgstr "보관 단위가 없습니다."
 
 msgid "No storage units or tracking numbers match."
-msgstr ""
+msgstr "일치하는 보관 단위 또는 추적 번호가 없습니다."
 
 msgid "No suppliers yet"
 msgstr "아직 공급업체가 없습니다"
@@ -14863,6 +14871,9 @@ msgstr "릴리스"
 msgid "Release {0} batches"
 msgstr "{0}개 배치 릴리스"
 
+msgid "Release 1 batch"
+msgstr "배치 1개 릴리스"
+
 msgid "Release Batch"
 msgstr "배치 릴리스"
 
@@ -14883,12 +14894,25 @@ msgstr "릴리스 제어"
 msgid "Release Job"
 msgstr "작업 지시 릴리스"
 
+msgid "Release Jobs"
+msgstr "작업 지시 릴리스"
+
 msgid "Released"
 msgstr "릴리즈됨"
 
 #. placeholder {0}: d.released
 msgid "Released {0} batches"
 msgstr "{0}개 배치 릴리스됨"
+
+#. placeholder {0}: result.released
+msgid "Released {0} jobs"
+msgstr "작업 지시 {0}개 릴리스됨"
+
+msgid "Released 1 batch"
+msgstr "배치 1개 릴리스됨"
+
+msgid "Released 1 job"
+msgstr "작업 지시 1개 릴리스됨"
 
 msgid "Released date"
 msgstr "출시일"
@@ -16144,7 +16168,7 @@ msgid "Search related items..."
 msgstr "관련 품목 검색..."
 
 msgid "Search storage units and tracking numbers"
-msgstr ""
+msgstr "보관 단위 및 추적 번호 검색"
 
 msgid "Search suppliers..."
 msgstr "공급업체 검색..."
@@ -18745,6 +18769,9 @@ msgstr "동일한 개인이 검사할 수 있습니다"
 msgid "The SAML metadata URL published by your identity provider"
 msgstr "신원 공급자가 게시한 SAML 메타데이터 URL"
 
+msgid "The schedule could not be updated after the release"
+msgstr "릴리스 후 일정을 업데이트할 수 없었습니다."
+
 msgid "The schedule used to spread this asset's cost over its useful life (straight-line, declining balance, units of production)."
 msgstr "이 자산의 원가를 내용연수에 걸쳐 배분하는 데 사용되는 상각 스케줄입니다(정액법, 정률법, 생산량비례법)."
 
@@ -20016,7 +20043,7 @@ msgid "Untitled step"
 msgstr "제목 없는 단계"
 
 msgid "Untracked"
-msgstr ""
+msgstr "미추적"
 
 msgid "Unused picked material flushed back from the work center to the warehouse."
 msgstr "작업장에서 창고로 반환된 미사용 선택 재료."
