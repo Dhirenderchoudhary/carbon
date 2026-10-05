@@ -13,7 +13,7 @@ import {
   PostgresQueryCompiler,
   type QueryResult
 } from "kysely";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // diffMethod now lives in items.service. Importing the real module drags in the
 // items.service graph, which transitively loads @carbon/content/glossary — whose
@@ -27,6 +27,14 @@ vi.mock("@carbon/content/glossary", () => ({
   hasEntry: vi.fn(),
   termSlug: vi.fn()
 }));
+
+// The server functions (get-method copies a revision's make method) run their
+// own transactions; the boundary here is the call.
+const { serverFnInvoke } = vi.hoisted(() => ({ serverFnInvoke: vi.fn() }));
+vi.mock("@carbon/server-functions", () => {
+  const invoker = { invoke: serverFnInvoke };
+  return { serverFns: { system: () => invoker, as: () => invoker } };
+});
 
 const {
   createRevision,
@@ -646,15 +654,18 @@ describe("createRevision", () => {
     companyId: "c1"
   } as never;
 
-  // The caller's supabase client: the permission gate and the method copy.
+  beforeEach(() => {
+    serverFnInvoke.mockReset().mockResolvedValue({ data: null, error: null });
+  });
+
+  // The caller's supabase client: the permission gate.
   function revisionClient(gate: { error: { message: string } | null }) {
     const rpc = vi.fn().mockResolvedValue({ data: null, ...gate });
-    const invoke = vi.fn().mockResolvedValue({ data: null, error: null });
-    return { client: { rpc, functions: { invoke } } as never, rpc, invoke };
+    return { client: { rpc } as never, rpc };
   }
 
   it("inserts the revision and what it inherits in one transaction", async () => {
-    const { client, rpc, invoke } = revisionClient({ error: null });
+    const { client, rpc } = revisionClient({ error: null });
     const { db, driver } = recordingDatabase();
 
     const result = await createRevision(client, db, {
@@ -708,19 +719,15 @@ describe("createRevision", () => {
     );
 
     // The method is copied once the revision is committed.
-    expect(invoke).toHaveBeenCalledWith("get-method", {
-      body: {
-        type: "itemToItem",
-        sourceId: "item-a",
-        targetId: "item-b",
-        companyId: "c1",
-        userId: "u1"
-      }
+    expect(serverFnInvoke).toHaveBeenCalledWith("get-method", {
+      type: "itemToItem",
+      sourceId: "item-a",
+      targetId: "item-b"
     });
   });
 
   it("leaves no revision behind when the copy fails", async () => {
-    const { client, invoke } = revisionClient({ error: null });
+    const { client } = revisionClient({ error: null });
     const { db, driver } = recordingDatabase('insert into "supplierPart"');
 
     const result = await createRevision(client, db, {
@@ -737,12 +744,12 @@ describe("createRevision", () => {
     expect(driver.log.at(-1)).toBe("ROLLBACK");
     expect(driver.log).not.toContain("COMMIT");
     expect(driver.log.some((sql) => sql.startsWith("delete"))).toBe(false);
-    expect(invoke).not.toHaveBeenCalled();
+    expect(serverFnInvoke).not.toHaveBeenCalled();
   });
 
   it("writes nothing for a caller who cannot create parts in the company", async () => {
     const denied = { message: "Not authorized for this company" };
-    const { client, invoke } = revisionClient({ error: denied });
+    const { client } = revisionClient({ error: denied });
     const { db, driver } = recordingDatabase();
 
     const result = await createRevision(client, db, {
@@ -753,7 +760,7 @@ describe("createRevision", () => {
 
     expect(result).toEqual({ data: null, error: denied });
     expect(driver.log).toEqual([]);
-    expect(invoke).not.toHaveBeenCalled();
+    expect(serverFnInvoke).not.toHaveBeenCalled();
   });
 });
 

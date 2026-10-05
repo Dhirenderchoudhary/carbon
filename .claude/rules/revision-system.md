@@ -61,10 +61,11 @@ the type-scoped `revisions` array.
   `readableId`, new `revision`, `active: true`) and copies the source's planning
   and purchasing setup onto it (next bullet), so a revision with default planning
   and no suppliers is never visible and a failure leaves no row holding the
-  revision label. After the commit, if `replenishmentSystem !== "Buy"`, it invokes
-  the `get-method` edge function (`type: "itemToItem"`) to copy the method/BOM
-  from source to the new revision — that call cannot join the transaction, and
-  its result is still ignored. Three callers, one behaviour: the New Revision
+  revision label. After the commit, if `replenishmentSystem !== "Buy"`, it calls
+  the `get-method` server function (`@carbon/server-functions/get-method`,
+  `type: "itemToItem"`) to copy the method/BOM from source to the new revision.
+  That call runs its own transaction, so it cannot join this one: a failure is
+  logged and the revision stands (the method can be copied again). Three callers, one behaviour: the New Revision
   route, material sizes (`upsertMaterial`), and a change notice's Revision draft
   (`createChangeNoticeDraftMethod`, `active: false`).
 - **Authorization.** Kysely bypasses RLS, so before the transaction
@@ -128,7 +129,7 @@ Make methods are independently **versioned** (`20250603011801_make-method-versio
   = `Draft | Active | Archived`. Unique `(itemId, version)`.
 - View `activeMakeMethods` ranks per `itemId`, preferring `status='Active'` then
   `version DESC` (excludes `Archived`) — picks the one current method per item.
-- `activateMethodVersion` (`items.service.ts`) invokes the `convert` edge function
+- `activateMethodVersion` (`items.service.ts`) calls the `convert` server function
   (`type: "methodVersionToActive"`). Route: `x+/items+/methods+/versions.activate.$id.tsx`.
 - `jobMakeMethod.version` / `quoteMakeMethod.version` denormalize the method version
   at job/quote creation. Don't conflate method `version` (per-item recipe) with item
