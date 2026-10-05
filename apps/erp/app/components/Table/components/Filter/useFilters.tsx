@@ -4,6 +4,12 @@
 
 import { useUrlParams } from "~/hooks";
 
+/** A key's value in a list of `filter` params (`key:operator:value`), whatever the operator */
+export function findFilterValue(filters: string[], key: string): string | null {
+  const filter = filters.find((f) => f.split(":")[0] === key);
+  return filter?.split(":")[2] ?? null;
+}
+
 export function useFilters() {
   const [params, setParams] = useUrlParams();
   const urlFiltersParams = params.getAll("filter");
@@ -63,10 +69,8 @@ export function useFilters() {
   };
 
   // The key's value exactly as written in the URL, whatever the operator
-  const getFilterValue = (searchKey: string): string | null => {
-    const filter = urlFiltersParams.find((f) => f.split(":")[0] === searchKey);
-    return filter?.split(":")[2] ?? null;
-  };
+  const getFilterValue = (searchKey: string): string | null =>
+    findFilterValue(urlFiltersParams, searchKey);
 
   const addFilter = (newKey: string, newValue: string, isArray = false) => {
     if (hasFilterKey(newKey)) {
