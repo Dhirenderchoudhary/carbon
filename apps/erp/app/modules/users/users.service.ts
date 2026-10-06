@@ -517,7 +517,7 @@ export async function resolveUserSelectIds(
   const [members, groups] = await Promise.all([
     client
       .from("groupMembers")
-      .select("memberUserId, user")
+      .select("memberUserId")
       .eq("companyId", companyId)
       .in("memberUserId", ids),
     client
@@ -532,38 +532,23 @@ export async function resolveUserSelectIds(
     return { users: { data: null, error: members.error }, groups };
   }
 
-  const seen = new Set<string>();
-  const data: {
-    id: string;
-    firstName: string | null;
-    lastName: string | null;
-    fullName: string | null;
-    email: string | null;
-    avatarUrl: string | null;
-  }[] = [];
-  for (const row of members.data ?? []) {
-    if (!row.memberUserId || seen.has(row.memberUserId)) continue;
-    const user = row.user as {
-      id?: string;
-      firstName?: string | null;
-      lastName?: string | null;
-      fullName?: string | null;
-      email?: string | null;
-      avatarUrl?: string | null;
-    } | null;
-    if (!user?.id) continue;
-    seen.add(row.memberUserId);
-    data.push({
-      id: user.id,
-      firstName: user.firstName ?? null,
-      lastName: user.lastName ?? null,
-      fullName: user.fullName ?? null,
-      email: user.email ?? null,
-      avatarUrl: user.avatarUrl ?? null
-    });
+  const memberIds = [
+    ...new Set(
+      (members.data ?? [])
+        .map((row) => row.memberUserId)
+        .filter((id): id is string => Boolean(id))
+    )
+  ];
+  if (memberIds.length === 0) {
+    return { users: { data: [], error: null }, groups };
   }
 
-  return { users: { data, error: null }, groups };
+  const users = await client
+    .from("user")
+    .select("id, firstName, lastName, fullName, email, avatarUrl")
+    .in("id", memberIds);
+
+  return { users, groups };
 }
 
 /** @mcp read */

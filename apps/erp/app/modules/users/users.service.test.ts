@@ -41,8 +41,9 @@ function query(result: { data: unknown; error: unknown }, filters: unknown[]) {
 }
 
 describe("resolveUserSelectIds", () => {
-  it("loads profiles from this company's group members and returns each person once", async () => {
+  it("loads profiles from this company's group members, including a deactivated user", async () => {
     const memberFilters: unknown[] = [];
+    const userFilters: unknown[] = [];
     const client = {
       from(table: string) {
         if (table === "groupMembers") {
@@ -50,31 +51,38 @@ describe("resolveUserSelectIds", () => {
             {
               error: null,
               data: [
-                {
-                  memberUserId: "ada",
-                  user: {
-                    id: "ada",
-                    firstName: "Ada",
-                    lastName: "Lovelace",
-                    fullName: "Ada Lovelace",
-                    email: "ada@example.com",
-                    avatarUrl: null
-                  }
-                },
-                {
-                  memberUserId: "ada",
-                  user: {
-                    id: "ada",
-                    firstName: "Ada",
-                    lastName: "Lovelace",
-                    fullName: "Ada Lovelace",
-                    email: "ada@example.com",
-                    avatarUrl: null
-                  }
-                }
+                { memberUserId: "ada" },
+                { memberUserId: "ada" },
+                { memberUserId: "gone" }
               ]
             },
             memberFilters
+          );
+        }
+        if (table === "user") {
+          return query(
+            {
+              error: null,
+              data: [
+                {
+                  id: "ada",
+                  firstName: "Ada",
+                  lastName: "Lovelace",
+                  fullName: "Ada Lovelace",
+                  email: "ada@example.com",
+                  avatarUrl: null
+                },
+                {
+                  id: "gone",
+                  firstName: "Grace",
+                  lastName: "Hopper",
+                  fullName: "Grace Hopper",
+                  email: "grace@example.com",
+                  avatarUrl: null
+                }
+              ]
+            },
+            userFilters
           );
         }
         return query({ error: null, data: [] }, []);
@@ -90,6 +98,7 @@ describe("resolveUserSelectIds", () => {
       ["eq", "companyId", "co"],
       ["in", "memberUserId", ["ada", "other"]]
     ]);
+    expect(userFilters).toEqual([["in", "id", ["ada", "gone"]]]);
     expect(users.data).toEqual([
       {
         id: "ada",
@@ -98,7 +107,36 @@ describe("resolveUserSelectIds", () => {
         fullName: "Ada Lovelace",
         email: "ada@example.com",
         avatarUrl: null
+      },
+      {
+        id: "gone",
+        firstName: "Grace",
+        lastName: "Hopper",
+        fullName: "Grace Hopper",
+        email: "grace@example.com",
+        avatarUrl: null
       }
     ]);
+  });
+
+  it("returns the membership error and does not read user", async () => {
+    const seen: string[] = [];
+    const client = {
+      from(table: string) {
+        seen.push(table);
+        if (table === "groupMembers") {
+          return query({ data: null, error: { message: "nope" } }, []);
+        }
+        return query({ data: [], error: null }, []);
+      }
+    };
+
+    const { users } = await resolveUserSelectIds(client as never, "co", [
+      "ada"
+    ]);
+
+    expect(users.error).toEqual({ message: "nope" });
+    expect(users.data).toBeNull();
+    expect(seen).not.toContain("user");
   });
 });

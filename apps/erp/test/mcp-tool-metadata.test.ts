@@ -439,11 +439,8 @@ describe("published defaults", () => {
       "sales_resolvePriceList",
       "production_calculateJobPriority",
       "inventory_expandStorageUnitIdsWithDescendants",
-      "items_assertMethodOperationIsDraft",
       "items_resolveItemIdFromExtractedText",
       "resources_resolveEmployeeAbilityExpiresAt",
-      "sales_buildPullFromInventoryPriceRows",
-      "sales_buildPurchaseToOrderPriceRows",
       "settings_resolveSections",
       "users_resolveUserSelectIds",
       "accounting_translateCompanyBalances"
@@ -462,6 +459,17 @@ describe("published defaults", () => {
       "shared_lookupBuyPriceFromMap",
       "shared_resolveBuyUnitCost",
       "shared_resolveSupplierPrice"
+    ]) {
+      expect(byName.has(name), name).toBe(false);
+    }
+  });
+
+  it("does not publish helpers that only check or build rows", () => {
+    for (const name of [
+      "items_assertMethodOperationIsDraft",
+      "sales_buildMakeToOrderPriceRows",
+      "sales_buildPullFromInventoryPriceRows",
+      "sales_buildPurchaseToOrderPriceRows"
     ]) {
       expect(byName.has(name), name).toBe(false);
     }

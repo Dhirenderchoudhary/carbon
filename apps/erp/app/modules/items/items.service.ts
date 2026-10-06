@@ -734,7 +734,6 @@ export async function deleteMethodMaterial(
   return client.from("methodMaterial").delete().eq("id", id);
 }
 
-/** @mcp read */
 export async function assertMethodOperationIsDraft(
   client: SupabaseClient<Database>,
   operationId: string

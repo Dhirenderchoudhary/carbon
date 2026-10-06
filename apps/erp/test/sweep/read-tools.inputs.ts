@@ -32,6 +32,9 @@ export function givenInputs(today: string): Record<string, Record<string, Planne
     accounting_getConsolidatedBalances: {
       targetCurrency: from("company", "baseCurrencyCode")
     },
+    accounting_translateCompanyBalances: {
+      targetCurrency: from("company", "baseCurrencyCode")
+    },
     accounting_getConsolidatedPeriodSeries: {
       targetCurrency: from("company", "baseCurrencyCode")
     },

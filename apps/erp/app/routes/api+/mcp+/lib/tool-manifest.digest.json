@@ -1,5 +1,5 @@
 {
-  "totalTools": 1476,
+  "totalTools": 1472,
   "modules": 15,
   "tools": [
     {"name":"account_deleteUserAttributeValue","classification":"DESTRUCTIVE","paramCount":2,"schema":"0d38e12233b4","response":"bcde375ebd4c","injectAuth":"companyId+userId","permission":"none","paginates":false},
@@ -349,7 +349,6 @@
     {"name":"invoicing_upsertSalesInvoiceShipment","classification":"WRITE","paramCount":8,"schema":"c55c0878eacb","response":"3797626bd17e","injectAuth":"companyId+updatedBy","permission":"invoicing:update","paginates":false},
     {"name":"items_activateMethodVersion","classification":"WRITE","paramCount":1,"schema":"3797626bd17e","response":"ec9aaaf82857","injectAuth":"companyId+userId","permission":"parts:update","paginates":false},
     {"name":"items_addChangeNoticeAffectedItem","classification":"DESTRUCTIVE","paramCount":5,"schema":"183209667024","response":"3cc309ba4541","injectAuth":"companyId+createdBy+updatedBy+userId","permission":"parts:create","paginates":false},
-    {"name":"items_assertMethodOperationIsDraft","classification":"READ","paramCount":1,"schema":"c407a9edb930","response":"none","injectAuth":"companyId","permission":"parts:view","paginates":false},
     {"name":"items_cascadeItemTrackingType","classification":"WRITE","paramCount":2,"schema":"cb7a14748215","response":"none","injectAuth":"companyId+userId","permission":"parts:update","paginates":false},
     {"name":"items_copyItem","classification":"WRITE","paramCount":8,"schema":"9c8674273b59","response":"4e1a8f1febce","injectAuth":"companyId+createdBy+updatedBy+userId","permission":"parts:create","paginates":false},
     {"name":"items_copyMakeMethod","classification":"WRITE","paramCount":8,"schema":"9c8674273b59","response":"4e1a8f1febce","injectAuth":"companyId+createdBy+updatedBy+userId","permission":"parts:create","paginates":false},
@@ -1132,9 +1131,6 @@
     {"name":"resources_upsertTrainingAssignment","classification":"WRITE","paramCount":3,"schema":"9f8996544bb7","response":"3797626bd17e","injectAuth":"companyId+createdBy+updatedBy","permission":"resources:create+update","paginates":false},
     {"name":"resources_upsertTrainingQuestion","classification":"WRITE","paramCount":12,"schema":"1c336cac9dc8","response":"3797626bd17e","injectAuth":"companyId+createdBy+updatedBy","permission":"resources:create+update","paginates":false,"upsert":"id"},
     {"name":"resources_upsertWorkCenter","classification":"DESTRUCTIVE","paramCount":15,"schema":"cbbc99da1ba7","response":"3797626bd17e","injectAuth":"companyId+createdBy+updatedBy","permission":"resources:create+update","paginates":false,"upsert":"id"},
-    {"name":"sales_buildMakeToOrderPriceRows","classification":"WRITE","paramCount":4,"schema":"9ca94f5219fe","response":"10ba10c1ac60","injectAuth":"companyId","permission":"sales:update","paginates":false},
-    {"name":"sales_buildPullFromInventoryPriceRows","classification":"READ","paramCount":4,"schema":"9ca94f5219fe","response":"10ba10c1ac60","injectAuth":"companyId","permission":"sales:view","paginates":false},
-    {"name":"sales_buildPurchaseToOrderPriceRows","classification":"READ","paramCount":4,"schema":"9ca94f5219fe","response":"10ba10c1ac60","injectAuth":"companyId","permission":"sales:view","paginates":false},
     {"name":"sales_calculatePricesForQuantities","classification":"WRITE","paramCount":3,"schema":"160e0d2cf116","response":"af602e7b257e","injectAuth":"companyId","permission":"sales:update","paginates":false},
     {"name":"sales_cancelSalesOrder","classification":"WRITE","paramCount":2,"schema":"745d2b9e6ebc","response":"903bb804a4ff","injectAuth":"companyId+userId","permission":"sales:update","paginates":false,"result":"flag"},
     {"name":"sales_cancelSalesReturnOrder","classification":"WRITE","paramCount":1,"schema":"3797626bd17e","response":"3797626bd17e","injectAuth":"companyId+userId","permission":"sales:update","paginates":false},
@@ -1474,7 +1470,7 @@
     {"name":"users_getUserSelectGroups","classification":"READ","paramCount":4,"schema":"b459d00208b5","response":"51b54791b40a","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_getUsersWithVerifiedMfa","classification":"READ","paramCount":0,"schema":"efddc7bd8bbc","response":"4c1fdc714231","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_insertGroup","classification":"WRITE","paramCount":1,"schema":"098974972159","response":"06c8b45796ca","injectAuth":"companyId","permission":"users:create","paginates":false},
-    {"name":"users_resolveUserSelectIds","classification":"READ","paramCount":1,"schema":"0eb0c2be01ed","response":"e459c6753ad5","injectAuth":"companyId","permission":"users:view","paginates":false},
+    {"name":"users_resolveUserSelectIds","classification":"READ","paramCount":1,"schema":"0eb0c2be01ed","response":"d5c704d28901","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_searchUsersForSelect","classification":"READ","paramCount":4,"schema":"230b4891a4e5","response":"c9c1df9c3e28","injectAuth":"companyId+userId","permission":"users:view","paginates":false},
     {"name":"users_upsertGroup","classification":"WRITE","paramCount":2,"schema":"f06d2d858884","response":"bcde375ebd4c","injectAuth":"companyId","permission":"users:create+update","paginates":false},
     {"name":"users_upsertGroupMembers","classification":"DESTRUCTIVE","paramCount":2,"schema":"b32a69080685","response":"bcde375ebd4c","injectAuth":"companyId","permission":"users:create+update","paginates":false}
