@@ -636,7 +636,13 @@ const QuoteSummary = ({
     []
   );
 
-  const subtotal = Object.values(selectedLines).reduce((acc, line) => {
+  // The selection is seeded once, so a line deleted since then still has an
+  // entry — total only the lines the quote still has.
+  const currentLines = (routeData?.lines ?? []).flatMap((line) =>
+    line.id && selectedLines[line.id] ? [selectedLines[line.id]] : []
+  );
+
+  const subtotal = currentLines.reduce((acc, line) => {
     return (
       acc +
       (line.convertedNetUnitPrice ?? 0) * line.quantity +
@@ -644,7 +650,7 @@ const QuoteSummary = ({
       (line.convertedShippingCost ?? 0)
     );
   }, 0);
-  const totalDiscount = Object.values(selectedLines).reduce((acc, line) => {
+  const totalDiscount = currentLines.reduce((acc, line) => {
     return (
       acc +
       (line.convertedUnitPrice ?? 0) *
@@ -652,7 +658,7 @@ const QuoteSummary = ({
         (line.discountPercent ?? 0)
     );
   }, 0);
-  const tax = Object.values(selectedLines).reduce((acc, line) => {
+  const tax = currentLines.reduce((acc, line) => {
     return (
       acc +
       ((line.convertedNetUnitPrice ?? 0) * line.quantity +
