@@ -514,11 +514,12 @@ export async function resolveUserSelectIds(
   companyId: string,
   ids: string[]
 ) {
-  const [users, groups] = await Promise.all([
+  const [members, groups] = await Promise.all([
     client
-      .from("user")
-      .select("id, firstName, lastName, fullName, email, avatarUrl")
-      .in("id", ids),
+      .from("groupMembers")
+      .select("memberUserId, user")
+      .eq("companyId", companyId)
+      .in("memberUserId", ids),
     client
       .from("group")
       .select("id, name")
@@ -526,7 +527,43 @@ export async function resolveUserSelectIds(
       .eq("companyId", companyId)
       .eq("isIdentityGroup", false)
   ]);
-  return { users, groups };
+
+  if (members.error) {
+    return { users: { data: null, error: members.error }, groups };
+  }
+
+  const seen = new Set<string>();
+  const data: {
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    fullName: string | null;
+    email: string | null;
+    avatarUrl: string | null;
+  }[] = [];
+  for (const row of members.data ?? []) {
+    if (!row.memberUserId || seen.has(row.memberUserId)) continue;
+    const user = row.user as {
+      id?: string;
+      firstName?: string | null;
+      lastName?: string | null;
+      fullName?: string | null;
+      email?: string | null;
+      avatarUrl?: string | null;
+    } | null;
+    if (!user?.id) continue;
+    seen.add(row.memberUserId);
+    data.push({
+      id: user.id,
+      firstName: user.firstName ?? null,
+      lastName: user.lastName ?? null,
+      fullName: user.fullName ?? null,
+      email: user.email ?? null,
+      avatarUrl: user.avatarUrl ?? null
+    });
+  }
+
+  return { users: { data, error: null }, groups };
 }
 
 /** @mcp read */

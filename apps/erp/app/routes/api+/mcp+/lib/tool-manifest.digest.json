@@ -1474,7 +1474,7 @@
     {"name":"users_getUserSelectGroups","classification":"READ","paramCount":4,"schema":"b459d00208b5","response":"51b54791b40a","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_getUsersWithVerifiedMfa","classification":"READ","paramCount":0,"schema":"efddc7bd8bbc","response":"4c1fdc714231","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_insertGroup","classification":"WRITE","paramCount":1,"schema":"098974972159","response":"06c8b45796ca","injectAuth":"companyId","permission":"users:create","paginates":false},
-    {"name":"users_resolveUserSelectIds","classification":"READ","paramCount":1,"schema":"0eb0c2be01ed","response":"7fdfa4c9e77e","injectAuth":"companyId","permission":"users:view","paginates":false},
+    {"name":"users_resolveUserSelectIds","classification":"READ","paramCount":1,"schema":"0eb0c2be01ed","response":"e459c6753ad5","injectAuth":"companyId","permission":"users:view","paginates":false},
     {"name":"users_searchUsersForSelect","classification":"READ","paramCount":4,"schema":"230b4891a4e5","response":"c9c1df9c3e28","injectAuth":"companyId+userId","permission":"users:view","paginates":false},
     {"name":"users_upsertGroup","classification":"WRITE","paramCount":2,"schema":"f06d2d858884","response":"bcde375ebd4c","injectAuth":"companyId","permission":"users:create+update","paginates":false},
     {"name":"users_upsertGroupMembers","classification":"DESTRUCTIVE","paramCount":2,"schema":"b32a69080685","response":"bcde375ebd4c","injectAuth":"companyId","permission":"users:create+update","paginates":false}
