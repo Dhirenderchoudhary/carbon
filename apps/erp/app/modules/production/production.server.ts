@@ -116,7 +116,7 @@ export async function releaseJobs({
       companyId,
       userId
     });
-    if (recalc.error) return fail(`Failed to recalculate job ${id}`);
+    if (recalc.error) return fail("The job could not be recalculated");
 
     // A failed plan never blocks a release: the scheduled MRP run (every 3
     // hours) and Material Planning's Recalculate both repair it.
@@ -144,9 +144,9 @@ export async function releaseJobs({
       updatedBy: userId,
       fromStatuses: ["Draft", "Planned"]
     });
-    if (update.error) return fail(`Failed to release job ${id}`);
+    if (update.error) return fail("The job could not be released");
     if (!update.updated) {
-      return fail(`Job ${id} is no longer Draft or Planned`);
+      return fail("The job is no longer Draft or Planned");
     }
     releasedJobIds.push(id);
 
@@ -159,7 +159,7 @@ export async function releaseJobs({
       });
     if (purchaseOrder.error) {
       return fail(
-        `Job ${id} is released, but its purchase orders could not be created: ${getErrorMessage(
+        `The job is released, but its purchase orders could not be created: ${getErrorMessage(
           purchaseOrder.error,
           "unknown error"
         )}`
@@ -184,7 +184,7 @@ export async function releaseJobs({
         error: stamped.error
       });
       return fail(
-        `Job ${id} is released, but its release date could not be saved`
+        "The job is released, but its release date could not be saved"
       );
     }
   }

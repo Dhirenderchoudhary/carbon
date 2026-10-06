@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# 个有余额的账户} other {# 个有余额的�
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# 门课程} other {# 门课程}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {关闭 # 生产批次} other {关闭 # 生产批次}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {已关闭 # 生产批次} other {已关闭 # 生产批次}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {下达 # 生产批次} other {下达 # 生产批次}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {已发布 # 生产批次} other {已发布 # 生产批次}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {已下达 # 工单} other {已下达 # 工单}}"
+
 msgid "{days}d"
 msgstr "{days}天"
 
@@ -6392,25 +6407,11 @@ msgstr "处置"
 msgid "Dissolve"
 msgstr "解散"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "解散 {0} 批次"
-
-msgid "Dissolve 1 batch"
-msgstr "取消1个生产批次"
-
 msgid "Dissolve batch"
 msgstr "解散批次"
 
 msgid "Dissolve Batch"
 msgstr "解散批次"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "已解散 {0} 批次"
-
-msgid "Dissolved 1 batch"
-msgstr "已取消1个生产批次"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "相对时间表·待确认的日期"
 msgid "Release"
 msgstr "下达"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "下达{0}个生产批次"
-
-msgid "Release 1 batch"
-msgstr "下达1个生产批次"
-
 msgid "Release Batch"
 msgstr "下达生产批次"
 
@@ -14899,20 +14893,6 @@ msgstr "下达工单"
 
 msgid "Released"
 msgstr "已下达"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "已下达{0}个生产批次"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "已下达{0}个工单"
-
-msgid "Released 1 batch"
-msgstr "已下达1个生产批次"
-
-msgid "Released 1 job"
-msgstr "已下达1个工单"
 
 msgid "Released date"
 msgstr "下达日期"

@@ -26,6 +26,7 @@ import {
   parseDate,
   today
 } from "@internationalized/date";
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
@@ -152,10 +153,20 @@ function useReadableTrackedEntities(data: Job[], companyId: string) {
   return trackedEntities;
 }
 
+// A function declaration on purpose: `plural()` nested in `t` inside a
+// `memo(…)` component compiles to the global i18n, which is never activated
+// (see .claude/rules/i18n-lingui-system.md).
+function useReleasedJobsMessage() {
+  const { t } = useLingui();
+  return (count: number) =>
+    t`${plural(count, { one: "Released # job", other: "Released # jobs" })}`;
+}
+
 const JobsTable = memo((props: JobsTableProps) => {
   const { data, count, tags, batchesByJobId = {} } = props;
   const navigate = useNavigate();
   const { t } = useLingui();
+  const releasedJobsMessage = useReleasedJobsMessage();
   const [params] = useUrlParams();
   const parts = useParts();
   const tools = useTools();
@@ -697,11 +708,7 @@ const JobsTable = memo((props: JobsTableProps) => {
     onSuccess: (result) => {
       if (!result.success) return;
       if (result.released) {
-        toast.success(
-          result.released === 1
-            ? t`Released 1 job`
-            : t`Released ${result.released} jobs`
-        );
+        toast.success(releasedJobsMessage(result.released));
       }
       if (result.warnings.length) {
         toast.error(

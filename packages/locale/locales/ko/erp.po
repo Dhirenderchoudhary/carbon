@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# 잔액이 있는 계정} other {# 잔액이 있�
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "교육과정 {count}개"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {배치 # 해제} other {배치 # 해제}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {배치 # 해제됨} other {배치 # 해제됨}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {배치 # 릴리스} other {배치 # 릴리스}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {배치 # 릴리스됨} other {배치 # 릴리스됨}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {작업 지시 # 릴리스됨} other {작업 지시 # 릴리스됨}}"
+
 msgid "{days}d"
 msgstr "{days}일"
 
@@ -6392,25 +6407,11 @@ msgstr "처분 결정"
 msgid "Dissolve"
 msgstr "해체"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "{0} 배치 해제"
-
-msgid "Dissolve 1 batch"
-msgstr "배치 1개 해제"
-
 msgid "Dissolve batch"
 msgstr "배치 해제"
 
 msgid "Dissolve Batch"
 msgstr "배치 해체"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "{0} 배치 해제됨"
-
-msgid "Dissolved 1 batch"
-msgstr "배치 1개 해제됨"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "상대적 타임라인 · 확정 예정 날짜"
 msgid "Release"
 msgstr "릴리스"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "{0}개 배치 릴리스"
-
-msgid "Release 1 batch"
-msgstr "배치 1개 릴리스"
-
 msgid "Release Batch"
 msgstr "배치 릴리스"
 
@@ -14899,20 +14893,6 @@ msgstr "작업 지시 릴리스"
 
 msgid "Released"
 msgstr "릴리즈됨"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "{0}개 배치 릴리스됨"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "작업 지시 {0}개 릴리스됨"
-
-msgid "Released 1 batch"
-msgstr "배치 1개 릴리스됨"
-
-msgid "Released 1 job"
-msgstr "작업 지시 1개 릴리스됨"
 
 msgid "Released date"
 msgstr "출시일"

@@ -15,6 +15,7 @@ import {
   toast
 } from "@carbon/react";
 import { BATCH_STATUS_COLOR_MAP } from "@carbon/utils";
+import { plural } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -73,8 +74,29 @@ export function BatchStatus({ status }: { status: string | null }) {
   );
 }
 
+// A function declaration on purpose: `plural()` nested in `t` inside a
+// `memo(…)` component compiles to the global i18n, which is never activated
+// (see .claude/rules/i18n-lingui-system.md).
+function useBatchCountMessages() {
+  const { t } = useLingui();
+  return useMemo(
+    () => ({
+      release: (count: number) =>
+        t`${plural(count, { one: "Release # batch", other: "Release # batches" })}`,
+      released: (count: number) =>
+        t`${plural(count, { one: "Released # batch", other: "Released # batches" })}`,
+      dissolve: (count: number) =>
+        t`${plural(count, { one: "Dissolve # batch", other: "Dissolve # batches" })}`,
+      dissolved: (count: number) =>
+        t`${plural(count, { one: "Dissolved # batch", other: "Dissolved # batches" })}`
+    }),
+    [t]
+  );
+}
+
 const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
   const { t } = useLingui();
+  const countMessages = useBatchCountMessages();
   const permissions = usePermissions();
   const navigate = useNavigate();
   const canUpdate = permissions.can("update", "production");
@@ -203,11 +225,7 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
       return;
     }
     if (d.dissolved) {
-      toast.success(
-        d.dissolved === 1
-          ? t`Dissolved 1 batch`
-          : t`Dissolved ${d.dissolved} batches`
-      );
+      toast.success(countMessages.dissolved(d.dissolved));
     }
     if (d.failed?.length) {
       toast.error(
@@ -216,7 +234,7 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
           .join(", ")} — production already recorded`
       );
     }
-  }, [dissolveFetcher.state, dissolveFetcher.data, t]);
+  }, [dissolveFetcher.state, dissolveFetcher.data, t, countMessages]);
 
   // Bulk release for the selected rows — Planned batches only (release is the
   // Planned → Active flip; Active/Completing/Completed batches are already on or
@@ -243,11 +261,7 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
       return;
     }
     if (d.released) {
-      toast.success(
-        d.released === 1
-          ? t`Released 1 batch`
-          : t`Released ${d.released} batches`
-      );
+      toast.success(countMessages.released(d.released));
     }
     if (d.failed?.length) {
       toast.error(
@@ -256,7 +270,12 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
           .join(", ")}`
       );
     }
-  }, [releaseBatchesFetcher.state, releaseBatchesFetcher.data, t]);
+  }, [
+    releaseBatchesFetcher.state,
+    releaseBatchesFetcher.data,
+    t,
+    countMessages
+  ]);
 
   const renderActions = useCallback(
     (selectedRows: JobOperationBatch[]) => {
@@ -284,9 +303,7 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
             }
           >
             <DropdownMenuIcon icon={<LuCirclePlay />} />
-            {releasable.length === 1
-              ? t`Release 1 batch`
-              : t`Release ${releasable.length} batches`}
+            {countMessages.release(releasable.length)}
           </DropdownMenuItem>
           <DropdownMenuItem
             destructive
@@ -303,14 +320,12 @@ const BatchesTable = memo(({ data, count }: BatchesTableProps) => {
             }
           >
             <DropdownMenuIcon icon={<LuTrash />} />
-            {dissolvable.length === 1
-              ? t`Dissolve 1 batch`
-              : t`Dissolve ${dissolvable.length} batches`}
+            {countMessages.dissolve(dissolvable.length)}
           </DropdownMenuItem>
         </DropdownMenuContent>
       );
     },
-    [canUpdate, dissolveFetcher, releaseBatchesFetcher, t]
+    [canUpdate, dissolveFetcher, releaseBatchesFetcher, countMessages]
   );
 
   const customColumns =

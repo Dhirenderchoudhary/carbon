@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# счет с остатком} other {# счето
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# курс} other {# курсов}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {Расформировать # серию} few {Расформировать # серии} many {Расформировать # серий} other {Расформировать # серий}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {Расформирована # серия} few {Расформированы # серии} many {Расформированы # серий} other {Расформированы # серий}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {Запустить в работу # серию} few {Запустить в работу # серии} many {Запустить в работу # серий} other {Запустить в работу # серий}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {Запущена # серия} few {Запущены # серии} many {Запущены # серий} other {Запущены # серий}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {Запущен # производственный заказ} few {Запущено # производственных заказа} many {Запущено # производственных заказов} other {Запущено # производственных заказов}}"
+
 msgid "{days}d"
 msgstr "{days}д"
 
@@ -6392,25 +6407,11 @@ msgstr "Решения"
 msgid "Dissolve"
 msgstr "Распустить"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "Растворить {0} партий"
-
-msgid "Dissolve 1 batch"
-msgstr "Закрыть 1 серию"
-
 msgid "Dissolve batch"
 msgstr "Разбить партию"
 
 msgid "Dissolve Batch"
 msgstr "Распустить партию"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "Растворено {0} партий"
-
-msgid "Dissolved 1 batch"
-msgstr "Закрыта 1 серия"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Относительная шкала времени · даты буд�
 msgid "Release"
 msgstr "Запустить в работу"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "Запустить в работу {0} серий"
-
-msgid "Release 1 batch"
-msgstr "Запустить в работу 1 серию"
-
 msgid "Release Batch"
 msgstr "Запустить серию в работу"
 
@@ -14899,20 +14893,6 @@ msgstr "Запустить в работу производственные за
 
 msgid "Released"
 msgstr "Выпущено"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "Запущено {0} серий"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "Запущено {0} производственных заказов"
-
-msgid "Released 1 batch"
-msgstr "Запущена 1 серия"
-
-msgid "Released 1 job"
-msgstr "Запущен 1 производственный заказ"
 
 msgid "Released date"
 msgstr "Дата выпуска"

@@ -103,8 +103,10 @@ its query; delete it once Lingui strips the query itself.
   to a call — `memo((props) => …)`, which is most ERP tables — Lingui 6.9.0 expands it
   into a call on the global `@lingui/core` instance instead, which throws at runtime
   for the reason above. Extract, typecheck and Biome do not catch it. There, build the
-  string in a function-declaration hook, or choose between two whole `t` phrases
-  (`JobsTable.tsx`, `BatchesTable.tsx`). No app code calls `plural()` today.
+  string in a function-declaration hook (`useReleasedJobsMessage` in `JobsTable.tsx`,
+  `useBatchCountMessages` in `BatchesTable.tsx`) and call the hook from the component.
+  Verify a new one by compiling the file (Vite `transformRequest`) and checking that no
+  `@lingui/core` import appears.
 
 ## Adding strings / locales
 

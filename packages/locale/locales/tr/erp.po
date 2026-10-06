@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# bakiyesi olan hesap} other {# bakiyesi olan hesap
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# kurs} other {# kurs}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {# partiyi çöz} other {# partileri çöz}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {# parti çözüldü} other {# partiler çözüldü}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {# partiyi serbest bırak} other {# partileri serbest bırak}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {# parti serbest bırakıldı} other {# partiler serbest bırakıldı}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {# iş emri serbest bırakıldı} other {# iş emirleri serbest bırakıldı}}"
+
 msgid "{days}d"
 msgstr "{days}g"
 
@@ -6392,25 +6407,11 @@ msgstr "Kararlar"
 msgid "Dissolve"
 msgstr "Çöz"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "{0} parti çöz"
-
-msgid "Dissolve 1 batch"
-msgstr "1 Partiyi Çöz"
-
 msgid "Dissolve batch"
 msgstr "Toplu İşi Kaldır"
 
 msgid "Dissolve Batch"
 msgstr "Toplu İşi Çöz"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "{0} parti çözüldü"
-
-msgid "Dissolved 1 batch"
-msgstr "1 Parti Çözüldü"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Göreceli zaman çizelgesi · tarihler teyit edilecektir"
 msgid "Release"
 msgstr "Serbest Bırakma"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "{0} partiyi serbest bırak"
-
-msgid "Release 1 batch"
-msgstr "1 Partiyi Serbest Bırak"
-
 msgid "Release Batch"
 msgstr "Partiyi Serbest Bırak"
 
@@ -14899,20 +14893,6 @@ msgstr "İş emirlerini Serbest Bırak"
 
 msgid "Released"
 msgstr "Yayınlandı"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "{0} parti serbest bırakıldı"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "{0} İş emri serbest bırakıldı"
-
-msgid "Released 1 batch"
-msgstr "1 Parti serbest bırakıldı"
-
-msgid "Released 1 job"
-msgstr "1 İş emri serbest bırakıldı"
 
 msgid "Released date"
 msgstr "Yayın tarihi"

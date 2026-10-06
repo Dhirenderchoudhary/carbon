@@ -277,7 +277,7 @@ describe("bulk job release", () => {
     vi.mocked(releaseJobs).mockImplementation(async ({ jobIds }) => ({
       error:
         jobIds[0] === "j1"
-          ? "Job j1 is released, but its purchase orders could not be created: no supplier currency"
+          ? "The job is released, but its purchase orders could not be created: no supplier currency"
           : null,
       purchaseOrdersBySupplierId: {},
       releasedJobIds: jobIds
@@ -292,7 +292,7 @@ describe("bulk job release", () => {
         {
           readableId: "J1",
           message:
-            "Job j1 is released, but its purchase orders could not be created: no supplier currency"
+            "The job is released, but its purchase orders could not be created: no supplier currency"
         }
       ]
     });

@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# शेष राशि वाला खाता}
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# कोर्स} other {# कोर्स}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {# बैच विघटित करें} other {# बैच विघटित करें}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {# बैच विघटित} other {# बैच विघटित}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {# बैच जारी करें} other {# बैच जारी करें}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {# बैच जारी} other {# बैच जारी}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {# जॉब जारी} other {# जॉब जारी}}"
+
 msgid "{days}d"
 msgstr "{days}d"
 
@@ -6392,25 +6407,11 @@ msgstr "निपटान"
 msgid "Dissolve"
 msgstr "भंग करना"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "{0} बैच को भंग करें"
-
-msgid "Dissolve 1 batch"
-msgstr "1 बैच को भंग करें"
-
 msgid "Dissolve batch"
 msgstr "बैच को भंग करें"
 
 msgid "Dissolve Batch"
 msgstr "बैच भंग करना"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "{0} बैच भंग कर दिए गए"
-
-msgid "Dissolved 1 batch"
-msgstr "1 बैच भंग किया गया"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "सापेक्ष समयरेखा · तारीखें प
 msgid "Release"
 msgstr "जारी करें"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "{0} बैच जारी करें"
-
-msgid "Release 1 batch"
-msgstr "1 बैच को जारी करें"
-
 msgid "Release Batch"
 msgstr "बैच जारी करें"
 
@@ -14899,20 +14893,6 @@ msgstr "जॉब को जारी करें"
 
 msgid "Released"
 msgstr "जारी किया गया"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "{0} बैच जारी किए गए"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "{0} जॉब जारी किए गए"
-
-msgid "Released 1 batch"
-msgstr "1 बैच जारी किया गया"
-
-msgid "Released 1 job"
-msgstr "1 जॉब जारी किया गया"
 
 msgid "Released date"
 msgstr "जारी की गई तारीख"

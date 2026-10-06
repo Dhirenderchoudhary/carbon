@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# konto z saldem} other {# konta z saldem}}"
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# kurs} other {# kursy}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {Rozpuść # partię produkcyjną} few {Rozpuść # partie produkcyjne} many {Rozpuść # partii produkcyjnych} other {Rozpuść # partii produkcyjnych}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {Rozpuszczono # partię produkcyjną} few {Rozpuszczono # partie produkcyjne} many {Rozpuszczono # partii produkcyjnych} other {Rozpuszczono # partii produkcyjnych}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {Zwolnij # partię produkcyjną} few {Zwolnij # partie produkcyjne} many {Zwolnij # partii produkcyjnych} other {Zwolnij # partii produkcyjnych}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {Zwolniono # partię produkcyjną} few {Zwolniono # partie produkcyjne} many {Zwolniono # partii produkcyjnych} other {Zwolniono # partii produkcyjnych}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {Zwolniono # zlecenie produkcyjne} few {Zwolniono # zlecenia produkcyjne} many {Zwolniono # zleceń produkcyjnych} other {Zwolniono # zleceń produkcyjnych}}"
+
 msgid "{days}d"
 msgstr "{days}d"
 
@@ -6392,25 +6407,11 @@ msgstr "Dyspozycje"
 msgid "Dissolve"
 msgstr "Rozpuść"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "Rozwiązać {0} partii"
-
-msgid "Dissolve 1 batch"
-msgstr "Rozpuść 1 partię produkcyjną"
-
 msgid "Dissolve batch"
 msgstr "Rozwiązać partię"
 
 msgid "Dissolve Batch"
 msgstr "Rozpuść partię"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "Rozwiązane {0} partii"
-
-msgid "Dissolved 1 batch"
-msgstr "Rozwiązano 1 partię produkcyjną"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Względna oś czasu · daty do potwierdzenia"
 msgid "Release"
 msgstr "Zwolnienie"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "Zwolnij {0} partie produkcyjne"
-
-msgid "Release 1 batch"
-msgstr "Zwolnij 1 partię produkcyjną"
-
 msgid "Release Batch"
 msgstr "Zwolnij partię produkcyjną"
 
@@ -14899,20 +14893,6 @@ msgstr "Zwolnij zlecenia produkcyjne"
 
 msgid "Released"
 msgstr "Wydane"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "Zwolniono {0} partie produkcyjne"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "Zwolniono {0} zleceń produkcyjnych"
-
-msgid "Released 1 batch"
-msgstr "Zwolniono 1 partię produkcyjną"
-
-msgid "Released 1 job"
-msgstr "Zwolniono 1 zlecenie produkcyjne"
 
 msgid "Released date"
 msgstr "Data wydania"

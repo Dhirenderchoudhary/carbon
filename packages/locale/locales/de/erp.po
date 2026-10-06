@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# Konto mit einem Saldo} other {# Konten mit Salden
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# Kurs} other {# Kurse}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {# Los auflösen} other {# Lose auflösen}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {# Los aufgelöst} other {# Lose aufgelöst}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {# Los freigeben} other {# Lose freigeben}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {# Los freigegeben} other {# Lose freigegeben}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {# Fertigungsauftrag freigegeben} other {# Fertigungsaufträge freigegeben}}"
+
 msgid "{days}d"
 msgstr "{days}T"
 
@@ -6392,25 +6407,11 @@ msgstr "Verwendungsentscheide"
 msgid "Dissolve"
 msgstr "Auflösen"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "Auflösen {0} Chargen"
-
-msgid "Dissolve 1 batch"
-msgstr "1 Los auflösen"
-
 msgid "Dissolve batch"
 msgstr "Batch auflösen"
 
 msgid "Dissolve Batch"
 msgstr "Batch auflösen"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "Aufgelöst {0} Chargen"
-
-msgid "Dissolved 1 batch"
-msgstr "1 Los aufgelöst"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Relative Zeitleiste · Daten müssen noch bestätigt werden"
 msgid "Release"
 msgstr "Freigeben"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "{0} Lose freigeben"
-
-msgid "Release 1 batch"
-msgstr "1 Los freigeben"
-
 msgid "Release Batch"
 msgstr "Los freigeben"
 
@@ -14899,20 +14893,6 @@ msgstr "Fertigungsaufträge freigeben"
 
 msgid "Released"
 msgstr "Freigegeben"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "{0} Lose freigegeben"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "{0} Fertigungsaufträge freigegeben"
-
-msgid "Released 1 batch"
-msgstr "1 Los freigegeben"
-
-msgid "Released 1 job"
-msgstr "1 Fertigungsauftrag freigegeben"
 
 msgid "Released date"
 msgstr "Freigabedatum"

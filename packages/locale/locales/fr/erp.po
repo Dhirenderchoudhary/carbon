@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# compte avec un solde} other {# comptes avec un so
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# cours} other {# cours}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {Dissoudre # lot de production} other {Dissoudre # lots de production}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {# lot de production dissous} other {# lots de production dissous}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {Lancer # lot de production} other {Lancer # lots de production}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {# lot de production lancé} other {# lots de production lancés}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {# ordre de fabrication lancé} other {# ordres de fabrication lancés}}"
+
 msgid "{days}d"
 msgstr "{days}j"
 
@@ -6392,25 +6407,11 @@ msgstr "Traitements"
 msgid "Dissolve"
 msgstr "Dissoudre"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "Dissoudre {0} lots"
-
-msgid "Dissolve 1 batch"
-msgstr "Annuler 1 lot de production"
-
 msgid "Dissolve batch"
 msgstr "Dissoudre le lot"
 
 msgid "Dissolve Batch"
 msgstr "Dissoudre le lot"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "Dissous {0} lots"
-
-msgid "Dissolved 1 batch"
-msgstr "1 lot de production annulé"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Chronologie relative · dates à confirmer"
 msgid "Release"
 msgstr "Lancer"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "Lancer {0} lots de production"
-
-msgid "Release 1 batch"
-msgstr "Lancer 1 lot de production"
-
 msgid "Release Batch"
 msgstr "Lancer le lot de production"
 
@@ -14899,20 +14893,6 @@ msgstr "Lancer les ordres de fabrication"
 
 msgid "Released"
 msgstr "Libéré"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "{0} lots de production lancés"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "{0} ordres de fabrication lancés"
-
-msgid "Released 1 batch"
-msgstr "1 lot de production lancé"
-
-msgid "Released 1 job"
-msgstr "1 ordre de fabrication lancé"
 
 msgid "Released date"
 msgstr "Date de libération"

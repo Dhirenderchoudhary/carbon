@@ -83,7 +83,7 @@ describe("releaseJobs", () => {
       fromStatuses: ["Draft", "Planned"]
     });
     expect(result).toEqual({
-      error: "Job job-1 is no longer Draft or Planned",
+      error: "The job is no longer Draft or Planned",
       purchaseOrdersBySupplierId: {},
       releasedJobIds: []
     });
@@ -94,7 +94,7 @@ describe("releaseJobs", () => {
       clientWith({ error: { message: "connection reset" } })
     );
     expect(result).toEqual({
-      error: "Job job-1 is released, but its release date could not be saved",
+      error: "The job is released, but its release date could not be saved",
       purchaseOrdersBySupplierId: {},
       releasedJobIds: ["job-1"]
     });

@@ -319,6 +319,21 @@ msgstr "{count, plural, one {# account with a balance} other {# accounts with a 
 msgid "{count, plural, one {# course} other {# courses}}"
 msgstr "{count, plural, one {# course} other {# courses}}"
 
+msgid "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+msgstr "{count, plural, one {Dissolve # batch} other {Dissolve # batches}}"
+
+msgid "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+msgstr "{count, plural, one {Dissolved # batch} other {Dissolved # batches}}"
+
+msgid "{count, plural, one {Release # batch} other {Release # batches}}"
+msgstr "{count, plural, one {Release # batch} other {Release # batches}}"
+
+msgid "{count, plural, one {Released # batch} other {Released # batches}}"
+msgstr "{count, plural, one {Released # batch} other {Released # batches}}"
+
+msgid "{count, plural, one {Released # job} other {Released # jobs}}"
+msgstr "{count, plural, one {Released # job} other {Released # jobs}}"
+
 msgid "{days}d"
 msgstr "{days}d"
 
@@ -6392,25 +6407,11 @@ msgstr "Dispositions"
 msgid "Dissolve"
 msgstr "Dissolve"
 
-#. placeholder {0}: dissolvable.length
-msgid "Dissolve {0} batches"
-msgstr "Dissolve {0} batches"
-
-msgid "Dissolve 1 batch"
-msgstr "Dissolve 1 batch"
-
 msgid "Dissolve batch"
 msgstr "Dissolve batch"
 
 msgid "Dissolve Batch"
 msgstr "Dissolve Batch"
-
-#. placeholder {0}: d.dissolved
-msgid "Dissolved {0} batches"
-msgstr "Dissolved {0} batches"
-
-msgid "Dissolved 1 batch"
-msgstr "Dissolved 1 batch"
 
 #. placeholder {0}: batch.readableId
 msgid "Dissolving {0} returns its {memberCount} operations to the schedule un-run and deletes the batch. A batch with recorded production must be completed instead."
@@ -14867,13 +14868,6 @@ msgstr "Relative timeline · dates to be confirmed"
 msgid "Release"
 msgstr "Release"
 
-#. placeholder {0}: releasable.length
-msgid "Release {0} batches"
-msgstr "Release {0} batches"
-
-msgid "Release 1 batch"
-msgstr "Release 1 batch"
-
 msgid "Release Batch"
 msgstr "Release Batch"
 
@@ -14899,20 +14893,6 @@ msgstr "Release Jobs"
 
 msgid "Released"
 msgstr "Released"
-
-#. placeholder {0}: d.released
-msgid "Released {0} batches"
-msgstr "Released {0} batches"
-
-#. placeholder {0}: result.released
-msgid "Released {0} jobs"
-msgstr "Released {0} jobs"
-
-msgid "Released 1 batch"
-msgstr "Released 1 batch"
-
-msgid "Released 1 job"
-msgstr "Released 1 job"
 
 msgid "Released date"
 msgstr "Released date"
