@@ -333,6 +333,30 @@ describe("bulk job release", () => {
     expect(released.slice(0, 3)).toEqual(["j0", "j1", "j2"]);
   });
 
+  it("refuses a body that is not the table's shape", async () => {
+    setup([]);
+    const malformed = (body: string) =>
+      action({
+        request: new Request("http://localhost/x/job/release", {
+          method: "POST",
+          body,
+          headers: { "Content-Type": "application/json" }
+        }),
+        params: {},
+        context: {}
+      } as any);
+
+    expect(await malformed("not json")).toEqual({
+      success: false,
+      message: "Invalid request"
+    });
+    expect(await malformed(JSON.stringify({ jobIds: "j1" }))).toEqual({
+      success: false,
+      message: "Invalid request"
+    });
+    expect(releaseJobs).not.toHaveBeenCalled();
+  });
+
   it("refuses an empty selection", async () => {
     setup([]);
     expect(await run([])).toEqual({

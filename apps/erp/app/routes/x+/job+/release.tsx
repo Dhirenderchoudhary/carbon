@@ -9,12 +9,15 @@ import { getLogger } from "@carbon/logger";
 import { runLocationSchedule } from "@carbon/planning";
 import { chunkArray } from "@carbon/utils";
 import type { ActionFunctionArgs } from "react-router";
+import { z } from "zod";
 import { getJobReleaseReadiness } from "~/modules/production";
 import { releaseJobs } from "~/modules/production/production.server";
 import { jobReleaseProblems } from "~/modules/production/ui/Jobs/job-release-logic";
 import { getDatabaseClient } from "~/services/database.server";
 
 const logger = getLogger("erp", "job-release");
+
+const bodySchema = z.object({ jobIds: z.array(z.string()) });
 
 // Bulk release — the jobs table's "Release Jobs" action. Each selected Draft /
 // Planned job goes through the job page's release path (releaseJobs) on its
@@ -29,8 +32,13 @@ export async function action({ request }: ActionFunctionArgs) {
     update: "production"
   });
 
-  const { jobIds } = (await request.json()) as { jobIds?: string[] };
-  const ids = [...new Set((jobIds ?? []).filter(Boolean))];
+  // A body that is not JSON, or not the shape the table sends, is a plain
+  // refusal rather than a 500.
+  const body = bodySchema.safeParse(await request.json().catch(() => null));
+  if (!body.success) {
+    return { success: false as const, message: "Invalid request" };
+  }
+  const ids = [...new Set(body.data.jobIds.filter(Boolean))];
   if (ids.length === 0) {
     return { success: false as const, message: "No jobs selected" };
   }
