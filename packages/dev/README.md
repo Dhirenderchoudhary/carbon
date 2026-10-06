@@ -26,6 +26,7 @@ source ./setup.sh   # adds crbn to PATH + installs shell wrapper
 | `crbn remove --prune` | Also delete the git branch after removing each worktree. |
 | `crbn prune` | Destroy stacks no worktree can reach: slots whose directory is gone, and stacks with no slot. Lists them and confirms first; volumes are wiped. |
 | `crbn prune --all` | Destroy every crbn stack on the machine, running ones included. Worktrees, branches and live slots are kept; the next `crbn up` rebuilds the database. |
+| `crbn prune --tree` | Also clean up git worktrees: forget ones whose directory is gone. With `--all`, remove this repo's linked worktrees too. The main checkout, the current worktree, and any with uncommitted changes or a detached HEAD are kept; branches are never deleted. |
 
 ### Stack
 
@@ -37,6 +38,7 @@ source ./setup.sh   # adds crbn to PATH + installs shell wrapper
 | `crbn up --borrow` | Reuse another worktree's running containers (DB, API, etc). |
 | `crbn up --no-apps` | Services only (postgres, kong, supabase, inngest, mail). |
 | `crbn up --full` | Also start Studio, Postgres-Meta, the edge runtime and imgproxy (HEIC conversion). They are off by default; `crbn reload studio` or `crbn reload imgproxy` starts one on a running stack. |
+| `crbn up --no-hibernate` | Keep everything up. By default the containers stop after 30 min without ERP/MES traffic (the next request wakes them in about 8 s), and the dev servers stop after 2 h (that wake takes about 40 s). `CRBN_IDLE_MINUTES` and `CRBN_APPS_IDLE_MINUTES` change the waits. |
 | `crbn up --no-migrate` | Skip database migrations. |
 | `crbn up --no-regen` | Skip type/swagger regeneration. |
 | `crbn up --pull` | Force `docker compose pull` even if images exist locally. |

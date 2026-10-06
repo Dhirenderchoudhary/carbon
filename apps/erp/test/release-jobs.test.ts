@@ -4,10 +4,17 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// The service's imports now reach the glossary, whose `msg` macro only runs compiled.
+vi.mock("@lingui/core/macro", () => ({
+  msg: (strings: TemplateStringsArray) => ({ id: strings.join("") })
+}));
 vi.mock("@carbon/auth/client.server", () => ({
   getCarbonServiceRole: vi.fn(() => ({}))
 }));
-vi.mock("@carbon/env", () => ({ ASSEMBLER_SERVICE_URL: "" }));
+vi.mock("@carbon/env", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@carbon/env")>()),
+  ASSEMBLER_SERVICE_URL: ""
+}));
 vi.mock("@carbon/logger", () => ({
   getLogger: () => ({ error: vi.fn() })
 }));

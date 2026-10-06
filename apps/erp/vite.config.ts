@@ -6,6 +6,7 @@ import {
   applyDotenvToProcessEnv,
   clientOnlyAlias,
   linguiWithoutIdQuery,
+  stackActivity,
 } from "@carbon/dev/vite";
 import { getConfig } from "@lingui/conf";
 import { lingui } from "@lingui/vite-plugin";
@@ -17,6 +18,16 @@ import { defineConfig, PluginOption } from "vite";
 
 export default defineConfig(({ command, isSsrBuild, mode }) => {
   applyDotenvToProcessEnv(mode, import.meta.dirname);
+
+  // One id per build, the same in the client and server bundles. `path.to.api`
+  // puts it on the reference lists the browser keeps for a day, so a deploy
+  // is never served the copy cached under the previous one. The deployment on
+  // Vercel (a redeploy of one commit can still change what those lists hold);
+  // elsewhere the build's own start time, which also changes per build.
+  process.env.VITE_BUILD_ID ??=
+    process.env.VERCEL_DEPLOYMENT_ID?.replace(/^dpl_/, "").slice(0, 12) ??
+    process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 12) ??
+    Date.now().toString(36);
 
   /**
    * SSR dependencies that must be bundled into the server output rather than
@@ -129,6 +140,7 @@ export default defineConfig(({ command, isSsrBuild, mode }) => {
       ],
     },
     plugins: [
+      stackActivity(),
       tailwindcss(),
       linguiWithoutIdQuery(lingui({ macroTransform: true })),
       reactRouter(),
