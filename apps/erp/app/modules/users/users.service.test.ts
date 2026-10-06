@@ -91,12 +91,13 @@ describe("resolveUserSelectIds", () => {
 
     const { users } = await resolveUserSelectIds(client as never, "co", [
       "ada",
+      "gone",
       "other"
     ]);
 
     expect(memberFilters).toEqual([
       ["eq", "companyId", "co"],
-      ["in", "memberUserId", ["ada", "other"]]
+      ["in", "memberUserId", ["ada", "gone", "other"]]
     ]);
     expect(userFilters).toEqual([["in", "id", ["ada", "gone"]]]);
     expect(users.data).toEqual([
