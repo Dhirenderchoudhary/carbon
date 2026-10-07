@@ -1,11 +1,11 @@
 {
   "kind": "carbon-company-backup",
   "version": 1,
-  "schemaVersion": "20261005041631",
+  "schemaVersion": "20261006130200",
   "sourceCompanyId": "schema-baseline",
   "sourceCompanyGroupId": null,
   "sourceCompanyName": null,
-  "exportedAt": "2026-10-05T04:22:58.312Z",
+  "exportedAt": "2026-10-06T01:27:39.616Z",
   "exportedBy": "schema-baseline",
   "label": "schema baseline",
   "includeStorage": "none",
@@ -433,10 +433,16 @@
         "showCurrencyTrailingZeros",
         "requireMfa",
         "allowLowercaseItemIds",
+        "defaultResponsibleEmployee",
+        "rescheduleToleranceDays",
+        "forecastConsumptionBackwardPeriods",
+        "forecastConsumptionForwardPeriods",
         "includeOperationsOnTraveler",
         "requireSupplierContactAndLocation",
         "requireCustomerContactAndLocation",
-        "showBomExplorerReadableId"
+        "showBomExplorerReadableId",
+        "defaultPlanningHorizonDays",
+        "mrpRunTime"
       ]
     },
     {
@@ -1178,7 +1184,8 @@
         "customFields",
         "tags",
         "code",
-        "requiresStaffing"
+        "requiresStaffing",
+        "responsibleEmployee"
       ]
     },
     {
@@ -1286,6 +1293,21 @@
         "updatedBy",
         "updatedAt",
         "customFields"
+      ]
+    },
+    {
+      "name": "itemPostingGroupResponsibility",
+      "rows": 0,
+      "columns": [
+        "id",
+        "companyId",
+        "locationId",
+        "itemPostingGroupId",
+        "responsibleEmployee",
+        "createdBy",
+        "createdAt",
+        "updatedBy",
+        "updatedAt"
       ]
     },
     {
@@ -2830,7 +2852,8 @@
         "createdAt",
         "updatedAt",
         "updatedBy",
-        "id"
+        "id",
+        "consumedQuantity"
       ]
     },
     {
@@ -3002,7 +3025,9 @@
         "tags",
         "maximumInventoryQuantity",
         "demandAccumulationSafetyStock",
-        "minimumReserveQuantity"
+        "minimumReserveQuantity",
+        "responsibleEmployee",
+        "planningHorizonDays"
       ]
     },
     {
@@ -5506,6 +5531,37 @@
         "updatedAt",
         "customFields",
         "employeeId"
+      ]
+    },
+    {
+      "name": "planningAction",
+      "rows": 0,
+      "columns": [
+        "id",
+        "companyId",
+        "itemId",
+        "locationId",
+        "periodId",
+        "type",
+        "status",
+        "suggestedQuantity",
+        "suggestedDate",
+        "isASAP",
+        "purchaseOrderLineId",
+        "jobId",
+        "requiresManualAction",
+        "supplierId",
+        "policyName",
+        "reason",
+        "triggerValues",
+        "assignee",
+        "assigneeOverridden",
+        "createdBy",
+        "createdAt",
+        "updatedBy",
+        "updatedAt",
+        "horizonDate",
+        "latestOrderDate"
       ]
     },
     {
