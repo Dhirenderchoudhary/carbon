@@ -108,23 +108,6 @@ jobs:
           platforms: linux/amd64
           provenance: false
 
-      # The Dockerfiles' cache mounts (the pnpm store, Turborepo's cache)
-      # start empty on every runner; carry them between runs. Keyed by
-      # commit and restored from the newest, so each run saves what it adds.
-      - if: steps.plan.outputs.action == 'build'
-        uses: actions/cache@v6
-        with:
-          path: cache-mounts
-          key: cache-mounts-${{ matrix.image }}-${{ github.sha }}
-          restore-keys: cache-mounts-${{ matrix.image }}-
-
-      - if: steps.plan.outputs.action == 'build'
-        uses: reproducible-containers/buildkit-cache-dance@v3
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          cache-dir: cache-mounts
-          dockerfile: ${{ steps.plan.outputs.file }}
-
       - if: steps.plan.outputs.action == 'build'
         uses: docker/build-push-action@v7
         with:
