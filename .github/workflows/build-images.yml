@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [erp, mes, ops, edge-functions, assembler]
+        image: [erp, mes, bootstrap, edge-functions, assembler]
     steps:
       - uses: actions/checkout@v7
         with:
