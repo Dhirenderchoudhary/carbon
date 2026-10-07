@@ -21,6 +21,10 @@ COPY patches ./patches
 COPY scripts ./scripts
 # @carbon/content (glossary, the agent's doc corpus) lives with the docs it serves.
 COPY docs/content ./docs/content
+# Set before the install: its postinstall runs //#generate:mcp, which needs more
+# than node's default ~2 GB heap. Inherited by `build`.
+ARG NODE_OPTIONS="--max-old-space-size=8024"
+ENV NODE_OPTIONS=${NODE_OPTIONS}
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile
 
@@ -31,8 +35,6 @@ ARG APP
 # same-origin — the controlled/air-gapped variant is this default, not a flag.
 ARG ASSETS_URL
 ENV ASSETS_URL=${ASSETS_URL}
-ARG NODE_OPTIONS="--max-old-space-size=8024"
-ENV NODE_OPTIONS=${NODE_OPTIONS}
 RUN --mount=type=cache,id=turbo,target=/repo/.turbo,sharing=locked \
     pnpm run build:${APP}
 # Build scratch `runner` must not inherit: .vite is the dep-optimizer cache,
