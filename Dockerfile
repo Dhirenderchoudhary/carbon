@@ -25,10 +25,10 @@ COPY docs/content ./docs/content
 # than node's default ~2 GB heap. Inherited by `build`.
 ARG NODE_OPTIONS="--max-old-space-size=8024"
 ENV NODE_OPTIONS=${NODE_OPTIONS}
-# The manifest is not generated here: `build` makes it through turbo for erp, and
-# nothing else in an image reads it.
+# CI=1 as on any CI install: the postinstall leaves the MCP manifest to the task
+# that reads it. `build` makes it through turbo for erp; nothing else here does.
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
-    SKIP_GENERATE_MCP=1 pnpm install --frozen-lockfile
+    CI=1 pnpm install --frozen-lockfile
 
 FROM deps AS build
 ARG APP
