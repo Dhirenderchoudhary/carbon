@@ -14,6 +14,7 @@ import type { ActionFunctionArgs } from "react-router";
 import {
   getJobReleaseReadiness,
   jobStatus,
+  makeToAssetItemError,
   recalculateJobRequirements,
   runMRP,
   updateJobStatus
@@ -60,7 +61,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (status === "Ready") {
     const { data } = await client
       .from("job")
-      .select("item(itemReplenishment(manufacturingBlocked))")
+      .select(
+        "quantity, salesOrderLineId, fixedAssetClassId, fixedAssetId, item(itemTrackingType, itemReplenishment(manufacturingBlocked))"
+      )
       .eq("id", id)
       .single();
 
@@ -69,6 +72,37 @@ export async function action({ request, params }: ActionFunctionArgs) {
         requestReferrer(request) ?? path.to.job(id),
         await flash(request, error(null, "Manufacturing is blocked"))
       );
+    }
+
+    // Make to Asset gate, checked here so every path to Ready (the release
+    // dialog and the plain status post) refuses before releaseJobs runs. The
+    // item rule is `makeToAssetItemError`; a job on a sales order line is a
+    // sale, not a capitalisation.
+    if (data?.fixedAssetClassId || data?.fixedAssetId) {
+      const itemError = makeToAssetItemError({
+        fixedAssetClassId: data.fixedAssetClassId,
+        fixedAssetId: data.fixedAssetId,
+        itemTrackingType: data.item?.itemTrackingType,
+        quantity: data.quantity
+      });
+      if (itemError) {
+        throw redirect(
+          requestReferrer(request) ?? path.to.job(id),
+          await flash(request, error(null, itemError))
+        );
+      }
+      if (data.salesOrderLineId) {
+        throw redirect(
+          requestReferrer(request) ?? path.to.job(id),
+          await flash(
+            request,
+            error(
+              null,
+              "A job linked to a sales order line cannot complete to a fixed asset"
+            )
+          )
+        );
+      }
     }
   }
 

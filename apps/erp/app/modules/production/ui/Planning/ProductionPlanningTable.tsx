@@ -19,6 +19,7 @@ import {
   toast,
   VStack
 } from "@carbon/react";
+import { distinctItemText } from "@carbon/utils";
 import { parseDate } from "@internationalized/date";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -480,9 +481,14 @@ const ProductionPlanningTable = ({
 
             <VStack spacing={0} className="font-medium">
               {row.original.readableIdWithRevision}
-              <div className="w-full truncate text-muted-foreground text-xs">
-                {row.original.name}
-              </div>
+              {distinctItemText(
+                row.original.readableIdWithRevision,
+                row.original.name
+              ) && (
+                <div className="w-full truncate text-muted-foreground text-xs">
+                  {row.original.name}
+                </div>
+              )}
             </VStack>
           </HStack>
         ),

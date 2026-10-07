@@ -88,6 +88,41 @@ export async function action({ request }: ActionFunctionArgs) {
         })
         .in("id", ids as string[]);
     }
+    case "customerId": {
+      // A ship-to is one of the old customer's locations, so a customer
+      // change clears it (sales rules would otherwise evaluate an address
+      // that is not the new customer's).
+      if (value) {
+        const changed = await client
+          .from("salesInvoice")
+          .select("id")
+          .in("id", ids as string[])
+          .eq("companyId", companyId)
+          .neq("customerId", value);
+        if (changed.error) return changed;
+        const changedIds = (changed.data ?? []).map((row) => row.id);
+        if (changedIds.length > 0) {
+          const cleared = await client
+            .from("salesInvoiceShipment")
+            .update({
+              customerLocationId: null,
+              updatedBy: userId,
+              updatedAt: datetime.timestamp()
+            })
+            .in("id", changedIds)
+            .eq("companyId", companyId);
+          if (cleared.error) return cleared;
+        }
+      }
+      return await client
+        .from("salesInvoice")
+        .update({
+          customerId: value ? value : undefined,
+          updatedBy: userId,
+          updatedAt: datetime.timestamp()
+        })
+        .in("id", ids as string[]);
+    }
     case "dateIssued":
       if (ids.length === 1) {
         const invoice = await client
@@ -154,7 +189,6 @@ export async function action({ request }: ActionFunctionArgs) {
           .in("id", ids as string[]);
       }
     // don't break -- just let it catch the next case
-    case "customerId":
     case "invoiceCustomerContactId":
     case "invoiceCustomerLocationId":
     case "locationId":

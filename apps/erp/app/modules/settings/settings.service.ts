@@ -34,6 +34,7 @@ import { sanitize } from "~/utils/supabase";
 import type {
   accountsPayableBillingAddressValidator,
   accountsReceivableBillingAddressValidator,
+  invoiceAutomations,
   itemSerialSequenceValidator,
   kanbanOutputTypes,
   purchasePriceUpdateTimingTypes,
@@ -1053,6 +1054,24 @@ export async function updateAssetTaxDepreciationSettings(
     .eq("id", companyId);
 }
 
+/** The ASC 842 classification thresholds and the default lessor discount
+ *  rate, all percentage points (75, 90, 6). * @mcp update
+ */
+export async function updateLeasePolicySettings(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  settings: {
+    leaseMajorPartThresholdPercent: number;
+    leaseSubstantiallyAllThresholdPercent: number;
+    leaseDefaultDiscountRate: number;
+  }
+) {
+  return client
+    .from("companySettings")
+    .update(sanitize(settings))
+    .eq("id", companyId);
+}
+
 /** @mcp update */
 export async function updateTimeCardSetting(
   client: SupabaseClient<Database>,
@@ -1380,6 +1399,30 @@ export async function updateQuoteLineCategoryMarkups(
   return client
     .from("companySettings")
     .update(sanitize({ quoteLineCategoryMarkups }))
+    .eq("id", companyId);
+}
+
+/** @mcp update */
+export async function updateInvoiceAutomationSetting(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  invoiceAutomation: (typeof invoiceAutomations)[number]
+) {
+  return client
+    .from("companySettings")
+    .update(sanitize({ invoiceAutomation }))
+    .eq("id", companyId);
+}
+
+/** @mcp update */
+export async function updateInvoiceNotificationSetting(
+  client: SupabaseClient<Database>,
+  companyId: string,
+  invoiceNotificationGroup: string[]
+) {
+  return client
+    .from("companySettings")
+    .update(sanitize({ invoiceNotificationGroup }))
     .eq("id", companyId);
 }
 

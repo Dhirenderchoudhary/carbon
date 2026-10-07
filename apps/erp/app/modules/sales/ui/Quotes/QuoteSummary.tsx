@@ -22,6 +22,7 @@ import {
   TruncatedTooltipText,
   VStack
 } from "@carbon/react";
+import { distinctItemText } from "@carbon/utils";
 import { Trans } from "@lingui/react/macro";
 import { useLocale } from "@react-aria/i18n";
 import { motion } from "motion/react";
@@ -180,6 +181,7 @@ const LineItems = ({
                     </HStack>
                     <HStack spacing={4}>
                       <MotionMoney
+                        className="font-semibold text-xl whitespace-nowrap"
                         value={
                           (selectedLine.convertedNetUnitPrice ?? 0) *
                             (selectedLine.quantity ?? 0) +
@@ -204,12 +206,14 @@ const LineItems = ({
                       </motion.div>
                     </HStack>
                   </div>
-                  <TruncatedTooltipText
-                    className="text-muted-foreground text-sm truncate"
-                    tooltip={line.description}
-                  >
-                    {line.description}
-                  </TruncatedTooltipText>
+                  {distinctItemText(line.itemReadableId, line.description) && (
+                    <TruncatedTooltipText
+                      className="text-muted-foreground text-sm truncate"
+                      tooltip={line.description}
+                    >
+                      {line.description}
+                    </TruncatedTooltipText>
+                  )}
                 </div>
               </VStack>
             </HStack>
@@ -555,7 +559,7 @@ const LinePricingOptions = ({
                 </Td>
               </Tr>
 
-              <Tr key="total" className="font-bold">
+              <Tr key="total" className="font-semibold">
                 <Td>
                   <Trans>Total</Trans>
                 </Td>

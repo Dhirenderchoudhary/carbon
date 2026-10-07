@@ -15,6 +15,7 @@ import {
   useUrlParams,
   VStack
 } from "@carbon/react";
+import { distinctItemText } from "@carbon/utils";
 import { getLocalTimeZone, parseDate } from "@internationalized/date";
 import { useLingui } from "@lingui/react/macro";
 import { useDateFormatter, useNumberFormatter } from "@react-aria/i18n";
@@ -125,9 +126,14 @@ const DemandProjectionsTable = memo(
 
                 <VStack spacing={0} className="font-medium">
                   {row.original.readableIdWithRevision}
-                  <div className="w-full truncate text-muted-foreground text-xs">
-                    {row.original.name}
-                  </div>
+                  {distinctItemText(
+                    row.original.readableIdWithRevision,
+                    row.original.name
+                  ) && (
+                    <div className="w-full truncate text-muted-foreground text-xs">
+                      {row.original.name}
+                    </div>
+                  )}
                 </VStack>
               </HStack>
             </Hyperlink>
@@ -199,7 +205,7 @@ const DemandProjectionsTable = memo(
           count={count}
           defaultColumnPinning={defaultColumnPinning}
           title={t`Demand Forecasts`}
-          table="production-planning"
+          table="demand-projection"
           withSavedView
           withSelectableRows
           withSimpleSorting

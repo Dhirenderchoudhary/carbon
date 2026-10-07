@@ -41,6 +41,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { nanoid } from "nanoid";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import {
+  LuBuilding2,
   LuCheck,
   LuChevronDown,
   LuChevronRight,
@@ -49,7 +50,7 @@ import {
   LuQrCode,
   LuSearch
 } from "react-icons/lu";
-import { Outlet, useFetcher } from "react-router";
+import { Link, Outlet, useFetcher } from "react-router";
 import type { z } from "zod";
 import { DateTime } from "~/components";
 import { Input, Location, Select, TextArea } from "~/components/Form";
@@ -285,6 +286,22 @@ const InventoryStorageUnits = ({
     }
   };
 
+  // A serialized unit can leave stock as a fixed asset (Dr asset / Cr Finished
+  // Goods at its carrying cost). The capitalize route reads the unit from the
+  // search params; the posting itself needs `create: accounting`.
+  const canCapitalize = permissions.can("create", "accounting");
+  const capitalizeHref = (item: ItemStorageUnitQuantities) => {
+    const params = new URLSearchParams({
+      itemId: pickMethod.itemId,
+      trackedEntityId: item.trackedEntityId,
+      locationId
+    });
+    // A unit in no bin has a null storageUnitId; URLSearchParams would send it
+    // as the string "null", which then fails the itemLedger bin FK.
+    if (item.storageUnitId) params.set("storageUnitId", item.storageUnitId);
+    return `${path.to.fixedAssetCapitalize}?${params}`;
+  };
+
   const handleConfirmPrint = () => {
     if (!pendingPrintEntityId || !selectedPrinterId) return;
     printFetcher.submit(
@@ -380,6 +397,18 @@ const InventoryStorageUnits = ({
           icon={<LuPrinter />}
           onClick={() => handlePrintLabel(item.trackedEntityId!)}
         />
+      )}
+      {/* A fixed asset is one serialized unit; a batch row is many. */}
+      {item.trackedEntityId && isSerial && canCapitalize && (
+        <Link to={capitalizeHref(item)}>
+          <IconButton
+            aria-label={t`Capitalize as Fixed Asset`}
+            title={t`Capitalize as Fixed Asset`}
+            variant="ghost"
+            size="sm"
+            icon={<LuBuilding2 />}
+          />
+        </Link>
       )}
       <IconButton
         aria-label={t`Update Quantity`}

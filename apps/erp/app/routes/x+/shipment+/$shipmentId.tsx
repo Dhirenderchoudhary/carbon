@@ -10,13 +10,18 @@ import { RecordOutlet } from "@carbon/react";
 import { redirect } from "@carbon/utils";
 import { msg } from "@lingui/core/macro";
 import type { LoaderFunctionArgs } from "react-router";
-import { useParams } from "react-router";
+import { useLoaderData } from "react-router";
+import { DocumentPage, DocumentSidebar } from "~/components/DocumentPage";
 import {
   getShipment,
   getShipmentLines,
   getShipmentRelatedItems,
   getShipmentTracking
 } from "~/modules/inventory";
+import {
+  ShipmentDocuments,
+  ShipmentHeader
+} from "~/modules/inventory/ui/Shipments";
 import { detailBreadcrumb, type Handle } from "~/utils/handle";
 import { path } from "~/utils/path";
 
@@ -112,17 +117,23 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function ShipmentRoute() {
-  const params = useParams();
-  const { shipmentId } = params;
-  if (!shipmentId) throw new Error("Could not find shipmentId");
+  const { shipment } = useLoaderData<typeof loader>();
 
   return (
-    <div className="flex h-[calc(100dvh-var(--topbar-height)-var(--content-inset))] overflow-y-auto scrollbar-hide w-full">
-      <div className="h-full p-4 w-full max-w-5xl mx-auto">
-        <div className="flex flex-col gap-4 pb-16 w-full">
-          <RecordOutlet />
-        </div>
-      </div>
-    </div>
+    <DocumentPage
+      header={<ShipmentHeader />}
+      sidebar={
+        <DocumentSidebar
+          documents={<ShipmentDocuments />}
+          activity={{
+            entityType: "shipment",
+            entityId: shipment.id,
+            refreshKey: `${shipment.updatedAt ?? ""}:${shipment.status}`
+          }}
+        />
+      }
+    >
+      <RecordOutlet />
+    </DocumentPage>
   );
 }

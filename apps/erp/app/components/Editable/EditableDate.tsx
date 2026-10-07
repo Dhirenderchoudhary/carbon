@@ -3,6 +3,7 @@
 // including ports, remain AGPLv3; serving them over a network requires releasing their source.
 
 import { DatePicker } from "@carbon/react";
+import type { CalendarDate } from "@internationalized/date";
 import { parseDate } from "@internationalized/date";
 import { useLingui } from "@lingui/react/macro";
 import type { PostgrestSingleResponse } from "@supabase/supabase-js";
@@ -25,13 +26,31 @@ import type { EditableTableCellComponentProps } from "~/components/Editable";
  * (a due date, a required date) are not optional, and react-aria reports a
  * half-typed date as `null` too.
  */
+/** A `YYYY-MM-DD` value as a picker date; anything else is empty. */
+function toCalendarDate(value: unknown): CalendarDate | null {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}/.test(value)) {
+    return null;
+  }
+  try {
+    return parseDate(value.slice(0, 10));
+  } catch {
+    return null;
+  }
+}
+
 const EditableDate = <T extends object>(
   mutation: (
     accessorKey: string,
     newValue: string,
     row: T
   ) => Promise<PostgrestSingleResponse<unknown>>,
-  options?: { clearable?: boolean }
+  options?: {
+    clearable?: boolean;
+    /** The accessible name of the picker (the column's header). */
+    label?: string;
+    /** Per-row bounds, as `YYYY-MM-DD`. */
+    bounds?: (row: T) => { minValue?: string; maxValue?: string };
+  }
 ) => {
   const EditableDateEditor = ({
     value,
@@ -42,10 +61,8 @@ const EditableDate = <T extends object>(
   }: EditableTableCellComponentProps<T>) => {
     const { t } = useLingui();
     // a timestamp column would carry a time part; a calendar date is its head
-    const current =
-      typeof value === "string" && value.length >= 10
-        ? value.slice(0, 10)
-        : null;
+    const current = toCalendarDate(value)?.toString() ?? null;
+    const bounds = options?.bounds?.(row);
 
     // The field's latest value; `committed` is what the cell last saved, so
     // the blur that follows a closed calendar does not save the day twice.
@@ -89,11 +106,13 @@ const EditableDate = <T extends object>(
         }}
       >
         <DatePicker
-          aria-label={t`Date`}
+          aria-label={options?.label ?? t`Date`}
           size="sm"
           autoFocus
           closeOnSelect
           defaultValue={current ? parseDate(current) : null}
+          minValue={toCalendarDate(bounds?.minValue) ?? undefined}
+          maxValue={toCalendarDate(bounds?.maxValue) ?? undefined}
           onChange={(next) => {
             latest.current = next ? next.toString() : null;
           }}

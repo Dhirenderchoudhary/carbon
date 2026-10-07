@@ -47,7 +47,7 @@ import {
   useRouteData,
   useShortcutKeys
 } from "@carbon/react";
-import { formatDurationMilliseconds } from "@carbon/utils";
+import { distinctItemText, formatDurationMilliseconds } from "@carbon/utils";
 import type {
   AssemblyStep,
   CameraPose,
@@ -1856,9 +1856,12 @@ export function AssemblyView({
             <p className="truncate text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               {job?.itemReadableIdWithRevision ?? "—"}
             </p>
-            {operation?.itemDescription && (
+            {distinctItemText(
+              job?.itemReadableIdWithRevision ?? "—",
+              operation?.itemDescription
+            ) && (
               <p className="mt-0.5 line-clamp-2 text-xs text-foreground/80">
-                {operation.itemDescription}
+                {operation?.itemDescription}
               </p>
             )}
             {!isMultiQuantity && currentEntity ? (

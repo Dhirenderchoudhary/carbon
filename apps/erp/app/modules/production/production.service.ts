@@ -781,6 +781,10 @@ export async function getActiveProductionEvents(
   client: SupabaseClient<Database>,
   companyId: string
 ) {
+  // TS2589 — supabase select-string instantiation depth sits on tsgo's limit;
+  // the cliff shifts as unrelated modules join the program. ts-ignore, not
+  // ts-expect-error, so it satisfies both tsc and tsgo.
+  // @ts-ignore TS2589
   return client
     .from("productionEvent")
     .select(
@@ -3614,6 +3618,8 @@ export async function insertJob(
     notes?: string;
     customFields?: Json;
     configuration?: Record<string, unknown>;
+    fixedAssetClassId?: string | null;
+    fixedAssetId?: string | null;
   },
   options?: {
     skipMethod?: boolean;
@@ -3734,6 +3740,8 @@ export async function insertJob(
       modelUploadId: input.modelUploadId,
       notes: input.notes,
       customFields: input.customFields,
+      fixedAssetClassId: input.fixedAssetClassId ?? null,
+      fixedAssetId: input.fixedAssetId ?? null,
       configuration: (input.configuration as Json | undefined) ?? null,
       companyId: input.companyId,
       createdBy: input.createdBy,
@@ -3858,6 +3866,7 @@ export async function updateJob(
   client: SupabaseClient<Database>,
   input: {
     id: string;
+    companyId: string;
     updatedBy: string;
     quantity?: number;
     dueDate?: string | null;
@@ -3878,11 +3887,13 @@ export async function updateJob(
     customFields?: Json;
     scrapQuantity?: number;
     itemId?: string;
+    fixedAssetClassId?: string | null;
+    fixedAssetId?: string | null;
   }
 ): Promise<{ data: { id: string } | null; error: PostgrestError | null }> {
-  const { id, updatedBy, ...updates } = input;
+  const { id, companyId, updatedBy, ...updates } = input;
 
-  const priority = await priorityForDateChange(client, id, updates);
+  const priority = await priorityForDateChange(client, id, companyId, updates);
 
   return client
     .from("job")
@@ -3895,6 +3906,7 @@ export async function updateJob(
       })
     )
     .eq("id", id)
+    .eq("companyId", companyId)
     .select("id")
     .single();
 }
@@ -3907,6 +3919,7 @@ export async function updateJob(
 async function priorityForDateChange(
   client: SupabaseClient<Database>,
   id: string,
+  companyId: string,
   updates: {
     dueDate?: string | null;
     deadlineType?: (typeof deadlineTypes)[number];
@@ -3924,6 +3937,7 @@ async function priorityForDateChange(
     .from("job")
     .select("dueDate, deadlineType, companyId, locationId")
     .eq("id", id)
+    .eq("companyId", companyId)
     .single();
   if (!existing.data) return undefined;
 
@@ -4014,7 +4028,7 @@ export async function updatePlanningJob(
       updates.deadlineType = deadlineType;
     }
   }
-  const priority = await priorityForDateChange(client, id, updates);
+  const priority = await priorityForDateChange(client, id, companyId, updates);
 
   let scrap: { scrapQuantity: number } | undefined;
   if (updates.quantity !== undefined) {

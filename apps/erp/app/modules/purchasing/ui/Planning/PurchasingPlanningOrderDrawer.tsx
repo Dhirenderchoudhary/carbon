@@ -27,7 +27,12 @@ import {
   toast,
   useDisclosure
 } from "@carbon/react";
-import { formatDate, RoundingMode, round } from "@carbon/utils";
+import {
+  distinctItemText,
+  formatDate,
+  RoundingMode,
+  round
+} from "@carbon/utils";
 import { parseDate } from "@internationalized/date";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useLocale } from "@react-aria/i18n";
@@ -604,7 +609,10 @@ export const PurchasingPlanningOrderDrawer = memo(
                   <LuExternalLink />
                 </Link>
               </DrawerTitle>
-              <DrawerDescription>{selectedItem.name}</DrawerDescription>
+              {distinctItemText(
+                selectedItem.readableIdWithRevision,
+                selectedItem.name
+              ) && <DrawerDescription>{selectedItem.name}</DrawerDescription>}
               <div className="absolute top-4 right-12">
                 <TabsList>
                   <TabsTrigger value="ordering">

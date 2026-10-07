@@ -23,7 +23,7 @@ import {
   useShortcutKeyMap,
   VStack
 } from "@carbon/react";
-import { getItemReadableId } from "@carbon/utils";
+import { distinctItemText, getItemReadableId } from "@carbon/utils";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMemo, useRef, useState } from "react";
 import {
@@ -259,6 +259,15 @@ function PurchaseOrderLineBody({
   isOverlay?: boolean;
 }) {
   const [items] = useItems();
+  const subtitle =
+    line.purchaseOrderLineType === "G/L Account"
+      ? "G/L Account"
+      : line.purchaseOrderLineType === "Fixed Asset"
+        ? (line as any).assetName || line.description
+        : distinctItemText(
+            getItemReadableId(items, line.itemId),
+            line.description
+          );
   return (
     <ReorderableRow dragHandle={dragHandle} isOverlay={isOverlay}>
       <HStack spacing={2} className="flex-grow min-w-0 p-2 pr-10">
@@ -271,13 +280,11 @@ function PurchaseOrderLineBody({
                 ? (line as any).assetReadableId || "Fixed Asset"
                 : getItemReadableId(items, line.itemId)}
           </span>
-          <span className="text-muted-foreground text-xs truncate line-clamp-1">
-            {line.purchaseOrderLineType === "G/L Account"
-              ? "G/L Account"
-              : line.purchaseOrderLineType === "Fixed Asset"
-                ? (line as any).assetName || line.description
-                : line.description}
-          </span>
+          {subtitle && (
+            <span className="text-muted-foreground text-xs truncate line-clamp-1">
+              {subtitle}
+            </span>
+          )}
         </VStack>
       </HStack>
     </ReorderableRow>
@@ -340,6 +347,16 @@ function PurchaseOrderLineItem({
       "Completed"
     ].includes(orderStatus);
 
+  const subtitle =
+    line.purchaseOrderLineType === "G/L Account"
+      ? "G/L Account"
+      : line.purchaseOrderLineType === "Fixed Asset"
+        ? line.assetName || line.description
+        : distinctItemText(
+            getItemReadableId(items, line.itemId),
+            line.description
+          );
+
   return (
     <VStack spacing={0} className="border-b">
       <PrefetchLink
@@ -366,13 +383,11 @@ function PurchaseOrderLineItem({
                     ? (line as any).assetReadableId || "Fixed Asset"
                     : getItemReadableId(items, line.itemId)}
               </span>
-              <span className="text-muted-foreground text-xs truncate line-clamp-1">
-                {line.purchaseOrderLineType === "G/L Account"
-                  ? "G/L Account"
-                  : line.purchaseOrderLineType === "Fixed Asset"
-                    ? line.assetName || line.description
-                    : line.description}
-              </span>
+              {subtitle && (
+                <span className="text-muted-foreground text-xs truncate line-clamp-1">
+                  {subtitle}
+                </span>
+              )}
             </VStack>
           </HStack>
           <div className="absolute right-2">

@@ -71,12 +71,12 @@ export default function SalesInvoiceBasicRoute() {
     salesInvoice: SalesInvoice;
     salesInvoiceLines: SalesInvoiceLine[];
     salesInvoiceShipment: SalesInvoiceShipment;
-    opportunity: Opportunity;
+    opportunity: Opportunity | null;
     files: Promise<FileObject[]>;
   }>(path.to.salesInvoice(invoiceId));
 
   if (!invoiceData?.salesInvoice) throw new Error("salesInvoice not found");
-  const { salesInvoice, salesInvoiceShipment } = invoiceData;
+  const { salesInvoice, salesInvoiceShipment, opportunity } = invoiceData;
 
   if (!invoiceData) throw new Error("Could not find invoice data");
 
@@ -89,6 +89,7 @@ export default function SalesInvoiceBasicRoute() {
   const shipmentInitialValues = {
     id: salesInvoiceShipment.id,
     locationId: salesInvoiceShipment.locationId ?? "",
+    customerLocationId: salesInvoiceShipment.customerLocationId ?? "",
     shippingCost: salesInvoiceShipment.shippingCost ?? 0,
     shippingMethodId: salesInvoiceShipment.shippingMethodId ?? "",
     shippingTermId: salesInvoiceShipment.shippingTermId ?? "",
@@ -110,16 +111,23 @@ export default function SalesInvoiceBasicRoute() {
         table="salesInvoice"
         internalNotes={internalNotes}
       />
-      <DeferredFiles key={`documents-${invoiceId}`} resolve={invoiceData.files}>
-        {(resolvedFiles) => (
-          <OpportunityDocuments
-            opportunity={invoiceData.opportunity}
-            attachments={resolvedFiles}
-            id={invoiceId}
-            type="Sales Invoice"
-          />
-        )}
-      </DeferredFiles>
+      {/* Documents live under the opportunity's storage folder, so an
+          invoice without one has nowhere to keep them. */}
+      {opportunity && (
+        <DeferredFiles
+          key={`documents-${invoiceId}`}
+          resolve={invoiceData.files}
+        >
+          {(resolvedFiles) => (
+            <OpportunityDocuments
+              opportunity={opportunity}
+              attachments={resolvedFiles}
+              id={invoiceId}
+              type="Sales Invoice"
+            />
+          )}
+        </DeferredFiles>
+      )}
       <SalesInvoiceShipmentForm
         key={`shipment-${invoiceId}`}
         ref={shipmentFormRef}

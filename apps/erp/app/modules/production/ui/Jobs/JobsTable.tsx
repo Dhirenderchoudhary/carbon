@@ -20,6 +20,7 @@ import {
   useDisclosure,
   VStack
 } from "@carbon/react";
+import { distinctItemText } from "@carbon/utils";
 import {
   getLocalTimeZone,
   isSameDay,
@@ -242,9 +243,14 @@ const JobsTable = memo((props: JobsTableProps) => {
           return (
             <VStack spacing={0}>
               {row.original.itemReadableIdWithRevision}
-              <div className="w-full truncate text-muted-foreground text-xs">
-                {row.original.name}
-              </div>
+              {distinctItemText(
+                row.original.itemReadableIdWithRevision,
+                row.original.name
+              ) && (
+                <div className="w-full truncate text-muted-foreground text-xs">
+                  {row.original.name}
+                </div>
+              )}
             </VStack>
           );
         },
