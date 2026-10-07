@@ -25,8 +25,10 @@ COPY docs/content ./docs/content
 # than node's default ~2 GB heap. Inherited by `build`.
 ARG NODE_OPTIONS="--max-old-space-size=8024"
 ENV NODE_OPTIONS=${NODE_OPTIONS}
+# The manifest is not generated here: `build` makes it through turbo for erp, and
+# nothing else in an image reads it.
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm install --frozen-lockfile
+    SKIP_GENERATE_MCP=1 pnpm install --frozen-lockfile
 
 FROM deps AS build
 ARG APP

@@ -56,7 +56,9 @@ Triggers on push to `main` touching `apps/erp/**`, `apps/mes/**`, `packages/**`
   stale — there is now ONE Dockerfile: `deps`→`build` (`pnpm run build:${APP}`)→
   `runner` on `node:22-slim`).
 - Pushes `carbon/<app>:latest` **and** `carbon/<app>:${{ github.sha }}` to ECR,
-  `platforms: linux/amd64`, GHA buildx cache.
+  `platforms: linux/amd64`. No layer cache: this workflow only runs when
+  `apps/` or `packages/` changed, which invalidates every layer after the base, so
+  exporting one cost about two minutes a job and was never read back.
 
 ## Deploy (job `deploy`, needs `build`)
 - Sets `IMAGE_TAG: ${{ github.sha }}` (this is what `sst.config.ts` interpolates
